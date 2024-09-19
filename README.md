@@ -52,8 +52,15 @@
 
 您可以通过更改Logseq的设置来切换语言，以使上述更改生效。
 
+## 感谢
+
+- 本插件tab能力参考插件：[logseq-assets-plus](https://github.com/xyhp915/logseq-assets-plus)
+- 本插件card能力参考插件：[logseq-cardbox](https://github.com/sosuisen/logseq-cardbox)
+
 ## 支持开发
 
 如果您喜欢这个插件，请考虑捐赠以支持其持续开发。
 
 ![捐赠](./images/WechatIMG9.jpg)
+
+
