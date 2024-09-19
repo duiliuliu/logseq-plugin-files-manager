@@ -1,0 +1,247 @@
+.list {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
+    transition: transform 0.3s, box-shadow 0.3s;
+    width: 160px;
+    height: 220px;
+}
+
+.list:hover,
+.list:focus {
+    outline: 0;
+    transform: translateY(-6px);
+    box-shadow: 0 4px 19px rgba(0, 0, 0, 0.3);
+}
+
+.list:active {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.list-content {
+    width: 100%;
+    /* height: 110px; */
+    overflow: hidden;
+}
+
+.list-title {
+    font-size: 16px;
+    color: var(--ls-primary-text-color);
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.list-summary {
+    width: 100%;
+    overflow: hidden;
+    font-size: 12px;
+    color: #606060;
+    text-align: left;
+    white-space: pre-wrap;
+    flex-grow: 1;
+}
+
+.list-image {
+    overflow: hidden;
+    padding-top: 7px;
+    display: none;
+    flex-grow: 1;
+}
+
+.list-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 3px;
+}
+
+.list-description {
+    font-size: 10px;
+    color: #888;
+    text-align: left;
+}
+
+.list-avatar {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+    color: #333;
+    margin-right: 10px;
+    background-color: aliceblue;
+    border-radius: 100%;
+}
+
+.list-tag {
+    /* 添加一些文本阴影可以更好地突出文字 */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    /* 可以添加一些鼠标悬停的效果 */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.list-tag:hover {
+    transform: scale(1.1);
+    /* 鼠标悬停时放大标签 */
+    text-shadow: 1px 1px 1.5px rgba(0, 0, 0, 0.3);
+    /* 鼠标悬停时增加文本阴影 */
+}
+
+.list-actions {
+    display: flex;
+    /* 使用flex布局 */
+    flex-direction: column;
+    /* 子元素竖直排列 */
+    gap: 4px;
+    /* 子元素之间的间距 */
+}
+
+.list-actions a {
+    display: inline-flex;
+    /* 确保图标和文字可以在同一行显示 */
+    align-items: center;
+    /* 垂直居中 */
+    justify-content: center;
+    /* 水平居中 */
+    cursor: pointer;
+    /* 鼠标指针变为手型 */
+}
+
+.list-actions a:focus {
+    outline: none;
+    /* 移除聚焦时的默认轮廓 */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
+    /* 聚焦时的阴影效果，模拟tooltip的高亮效果 */
+}
+
+/* 可以为tooltip添加一个隐藏的元素，在聚焦时显示 */
+.list-actions a:focus::after {
+    content: attr(title);
+    position: absolute;
+    background-color: black;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+/* 根据需要调整tooltip的位置 */
+.list-actions a:focus::after {
+    top: calc(100% + 5px);
+    /* 在链接下方显示 */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 当屏幕宽度较小时，tooltip可能需要倒置 */
+@media (max-width: 768px) {
+    .list-actions a:focus::after {
+        top: auto;
+        bottom: calc(100% + 5px);
+    }
+}
+
+.card-avatar {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+    color: #333;
+    background-color: aliceblue;
+    border-radius: 100%;
+}
+
+.card-title-container {
+    /* display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: center;
+    align-content: stretch;
+    align-items: flex-end; */
+}
+
+.card-description {
+    font-size: 12px;
+    /* 调整字体大小以提高可读性 */
+    width: fit-content;
+    color: #333;
+    /* 调整颜色 */
+    word-wrap: break-word;
+}
+
+.asset-list {
+    margin: 20px auto;
+    padding: 0;
+    background-color: var(--ls-primary-background-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    list-style: none;
+}
+
+.asset-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.asset-item:last-child {
+    border-bottom: none;
+}
+
+.asset-item:hover,
+.asset-item.is-active {
+    background-color: var(--ls-secondary-background-color);
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+.asset-extension {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4em;
+    color: #333;
+    margin-right: 10px;
+    background-color: aliceblue;
+    border-radius: 100%;
+}
+
+.asset-details {
+    flex-grow: 3;
+}
+
+.asset-name {
+    font-size: 16px;
+    color: var(--ls-primary-text-color);
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.asset-meta {
+    font-size: 14px;
+    color: var(--ls-secondary-text-color);
+}
+
+.asset-actions {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+}
+
+.asset-action {
+    cursor: pointer;
+    color: var(--ls-active-secondary-color);
+    font-size: 14px;
+}
+
+.asset-action:hover {
+    text-decoration: underline;
+}

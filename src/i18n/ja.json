@@ -1,0 +1,21 @@
+{
+    "All": "すべて",
+    "Documents": "ドキュメント",
+    "Images": "画像",
+    "Videos": "ビデオ",
+    "Audios": "オーディオ",
+    "Pages": "ページ",
+    "Journals": "日記",
+    "Settings": "設定",
+    "File Manager": "ファイルマネージャー",
+    "Open File Manager": "ファイルマネージャーを開く",
+    "search pages": "ページを検索",
+    "Card View": "カードビュー",
+    "List View": "リストビュー",
+    "Rebuild Data": "データを再構築",
+    "Building": "構築中",
+    "Copy filepath": "ファイルパスをコピー",
+    "Open the folder": "フォルダーを開く",
+    "Copied to clipboard success": "クリップボードにコピー成功",
+    "Open the folder with the Logseq": "Logseqでフォルダーを開く"
+}

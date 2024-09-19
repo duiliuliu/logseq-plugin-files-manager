@@ -1,0 +1,71 @@
+import { DataType, RelatedType } from './enums';
+
+// ===================================================================================
+// 接口定义
+// ===================================================================================
+
+/**
+ * DataItem 接口定义了数据项的基本结构，用于表示各种类型的数据项。
+ */
+interface DataItem {
+    graph: string;          // 数据项所属的图
+    dataType: DataType;     // 数据项的类型
+    name: string;           // 数据项的名称
+    uuid: string;           // 数据项的唯一标识符
+    updatedTime: number;    // 数据项的更新时间
+    alias: string;          // 数据项的别名
+    path?: string;          // 资产的路径
+
+    // 页面属性
+    summary?: string[];     // 页面的摘要信息，可能包含多个字符串
+    image?: string;         // 页面的图片链接
+
+    // 资产属性
+    extName?: string;       // 资产的扩展名
+    size?: string;          // 资产的尺寸或大小
+
+    related?: RelatedItem[]; // 与当前数据项相关联的其他项目
+}
+
+/**
+ * RelatedItem 接口定义了与数据项相关联的其他项目的基本信息。
+ */
+interface RelatedItem {
+    relatedType: RelatedType;  // 关联的类型
+    relatedItemUuid?: string;  // 关联项的唯一标识符
+    relatedTag?: string;       // 关联的标签
+    relatedBlockContent?: string;  // 关联的区块内容
+    relatedBlockPage?: string;   // 关联的页面名称
+}
+
+/**
+ * Tab 接口定义了标签页的基本结构，用于在用户界面中显示不同的标签页。
+ */
+interface Tab {
+    key: string;            // 标签页的唯一键
+    label: React.ReactNode; // 标签页显示的文本或节点
+    icon?: React.ReactNode; // 标签页显示的图标
+    children?: React.ReactNode;  // 标签页的子内容
+    count?: number;         // 标签页的计数，用于显示数量信息
+}
+
+/**
+ * Size 接口定义了尺寸的结构，包括宽度和高度。
+ */
+interface Size {
+    width: number;  // 尺寸的宽度，通常以像素为单位
+    height: number; // 尺寸的高度，通常以像素为单位
+}
+
+
+
+// ===================================================================================
+// 导出
+// ===================================================================================
+
+export type {
+    DataItem,
+    RelatedItem,
+    Tab,
+    Size
+};

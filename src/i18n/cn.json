@@ -1,0 +1,21 @@
+{
+    "All": "全部",
+    "Documents": "文档",
+    "Images": "图片",
+    "Videos": "视频",
+    "Audios": "音频",
+    "Pages": "页面",
+    "Journals": "日志",
+    "Settings": "设置",
+    "File Manager": "文件管理",
+    "Open File Manager": "打开文件管理器",
+    "search pages": "搜索页面",
+    "Card View": "卡片视图",
+    "List View": "列表视图",
+    "Rebuild Data": "重建数据",
+    "Building": "建设中",
+    "Copy filepath": "复制文件路径",
+    "Open the folder": "打开文件",
+    "Copied to clipboard success": "复制到剪贴板成功",
+    "Open the folder with the Logseq": "用Logseq打开文件夹"
+}
