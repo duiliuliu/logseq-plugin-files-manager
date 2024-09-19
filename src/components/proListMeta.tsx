@@ -190,7 +190,7 @@ const openFileAction = ({ record, userConfig }: MetaRenderProps) => (
 const renderCardTitle = ({ record, }: MetaRenderProps) => (
     <div className='card-title-container'>
         <div className='card-avatar'>{record.extName ? record.extName.toUpperCase() : '🕰'}</div>
-        {record.dataType === DataType.PAGE && <div className='card-description'>{record.name}</div>}
+        {(record.dataType === DataType.PAGE || record.dataType === DataType.JOURNAL) && <div className='card-description'>{record.alias}</div>}
     </div>
 );
 
