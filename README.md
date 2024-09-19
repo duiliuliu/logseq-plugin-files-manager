@@ -1,0 +1,1 @@
+# logseq-plugin-files-manager
