@@ -1,0 +1,21 @@
+{
+    "All": "All",
+    "Documents": "Documents",
+    "Images": "Images",
+    "Videos": "Videos",
+    "Audios": "Audios",
+    "Pages": "Pages",
+    "Journals": "Journals",
+    "Settings": "Settings",
+    "File Manager": "File Manager",
+    "Open File Manager": "Open File Manager",
+    "search pages": "search pages",
+    "Card View": "Card View",
+    "List View": "List View",
+    "Rebuild Data": "Rebuild Data",
+    "Building": "Building",
+    "Copy filepath": "Copy filepath",
+    "Open the folder": "Open the file",
+    "Copied to clipboard success": "Copied to clipboard success",
+    "Open the folder with the Logseq": "Open the folder with the Logseq"
+}

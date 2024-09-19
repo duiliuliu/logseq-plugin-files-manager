@@ -1,0 +1,28 @@
+/* src/components/ActionItem.css */
+.action-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.action-item:hover {
+  background-color: #f0f0f0;
+  /* 鼠标悬停时的背景颜色 */
+}
+
+.action-item:focus {
+  outline: none;
+  /* 移除默认的聚焦轮廓 */
+  background-color: #e0e0e0;
+  /* 聚焦时的背景颜色 */
+  box-shadow: 0 0 0 2px #007bff;
+  /* 聚焦时的阴影 */
+}
+
+.action-item:active {
+  background-color: #d0d0d0;
+  /* 点击时的背景颜色 */
+}

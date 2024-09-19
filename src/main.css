@@ -1,0 +1,90 @@
+/* :root is pseudo class */
+/* 
+/* styles.css */
+:root {
+  /* Light theme variables */
+  --background-color-light: #ffffff;
+  --text-color-light: #000000;
+  --primary-text-color-light: #333333;
+  --secondary-text-color-light: #666666;
+  --secondary-background-color-light: #f0f0f0;
+
+  /* Dark theme variables */
+  --background-color-dark: #1f1f1f;
+  --text-color-dark: #ffffff;
+  --primary-text-color-dark: #e0e0e0;
+  --secondary-text-color-dark: #aaaaaa;
+  --secondary-background-color-dark: #2a2a2a;
+
+  /* Default theme variables */
+  --ls-primary-background-color: var(--background-color-light);
+  --ls-secondary-background-color: var(--secondary-background-color-light);
+  --ls-primary-text-color: var(--primary-text-color-light);
+  --ls-secondary-text-color: var(--secondary-text-color-light);
+}
+
+/* Media query for dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ls-primary-background-color: var(--background-color-dark);
+    --ls-secondary-background-color: var(--secondary-background-color-dark);
+    --ls-primary-text-color: var(--primary-text-color-dark);
+    --ls-secondary-text-color: var(--secondary-text-color-dark);
+  }
+} */
+
+
+/* Theme classes */
+.light-mode {
+  --ls-primary-background-color: var(--background-color-light);
+  --ls-secondary-background-color: var(--secondary-background-color-light);
+  --ls-primary-text-color: var(--primary-text-color-light);
+  --ls-secondary-text-color: var(--secondary-text-color-light);
+}
+
+.dark-mode {
+  --ls-primary-background-color: var(--background-color-dark);
+  --ls-secondary-background-color: var(--secondary-background-color-dark);
+  --ls-primary-text-color: var(--primary-text-color-dark);
+  --ls-secondary-text-color: var(--secondary-text-color-dark);
+}
+
+
+:root {
+  font-family: 'Roboto', 'Noto Sans JP', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  user-select: none;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #747bff;
+}
+
+body {
+  width: auto;
+  height: 90%;
+  margin: 0;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}

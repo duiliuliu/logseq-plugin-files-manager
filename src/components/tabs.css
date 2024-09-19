@@ -1,0 +1,7 @@
+/* src/components/Tabs.css */
+
+@media (max-width: 768px) {
+  .tab {
+    padding: 10px;
+  }
+}
