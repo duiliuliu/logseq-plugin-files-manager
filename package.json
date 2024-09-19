@@ -53,7 +53,7 @@
     "vite-plugin-logseq": "^1.1.2"
   },
   "logseq": {
-    "id": "logseq-files-manager-01",
+    "id": "logseq-files-manager-0001",
     "title": "Logseq File Manager",
     "icon": "./images/folders.png"
   },
