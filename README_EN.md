@@ -53,6 +53,10 @@ You can launch the file manager in any of the following ways:
 
 You can change the language in Logseq's settings to take effect.
 
+## Thanks
+- The tab functionality of this plugin was inspired by: [logseq-assets-plus](https://github.com/xyhp915/logseq-assets-plus)
+- The card functionality of this plugin was inspired by: [logseq-cardbox](https://github.com/sosuisen/logseq-cardbox)
+
 ## Support Development
 
 If you like this plugin, please consider donating to support its continued development.
