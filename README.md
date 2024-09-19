@@ -1,6 +1,6 @@
 # Logseq 文件管理器插件
 
-[Chinese](README.md)) / [English](README_EN.md)
+[Chinese](README.md) / [English](README_EN.md)
 
 本插件专为提高您管理日常文档和附件的效率而设计，帮助您轻松处理和组织与Logseq相关的文件。
 
