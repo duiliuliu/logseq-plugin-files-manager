@@ -36,9 +36,13 @@ You can launch the file manager in any of the following ways:
 
 4. **Card View and List View**  
    - You can switch the display method in settings, displaying files in card or list form, providing a more intuitive file preview and operation interface.
+   - ![卡片视图](./images/app-card.jpg)
+   - 卡片与列表切换：![卡片与列表切换](./images/app-card-switch.jpg)
 
 5. **File Preview**
    - You can click on the file name to preview the file content. Please note: Due to browser limitations, some files may not support preview.
+   - ![文件预览](./images/app-preview.jpg)
+   
 
 ### Development Plan
 
