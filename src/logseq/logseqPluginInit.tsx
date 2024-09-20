@@ -78,3 +78,23 @@ export const handleClickOutside = () => {
     document.getElementById('app')?.addEventListener('click', e => e.stopPropagation());
 };
 
+export function doInitNotifyUser(showMsg: () => void) {
+    if (!logseq.settings!.notifications) { logseq.settings!.notifications = {} }
+
+    const notifications: { [key: string]: any } = logseq.settings!.notifications as object
+
+    const currentPluginVersion = logseq.baseInfo.version
+    const previousPluginVersion = notifications.previousPluginVersion
+
+    // Notify only old users
+    if (previousPluginVersion && currentPluginVersion !== previousPluginVersion) {
+        if (!notifications.introducedButtons) {
+            showMsg()
+            logseq.updateSettings({ notifications: { introducedButtons: true } })
+        }
+    }
+
+    logseq.updateSettings({ notifications: { previousPluginVersion: currentPluginVersion } })
+    logger.debug('logseq.updateSettings', logseq.settings, 'logseq.baseInfo.version', logseq.baseInfo.version)
+}
+
