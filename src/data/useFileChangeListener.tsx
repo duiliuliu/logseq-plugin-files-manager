@@ -21,7 +21,7 @@ type FileChanges = {
 }
 
 // 工具函数：处理文件变化
-const handleFileChanged = async (changes: FileChanges, graph: string, dateFormat: string, docFormat: string) => {
+const handleFileChanged = async (changes: FileChanges, graph: string, dateFormat: string, docFormat: string, directoryHandle: any) => {
     const [operation, originalName] = parseOperation(changes, dateFormat);
     logger.debug(`handleFileChanged,changes:${changes}`)
 
@@ -37,7 +37,7 @@ const handleFileChanged = async (changes: FileChanges, graph: string, dateFormat
 
         const pageEntity = await getPageDetails(originalName)
         if (pageEntity) {
-            processPage(pageEntity, graph, null, docFormat as DocFormat, false) // todo dirhandler
+            processPage(pageEntity, graph, directoryHandle, docFormat as DocFormat, false) // todo dirhandler
         }
     } else if (operation === OperationType.DELETE) {
         logger.debug(`Would remove page from DB: graph=${graph}, name=${originalName}`);
@@ -81,15 +81,15 @@ const parseOperation = (changes: FileChanges, dateFormat: string): [OperationTyp
 };
 
 // 使用Effect监听文件变化
-export const useFileChangeListener = (userConfig: AppUserConfigs) => {
+export const useFileChangeListener = (userConfig: AppUserConfigs, directoryHandle: any) => {
     useEffect(() => {
         const onFileChanged = async (changes: FileChanges) => {
-            await handleFileChanged(changes, userConfig.currentGraph, userConfig.preferredDateFormat, userConfig.preferredFormat);
+            await handleFileChanged(changes, userConfig.currentGraph, userConfig.preferredDateFormat, userConfig.preferredFormat, directoryHandle);
         };
 
         const removeOnChanged = logseq.DB.onChanged(onFileChanged);
         return () => {
             removeOnChanged();
         };
-    }, [userConfig.currentGraph, userConfig.preferredDateFormat, userConfig.preferredFormat]);
+    }, [userConfig.currentGraph, userConfig.preferredDateFormat, userConfig.preferredFormat, directoryHandle]);
 };

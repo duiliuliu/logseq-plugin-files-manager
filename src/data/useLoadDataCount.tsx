@@ -9,7 +9,7 @@ export type DataTypeCounts = {
 };
 
 // useDataTypeCount 钩子函数
-export const useLoadDataCount = ({ graph }: { graph: string }) => {
+export const useLoadDataCount = ({ graph, preparing }: { graph: string, preparing: boolean }) => {
     const [typeCount, setTypeCount] = useState<DataTypeCounts>({} as DataTypeCounts);
     const [countLoading, setCountLoading] = useState(true);
 
@@ -27,7 +27,7 @@ export const useLoadDataCount = ({ graph }: { graph: string }) => {
         };
 
         fetchTypeCount();
-    }, [graph]);
+    }, [graph, preparing]);
 
     return { typeCount, countLoading };
 };
@@ -47,7 +47,7 @@ const getDataTypesCount = async (graph: string): Promise<DataTypeCounts> => {
         await DB.data.where('graph').equals(graph).each((item) => {
             const dataType = item.dataType;
             const tabKey = DataType.toTabEnum(dataType)
-             if (dataType && tabKey) {
+            if (dataType && tabKey) {
                 counts[tabKey] = (counts[tabKey] || 0) + 1;
             }
         });

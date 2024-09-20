@@ -3,7 +3,7 @@ import { getAllLogseqPages, getLogseqFiles, getLogseqPageBlocksTree } from '../l
 import { DataType, DocFormat, RelatedType } from './enums';
 import { logger } from '../utils/logger';
 import { encodeLogseqFileName, formatFileName, formatFilePath, formatFileSize, getFileInfo } from '../utils/fileUtil';
-import { DB, removePageFromDB } from './db';
+import { DB } from './db';
 import { DataItem } from './types';
 import { REG_ASSETS, REG_SPLIT, REG_TAG } from './constants';
 import { format, parse } from 'date-fns';
@@ -26,12 +26,20 @@ const preparePagesData = async ({ graph, dirHandle, docFormat }: { graph: string
 
 // 处理单个页面的函数
 export const processPage = async (page: PageEntity, graph: string, dirHandle: any, docFormat: DocFormat, updated?: boolean) => {
-    // 获取页面的最新更新时间
-    const [updatedTime, size] = dirHandle
-        ? await getFileInfo(encodeLogseqFileName(page.originalName), dirHandle, docFormat)
-        : [page.updatedAt,];
+    const isJournal = page['journal?'];
 
-    if (!updatedTime) return;
+    // 获取页面的最新更新时间
+    const [updatedTime, size] = await getFileInfo(
+        encodeLogseqFileName(isJournal
+            ? format(parse(page.journalDay!.toString(), 'yyyyMMdd', new Date()), 'yyyy_MM_dd')
+            : page.originalName),
+        await dirHandle?.getDirectoryHandle(isJournal ? 'journals' : 'pages'),
+        docFormat,
+        [page.updatedAt ?? 0, undefined])
+    if (!updatedTime) {
+        logger.debug(`page no updatetime,page:${page.name}`)
+        return;
+    }
 
     // 获取页面的所有块
     const blocks = await getLogseqPageBlocksTree(page.uuid);
@@ -39,10 +47,10 @@ export const processPage = async (page: PageEntity, graph: string, dirHandle: an
 
     // 获取页面的摘要和图片
     const [summary, image, imageUuid] = extractSummary(blocks);
-    const isJournal = page['journal?']
-    const originalName = isJournal
+    const originalName = (isJournal
         ? format(parse(page.journalDay!.toString(), 'yyyyMMdd', new Date()), 'yyyy_MM_dd')
-        : encodeLogseqFileName(page.originalName) + DocFormat.toFileExt(docFormat)
+        : encodeLogseqFileName(page.originalName))
+        + DocFormat.toFileExt(docFormat);
     if (summary.length > 0 && !(summary.length === 1 && summary[0] === '')) { // 过滤内容为空的页面
         await DB.data.put({ // put 操作：新增或更新，等同于upsert
             graph,
@@ -60,10 +68,6 @@ export const processPage = async (page: PageEntity, graph: string, dirHandle: an
                 relatedItemUuid: imageUuid
             }]
         });
-    } else {
-        if (updated) {
-            await removePageFromDB(graph, originalName)
-        }
     }
 
     // 提取页面块中的资产和标签

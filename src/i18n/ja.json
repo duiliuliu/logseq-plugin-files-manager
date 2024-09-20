@@ -1,4 +1,5 @@
 {
+    "i18n_mark": "1",
     "All": "すべて",
     "Documents": "ドキュメント",
     "Images": "画像",
@@ -7,15 +8,22 @@
     "Pages": "ページ",
     "Journals": "日記",
     "Settings": "設定",
-    "File Manager": "ファイルマネージャー",
     "Open File Manager": "ファイルマネージャーを開く",
+    "File Manager": "ファイルマネージャー",
+    "File Manager Feature": "このプラグインは、日常のドキュメントと添付ファイルを管理する効率を高めるために設計されており、Logseqに関連するファイルを簡単に処理し、整理するのを支援します。",
+    "File Manager Change Log": "新しいプラグインバージョンには多くの新機能が導入されました。詳細を確認してください。",
+    "File Manager Change Log Link": "https://github.com/duiliuliu/logseq-plugin-files-manager/releases",
     "search pages": "ページを検索",
     "Card View": "カードビュー",
     "List View": "リストビュー",
     "Rebuild Data": "データを再構築",
-    "Building": "構築中",
+    "Building": "ビルド中",
+    "Authorize": "承認",
     "Copy filepath": "ファイルパスをコピー",
-    "Open the folder": "フォルダーを開く",
-    "Copied to clipboard success": "クリップボードにコピー成功",
-    "Open the folder with the Logseq": "Logseqでフォルダーを開く"
+    "Open the folder": "フォルダを開く",
+    "Copied to clipboard success": "クリップボードにコピーしました",
+    "Open the folder with the Logseq": "Logseqでフォルダを開く",
+    "Authorize Tip": "Logseqのドキュメントディレクトリを選択して承認をクリックしてください。承認後、ファイルは索引化され、しばらくお待ちください。",
+    "Authorize Tip PATH": "あなたのLogseqのパス",
+    "Here": "ここをクリック"
 }

@@ -1,4 +1,5 @@
 {
+    "i18n_mark": "1",
     "All": "全部",
     "Documents": "文档",
     "Images": "图片",
@@ -7,15 +8,22 @@
     "Pages": "页面",
     "Journals": "日志",
     "Settings": "设置",
+    "Open File Manager": "打开文件管理",
     "File Manager": "文件管理",
-    "Open File Manager": "打开文件管理器",
+    "File Manager Feature": "本插件旨在提高您管理日常文档和附件的效率，帮助您轻松处理和组织与Logseq相关的文件。",
+    "File Manager Change Log": "新插件版本引入了许多新功能。查看详情",
+    "File Manager Change Log Link": "https://github.com/duiliuliu/logseq-plugin-files-manager/releases",
     "search pages": "搜索页面",
     "Card View": "卡片视图",
     "List View": "列表视图",
     "Rebuild Data": "重建数据",
-    "Building": "建设中",
+    "Building": "构建中",
+    "Authorize": "授权",
     "Copy filepath": "复制文件路径",
-    "Open the folder": "打开文件",
+    "Open the folder": "打开文件夹",
     "Copied to clipboard success": "复制到剪贴板成功",
-    "Open the folder with the Logseq": "用Logseq打开文件夹"
+    "Open the folder with the Logseq": "用Logseq打开文件夹",
+    "Authorize Tip": "请点击选择Logseq文档目录进行授权，授权后文件将进行索引操作，请稍候。",
+    "Authorize Tip PATH": "您的Logseq路径",
+    "Here": "点击这里"
 }

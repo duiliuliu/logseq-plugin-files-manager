@@ -2,7 +2,9 @@ import normalizePath from 'normalize-path';
 import { logger } from './logger';
 import { useEffect, useState } from 'react';
 import { DocFormat } from '../data/enums';
-import { GRAPH_PREFIX } from '../data/constants';
+import { i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH } from '../data/constants';
+import { buildGraphPath } from '../logseq/utils';
+import getI18nConstant from '../i18n/utils';
 
 const imageFormats = ['png', 'jpg', 'jpeg', 'webp', 'gif']
 // 电子书常见的文件格式
@@ -86,23 +88,14 @@ export const decodeLogseqFileName = (name: string) => {
 };
 
 
-export const getFileInfo = async (fileName: string, handle: FileSystemDirectoryHandle, preferredFormat: DocFormat): Promise<[number, string | undefined]> => {
-    let path = fileName + DocFormat.toFileExt(preferredFormat);
-    let fileHandle = await handle.getFileHandle(path).catch(() => {
-        console.debug(`Failed to get file handle: ${path}`);
+export const getFileInfo = async (fileName: string, handle: FileSystemDirectoryHandle, preferredFormat: DocFormat, defaultV: [number, string | undefined]): Promise<[number, string | undefined]> => {
+    const path = fileName + DocFormat.toFileExt(preferredFormat);
+    const fileHandle = await handle?.getFileHandle(path).catch(() => {
+        console.debug(`Failed to get file handle: ${handle.name}/${path}`);
         return null;
     });
 
-    if (!fileHandle) {
-        // retry
-        path = fileName + DocFormat.toFileExt(preferredFormat);
-        fileHandle = await handle.getFileHandle(path).catch(() => {
-            console.debug(`Failed to get file handle: ${path}`);
-            return null;
-        });
-    }
-
-    if (!fileHandle) { return [0, undefined]; }
+    if (!fileHandle) { return defaultV; }
 
     const file = await fileHandle.getFile();
 
@@ -150,32 +143,34 @@ export const formatFileSize = (sizeInBytes: number): string => {
 export const useDirectoryHandle = ({ graph }: { graph: string; }) => {
     const [directoryHandle, setDirectoryHandle] = useState<any>(null);
 
-    useEffect(() => {
-        async function initializeDirectory() {
-            try {
-                if (graph) {
-                    if ('storage' in navigator && 'getDirectory' in navigator.storage) {
-                        const handle = await navigator.storage.getDirectory();
-                        logger.debug(`initializeDirectory,handle:${handle}`);
-                        if (!handle) {
-                            return
-                        }
+    async function initializeDirectory() {
+        if (graph) {
+            const handle = await window.showDirectoryPicker().catch(e => {
+                logger.warn('get directory failed,', e)
+            });
+            logger.debug(`initializeDirectory, handle: ${handle?.name}`);
+            if (!handle) {
+                return;
+            }
 
-                        const dirHandler = await handle.getDirectoryHandle(graph.replace(GRAPH_PREFIX, ''), { create: false });
-                        if (dirHandler && dirHandler.entries()) {
-                            setDirectoryHandle(dirHandler);
-                        }
-                    } else {
-                        logger.warn('navigator.storage.getDirectory() is not supported in this browser.');
-                    }
-                }
-            } catch (error) {
-                logger.error('Failed to get directory handle:', error);
+            if (handle.name === getGraphDirName(graph)) {
+                setDirectoryHandle(handle);
+            } else {
+                logseq.UI.showMsg(`${getI18nConstant('en', i18n_AUTHORIZE_TOOLTIP)},${getI18nConstant('en', i18n_AUTHORIZE_TOOLTIP_PATH)}:${buildGraphPath(graph)}`, 'error', { timeout: 3000 });
             }
         }
+    }
 
+    useEffect(() => {
         initializeDirectory();
     }, [graph]);
 
-    return { directoryHandle };
+    return { directoryHandle, initializeDirectory };
 };
+
+export const getGraphDirName = (graph: string) => {
+    // 使用split方法按路径分隔符分割路径
+    const parts = graph.split('/');
+    // 使用pop方法获取数组的最后一个元素
+    return parts.pop();
+}

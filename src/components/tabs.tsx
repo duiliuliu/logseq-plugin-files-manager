@@ -5,7 +5,6 @@ import { Tabs as AntdTabs, } from 'antd';
 import TabItem from './tabItem';
 import { ActionItemProps } from './actionItem';
 import ActionList from './actionList';
-import { logger } from '../utils/logger';
 import { Tab } from '../data/types';
 import { TabEnum } from '../data/enums';
 
@@ -23,7 +22,6 @@ const Tabs: React.FC<TabsProps> = ({ tabData, onTabClick, tabCounts, appWidth, a
   const iconOnly = (appWidth && appWidth < 768) as boolean
   const [settingOpen, setSettingOpen] = useState<boolean>(false);
   const handleTabClick = (tabKey: string) => {
-    logger.debug(`handleTabClick takKey:${tabKey}`)
     if (TabEnum.isSettingsTab(tabKey)) {
       setSettingOpen(!settingOpen)
     } else {

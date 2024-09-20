@@ -7,13 +7,14 @@ import { DataType } from './enums';
 interface UseDataProps {
     graph: string;
     maxNumber: number;
-    dataType: DataType
-    searchValue?: string, //检索词
-    loadMore?: boolean
+    dataType: DataType;
+    searchValue?: string; //检索词
+    loadMore?: boolean;
+    preparing: boolean;
 }
 
 // useLoadData 钩子函数
-export const useLoadData = ({ graph, maxNumber, dataType, searchValue, loadMore }: UseDataProps) => {
+export const useLoadData = ({ graph, maxNumber, dataType, searchValue, loadMore, preparing }: UseDataProps) => {
     const [data, setData] = useState<DataItem[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -39,7 +40,7 @@ export const useLoadData = ({ graph, maxNumber, dataType, searchValue, loadMore 
         };
 
         fetchData();
-    }, [graph, maxNumber, dataType, searchValue]); // 依赖项列表
+    }, [graph, maxNumber, dataType, searchValue, preparing]); // 依赖项列表
 
     return { data, loading };
 };
@@ -56,6 +57,7 @@ export const doLoadData = async (graph: string, offset: number, limit: number, d
 
                 // 检查名称是否匹配
                 if (item.name.includes(searchValue)) return true;
+                if (item.alias.includes(searchValue)) return true;
                 // 如果有摘要，检查每一项摘要是否匹配
                 if (item.summary?.some(summaryRow => summaryRow.includes(searchValue))) return true;
 

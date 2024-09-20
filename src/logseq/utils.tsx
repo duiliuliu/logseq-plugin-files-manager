@@ -4,11 +4,10 @@ import { mockLogseqPages, mockLogseqPages90 } from '../mock/logseqPages';
 import { mockBlocks50 as mockLogseqBlocks } from '../mock/logseqBlocks';
 import { logger } from '../utils/logger';
 import { mockLogseqFiles70 } from '../mock/logseqFile';
+import { GRAPH_PREFIX } from '../data/constants';
 
 // 获取所有Logseq页面
 export const getAllLogseqPages = async (): Promise<PageEntity[] | null> => {
-  logger.debug(`getAllLogseqPages start`)
-
   if (import.meta.env.DEV) {
     // 在开发环境中返回 mock 数据
     logger.debug(`getAllLogseqPages mock,dataLength:${mockLogseqPages90.length}`)
@@ -28,8 +27,6 @@ export const getAllLogseqPages = async (): Promise<PageEntity[] | null> => {
 
 // 获取Logseq树
 export const getLogseqPageBlocksTree = async (srcPage: PageIdentity): Promise<BlockEntity[]> => {
-  logger.debug(`getLogseqPageBlocksTree start`)
-
   if (import.meta.env.DEV) {
     // 在开发环境中返回 mock 数据
     logger.debug(`getLogseqPageBlocksTree mock,dataLength:${mockLogseqBlocks.length}`)
@@ -56,8 +53,6 @@ export const getLogseqFiles = async (): Promise<Array<{
   changeTime: number;
   birthTime: number;
 }>> => {
-  logger.debug(`getLogseqFiles start`)
-
   if (import.meta.env.DEV) {
     // 在开发环境中返回 mock 数据
     logger.debug(`getLogseqFiles mock,dataLength:${mockLogseqFiles70.length}`)
@@ -77,7 +72,6 @@ export const getLogseqFiles = async (): Promise<Array<{
 
 // 获取指定页面的详细信息
 export const getPageDetails = async (srcPage: PageIdentity): Promise<PageEntity | null> => {
-  logger.debug(`getPageDetails start for page: ${srcPage}`);
 
   if (import.meta.env.DEV) {
     // 在开发环境中返回 mock 数据
@@ -117,4 +111,12 @@ export const copyToClipboard = (text: string) => {
     // 移除输入框
     document.body.removeChild(textarea);
   }
+}
+
+export const buildGraphPath = (graph?: string) => {
+  if (graph) return graph.replace(GRAPH_PREFIX, '')
+}
+
+export function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
