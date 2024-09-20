@@ -6,8 +6,6 @@ import { decodeLogseqFileName } from '../utils/fileUtil';
 import { REGEX_PAGE_PATH } from './constants';
 import { DocFormat, OperationType } from './enums';
 import { getLogseqPageBlocksTree, getPageDetails } from '../logseq/utils';
-import { format, parse } from 'date-fns';
-import { isValidDate } from '../utils/timeUtil';
 import { removePageFromDB } from './db';
 
 type FileChanges = {
@@ -23,7 +21,7 @@ type FileChanges = {
 // 工具函数：处理文件变化
 const handleFileChanged = async (changes: FileChanges, graph: string, dateFormat: string, docFormat: string, directoryHandle: any) => {
     const [operation, originalName] = parseOperation(changes, dateFormat);
-    logger.debug(`handleFileChanged,changes:${changes}`)
+    logger.debug(`handleFileChanged,operation:${operation},changes:`, changes)
 
     if (operation === OperationType.CREATE) return;
 
@@ -39,16 +37,23 @@ const handleFileChanged = async (changes: FileChanges, graph: string, dateFormat
         if (pageEntity) {
             processPage(pageEntity, graph, directoryHandle, docFormat as DocFormat, false) // todo dirhandler
         }
-    } else if (operation === OperationType.DELETE) {
+    }
+
+    if (operation === OperationType.DELETE) {
         logger.debug(`Would remove page from DB: graph=${graph}, name=${originalName}`);
         removePageFromDB(graph, originalName);
     }
 };
 
 // 工具函数：解析操作类型
-const parseOperation = (changes: FileChanges, dateFormat: string): [OperationType, string] => {
+const parseOperation = (changes: FileChanges, _dateFormat: string): [OperationType, string] => {
     let operation = '' as OperationType;
     let originalName = '';
+
+    if (changes.txMeta?.outlinerOp === 'create-page') {
+        operation = OperationType.CREATE;
+        return [operation, decodeLogseqFileName(changes.blocks[0].originalName)];
+    }
 
     for (const block of changes.blocks) {
         if (block.path) {
@@ -67,14 +72,10 @@ const parseOperation = (changes: FileChanges, dateFormat: string): [OperationTyp
 
     for (const data of changes.txData) {
         if (data.length === 5 && data[1] === 'block/original-name') {
-            originalName = data[2];
+            originalName = decodeLogseqFileName(data[2]);
             operation = data[4] === false ? OperationType.DELETE : OperationType.CREATE;
-
-            if (isValidDate(originalName, dateFormat)) {
-                originalName = format(parse(originalName, dateFormat, new Date()), 'yyyy_MM_dd')
-            }
+            return [operation, originalName];
         }
-        return [operation, originalName];
     }
 
     return [operation, originalName];
