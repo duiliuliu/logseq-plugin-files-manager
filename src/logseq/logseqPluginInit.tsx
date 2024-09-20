@@ -1,6 +1,6 @@
 
 import { SimpleCommandKeybinding } from "@logseq/libs/dist/LSPlugin";
-import { i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL } from "../data/constants";
+import { i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, PARENT_OPEN_BUTTON_ID } from "../data/constants";
 import getI18nConstant from "../i18n/utils";
 import { logger } from "../utils/logger";
 
@@ -12,6 +12,11 @@ export const refreshLogseqInit = () => {
 export const openFileManager = () => {
     logger.debug(`openFileManager`)
     logseq.showMainUI();
+};
+
+// 打开文件管理器的函数
+export const openFileManagerListener = () => {
+    parent.document.querySelector(`#${PARENT_OPEN_BUTTON_ID}`)?.addEventListener('click', openFileManager)
 };
 
 // 注册命令到日志序列

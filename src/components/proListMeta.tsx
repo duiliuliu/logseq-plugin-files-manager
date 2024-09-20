@@ -8,8 +8,8 @@ import { Modal, Space, Tag, Tooltip } from 'antd';
 import { Copy, FolderOpen } from '@phosphor-icons/react';
 import { logger } from '../utils/logger';
 import { isBook, isImage } from '../utils/fileUtil';
-import { copyToClipboard } from '../logseq/utils';
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_TOOLTIP, GRAPH_PREFIX, i18n_OPEN_TOOLTIP } from '../data/constants';
+import { buildGraphPath, copyToClipboard } from '../logseq/utils';
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_TOOLTIP, i18n_OPEN_TOOLTIP } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
 
 interface MetaRenderProps {
@@ -22,8 +22,6 @@ const { info } = Modal;
 
 const showPreviewModalAction = ({ record, userConfig, bodyWidth, bodyHeight }: MetaRenderProps) => {
     if (record.path) {
-        logger.debug(`show modal,width:${bodyWidth},height:${bodyHeight}`)
-
         const width = bodyWidth ? bodyWidth * 0.7 : window.innerWidth * 0.5;
         const height = bodyHeight ? bodyHeight * 0.7 : window.innerHeight * 0.7;
         info({
@@ -62,7 +60,7 @@ const renderListContent = ({ record, userConfig }: MetaRenderProps) => {
     const imgContent = record.image || record.dataType === DataType.IMG_ASSET ? (
         <div className='list-image flex-1 ml-3' style={{ display: 'block' }}>
             <img
-                src={`${userConfig.currentGraph?.replace(GRAPH_PREFIX, '')}/assets/${record.dataType === DataType.IMG_ASSET ? record.name : record.image!}`}
+                src={`${buildGraphPath(userConfig.currentGraph)}/assets/${record.dataType === DataType.IMG_ASSET ? record.name : record.image!}`}
                 alt='image'
             />
         </div>
@@ -147,7 +145,6 @@ const copyFileNodeAction = ({ record, userConfig }: MetaRenderProps) => (
             copyToClipboard(copyValue);
 
             // 显示成功消息 
-            logger.debug(`logseq.App.openPath, path:${record.path}`)
             logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_COPY_SUCCESS), 'success');
         }} >
             <Copy size={18} weight={'duotone'} />
@@ -172,7 +169,7 @@ const openFileAction = ({ record, userConfig }: MetaRenderProps) => (
                 }
                 else {
                     logger.debug(`logseq.App.pushState, page:${record.name}`)
-                    logseq.App.pushState('page', { name: record.name, });
+                    logseq.App.pushState('page', { name: record.alias, });
                 }
             } else {
                 logger.debug(`logseq.App.openPath, path:${record.path}`)
@@ -215,7 +212,7 @@ const renderCardContent = ({ record, userConfig, bodyWidth, bodyHeight }: MetaRe
         return (
             <div className='list-content'>
                 <div className='list-image' style={{ display: 'block' }}>
-                    <img src={`${userConfig.currentGraph?.replace(GRAPH_PREFIX, '')}/assets/${imagePath}`} alt='image' />
+                    <img src={`${buildGraphPath(userConfig.currentGraph)}/assets/${imagePath}`} alt='image' />
                 </div>
             </div>
         );

@@ -80,7 +80,6 @@ namespace DataType {
         return 'unknown DataType' as DataType
     }
 
-
     /**
      * 检查给定的数据类型是否有效。
      * @param dataType 数据类型。

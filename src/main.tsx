@@ -6,8 +6,7 @@ import './main.css';
 import '@logseq/libs';
 import './i18n/configs';
 import App from './App';
-import { registerCommands, setupStyles, setupFileManagerNav, handleClickOutside, openFileManager } from './logseq/logseqPluginInit';
-
+import { registerCommands, setupStyles, setupFileManagerNav, handleClickOutside, openFileManager, openFileManagerListener } from './logseq/logseqPluginInit';
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -25,6 +24,7 @@ const main = async (_e: any) => {
   await setupFileManagerNav();
   await handleClickOutside();
   await renderApp();
+  await openFileManagerListener()
 };
 
 if (import.meta.env.DEV) {

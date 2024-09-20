@@ -16,7 +16,10 @@ import {
 
 // 定义主内容容器的 ID，用于在 DOM 中定位主内容区域
 export const PARENT_MAIN_CONTAINER_ID = 'main-content-container';
+export const PARENT_OPEN_BUTTON_ID = 'files-manager-open'
+
 // 标签文本常量
+export const __i18n_LOAD_MARK = 'i18n_mark'; // 1
 export const i18n_ALL_LABEL = 'All';
 export const i18n_DOCUMENTS_LABEL = 'Documents';
 export const i18n_IMAGES_LABEL = 'Images';
@@ -28,6 +31,9 @@ export const i18n_SETTINGS_LABEL = 'Settings';
 
 export const i18n_OPEN_FILE_MANAGER_LABEL = 'Open File Manager';
 export const i18n_FILE_MANAGER_LABEL = 'File Manager';
+export const i18n_FILE_MANAGER_FEATURE = 'File Manager Feature'; // 本插件专为提高您管理日常文档和附件的效率而设计，帮助您轻松处理和组织与Logseq相关的文件。
+export const i18n_FILE_MANAGER_CHANGE_LOG = 'File Manager Change Log' // 新插件版本引入了许多新功能。查看详情
+export const i18n_FILE_MANAGER_CHANGE_LOG_LINK = 'File Manager Change Log Link' // https://github.com/duiliuliu/logseq-plugin-files-manager/releases
 
 
 // 搜索占位符文本
@@ -40,10 +46,15 @@ export const i18n_REBUILD_DATA = 'Rebuild Data';
 export const i18n_BUILDING = 'Building';
 
 // 工具提示文本常量
+export const i18n_AUTHORIZE = 'Authorize';
 export const i18n_COPY_TOOLTIP = 'Copy filepath';
 export const i18n_OPEN_TOOLTIP = 'Open the folder';
 export const i18n_COPY_SUCCESS = 'Copied to clipboard success';
 export const i18n_OPEN_WITH_OS = 'Open the folder with the Logseq';
+export const i18n_AUTHORIZE_TOOLTIP = 'Authorize Tip' //请点击选择logseq文档目录进行授权,授权后文件会进行索引操作,请耐心等待片刻
+export const i18n_AUTHORIZE_TOOLTIP_PATH = 'Authorize Tip PATH' //您的Logseq路劲
+export const i18n_HERE = 'Here'; // 点击这儿
+
 
 // 图表前缀
 export const GRAPH_PREFIX = 'logseq_local_';
