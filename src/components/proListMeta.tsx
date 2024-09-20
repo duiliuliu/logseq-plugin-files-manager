@@ -138,7 +138,7 @@ const copyFileNodeAction = ({ record, userConfig }: MetaRenderProps) => (
                 }
             } else {
                 // 如果不是资产文件，使用Logseq的页面链接语法
-                copyValue = `[[${record.name}]]`;
+                copyValue = `[[${record.alias}]]`;
             }
 
             // 将值复制到剪贴板
