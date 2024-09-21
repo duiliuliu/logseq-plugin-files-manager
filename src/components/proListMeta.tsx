@@ -4,13 +4,15 @@ import { format } from 'date-fns';
 import { getTimeString } from '../utils/timeUtil';
 import React from 'react';
 import { DataType, RelatedType } from '../data/enums';
-import { Modal, Space, Tag, Tooltip } from 'antd';
-import { Copy, FolderOpen } from '@phosphor-icons/react';
+import { Dropdown, Modal, Space, Tag } from 'antd';
+import { Copy, DotsThree, FolderOpen } from '@phosphor-icons/react';
 import { logger } from '../utils/logger';
 import { isBook, isImage } from '../utils/fileUtil';
 import { buildGraphPath, copyToClipboard } from '../logseq/utils';
 import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_TOOLTIP, i18n_OPEN_TOOLTIP } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
+import { ActionItemProps, TooltipActionItem } from './actionItem';
+import { ItemType } from 'antd/es/menu/interface';
 
 interface MetaRenderProps {
     userConfig: AppUserConfigs;
@@ -109,52 +111,116 @@ const renderTag = ({ record }: MetaRenderProps) => {
     );
 }
 
-const renderActions = ({ record, userConfig }: MetaRenderProps) => (
-    <span className='list-actions' >
-        {openFileAction({ record, userConfig })}
-        {copyFileNodeAction({ record, userConfig })}
+const renderListActions = ({ record, userConfig }: MetaRenderProps) => {
+
+    const actions = [
+        openFileAction({ record, userConfig }),
+        copyFileNodeAction({ record, userConfig })
+    ]
+
+    return <Dropdown
+        // placement="bottomRight"
+        menu={{
+            items: actions.map((item, index) => ({
+                key: index.toString(),
+                label: item.text,
+                icon: <item.icon size={15} weight={'duotone'} />,
+                onClick: (e) => { item.onClick(e.domEvent) }
+            } as ItemType)),
+        }}
+    >
+        <DotsThree size={24} />
+    </Dropdown>
+};
+
+
+const renderCardActions2 = ({ record, userConfig }: MetaRenderProps) => {
+
+    const actions = [
+        openFileAction({ record, userConfig }),
+        copyFileNodeAction({ record, userConfig })
+    ]
+
+    return <Dropdown
+        // placement="bottomRight"
+        menu={{
+            items: actions.map((item, index) => ({
+                key: index.toString(),
+                icon: <TooltipActionItem
+                    key={index.toString()}
+                    icon={item.icon}
+                    text={item.text}
+                    onClick={item.onClick} />,
+                onClick: (e) => { item.onClick(e.domEvent) }
+            } as ItemType)),
+        }}
+    >
+        <DotsThree size={24} />
+    </Dropdown>
+};
+
+
+const renderCardActions = ({ record, userConfig }: MetaRenderProps) => {
+
+    const actions = [
+        openFileAction({ record, userConfig }),
+        copyFileNodeAction({ record, userConfig })
+    ]
+
+    return <span className='list-actions' >
+        <Space.Compact block>
+            {actions.map((item, index) => (
+                <TooltipActionItem
+                    key={index.toString()}
+                    icon={item.icon}
+                    text={item.text}
+                    onClick={item.onClick} />
+            ))}
+
+        </Space.Compact>
     </span>
-);
+};
 
-const copyFileNodeAction = ({ record, userConfig }: MetaRenderProps) => (
-    <Tooltip title={getI18nConstant(userConfig.preferredLanguage, i18n_COPY_TOOLTIP)}>
-        <a onClick={() => {
-            let copyValue = '';
+const copyFileNodeAction = ({ record, userConfig }: MetaRenderProps): ActionItemProps => ({
+    icon: Copy,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_COPY_TOOLTIP),
+    onClick: () => {
+        let copyValue = '';
 
-            // 检查是否为资产文件类型
-            if (DataType.isAssetFile(record.dataType)) {
-                // 获取相关块
-                const relatedBlocks = record.related?.filter(item => item.relatedType === RelatedType.BLOCK);
+        // 检查是否为资产文件类型
+        if (DataType.isAssetFile(record.dataType)) {
+            // 获取相关块
+            const relatedBlocks = record.related?.filter(item => item.relatedType === RelatedType.BLOCK);
 
-                // 如果存在相关块，使用块的UUID
-                if (relatedBlocks && relatedBlocks?.length > 0) {
-                    copyValue = `((${relatedBlocks[0].relatedItemUuid}))`;
-                } else {
-                    // 否则，构建文件路径
-                    const filePath = record.path?.replace(ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH);
-                    copyValue = DataType.IMG_ASSET === record.dataType
-                        ? `![${record.alias}](${filePath})` // 图片资产使用Markdown图片语法
-                        : `[${record.alias}](${filePath})`; // 其他资产使用Markdown链接语法
-                }
+            // 如果存在相关块，使用块的UUID
+            if (relatedBlocks && relatedBlocks?.length > 0) {
+                copyValue = `((${relatedBlocks[0].relatedItemUuid}))`;
             } else {
-                // 如果不是资产文件，使用Logseq的页面链接语法
-                copyValue = `[[${record.alias}]]`;
+                // 否则，构建文件路径
+                const filePath = record.path?.replace(ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH);
+                copyValue = DataType.IMG_ASSET === record.dataType
+                    ? `![${record.alias}](${filePath})` // 图片资产使用Markdown图片语法
+                    : `[${record.alias}](${filePath})`; // 其他资产使用Markdown链接语法
             }
+        } else {
+            // 如果不是资产文件，使用Logseq的页面链接语法
+            copyValue = `[[${record.alias}]]`;
+        }
 
-            // 将值复制到剪贴板
-            copyToClipboard(copyValue);
+        // 将值复制到剪贴板
+        copyToClipboard(copyValue);
 
-            // 显示成功消息 
-            logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_COPY_SUCCESS), 'success');
-        }} >
-            <Copy size={18} weight={'duotone'} />
-        </a>
-    </Tooltip>
-)
+        // 显示成功消息 
+        logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_COPY_SUCCESS), 'success');
+    }
+})
 
-const openFileAction = ({ record, userConfig }: MetaRenderProps) => (
-    <Tooltip title={getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_TOOLTIP)}>
-        <a onClick={(e) => {
+
+const openFileAction = ({ record, userConfig }: MetaRenderProps): ActionItemProps => (
+    {
+        icon: FolderOpen,
+        text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_TOOLTIP),
+        onClick: (e) => {
             if (record.extName && isBook(record.extName)) {
                 // logger.debug(`window.open, path:${record.path}`)
                 // window.open(record.path)
@@ -178,10 +244,8 @@ const openFileAction = ({ record, userConfig }: MetaRenderProps) => (
             }
             e.stopPropagation();
             logseq.hideMainUI({ restoreEditingCursor: true });
-        }}  >
-            <FolderOpen size={18} weight={'duotone'} />
-        </a>
-    </Tooltip>
+        }
+    }
 )
 
 const renderCardTitle = ({ record, }: MetaRenderProps) => (
@@ -232,7 +296,9 @@ export {
     renderListAvatar,
     renderListContent,
     renderTag,
-    renderActions,
+    renderListActions,
+    renderCardActions,
+    renderCardActions2,
     renderCardTitle,
     renderCardContent
 };

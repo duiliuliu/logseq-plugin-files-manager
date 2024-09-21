@@ -1,7 +1,7 @@
 {
   "name": "logseq-files-manager",
   "description": "Plugin to add thumbnail cards to Logseq that are displayed in order of update.",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "type": "module",
   "main": "dist/index.html",
   "license": "MPL-2.0",

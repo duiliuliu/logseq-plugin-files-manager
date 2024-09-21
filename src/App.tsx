@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import Tabs from './components/tabs';
 import { Button, Empty, GetProps, Input, Result, Spin } from 'antd';
 import { ActionItemProps } from './components/actionItem';
-import { ArrowsClockwise, FolderSimplePlus, RowsPlusBottom, SquaresFour } from '@phosphor-icons/react';
+import { ArrowsClockwise, FolderSimplePlus, List, SquaresFour } from '@phosphor-icons/react';
 import Search from 'antd/es/input/Search';
 import { useSize } from 'ahooks';
 import { useUpdateMaxNumberOnScroll } from './utils/useUpdateNumberOnScroll';
@@ -67,7 +67,7 @@ const App: React.FC = () => {
             text: getI18nConstant(userConfig.preferredLanguage, i18n_REBUILD_DATA),
             onClick: () => { rebuildData(true); }
         }, {
-            icon: DisplayMode.isCard(mode) ? RowsPlusBottom : SquaresFour,
+            icon: DisplayMode.isCard(mode) ? List : SquaresFour,
             text: DisplayMode.isCard(mode) ? getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_LIST_MODE) : getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_CARD_MODE),
             onClick: toggleMode
         }

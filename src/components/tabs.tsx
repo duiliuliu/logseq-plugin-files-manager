@@ -4,7 +4,7 @@ import './tabs.css'; // 引入样式文件
 import { Tabs as AntdTabs, } from 'antd';
 import TabItem from './tabItem';
 import { ActionItemProps } from './actionItem';
-import ActionList from './actionList';
+import { ActionList2 } from './actionList';
 import { Tab } from '../data/types';
 import { TabEnum } from '../data/enums';
 
@@ -42,7 +42,7 @@ const Tabs: React.FC<TabsProps> = ({ tabData, onTabClick, tabCounts, appWidth, a
           key: item.key,
           label: TabEnum.isSettingsTab(item.key) && actions ?
             (
-              <ActionList
+              <ActionList2
                 actions={actions}
                 open={settingOpen}
                 tabItem={<TabItem item={item} iconOnly={iconOnly} activeKey={activeKey} tabCounts={tabCounts} />}

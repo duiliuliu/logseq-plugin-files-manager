@@ -79,6 +79,8 @@ export const handleClickOutside = () => {
 };
 
 export function doInitNotifyUser(showMsg: () => void) {
+    logger.debug('logseq.updateSettings', logseq.settings, 'logseq.baseInfo.version', logseq.baseInfo.version)
+
     if (!logseq.settings!.notifications) { logseq.settings!.notifications = {} }
 
     const notifications: { [key: string]: any } = logseq.settings!.notifications as object
@@ -88,13 +90,9 @@ export function doInitNotifyUser(showMsg: () => void) {
 
     // Notify only old users
     if (previousPluginVersion && currentPluginVersion !== previousPluginVersion) {
-        if (!notifications.introducedButtons) {
-            showMsg()
-            logseq.updateSettings({ notifications: { introducedButtons: true } })
-        }
+        showMsg()
     }
 
     logseq.updateSettings({ notifications: { previousPluginVersion: currentPluginVersion } })
-    logger.debug('logseq.updateSettings', logseq.settings, 'logseq.baseInfo.version', logseq.baseInfo.version)
 }
 
