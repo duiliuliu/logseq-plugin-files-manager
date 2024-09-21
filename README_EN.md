@@ -17,6 +17,7 @@ You can launch the file manager in any of the following ways:
 ![Launch Method](./images/app-open.jpg)
 
 - After installation, the file manager will automatically start building the database. During this process, the message "Building..." will appear in the upper left corner of the file manager. Please do not exit Logseq until this message disappears.
+- **Please Note: The plugin currently reads the Logseq document directories strictly according to the default configuration, categorizing various files into directories such as pages, journals, and assets; future updates will attempt to optimize by reading user configurations.**
 - ![Rebuild Data](./images/app-build.jpg)
 
 - You can also manually click on Settings to rebuild the data and refresh the database.

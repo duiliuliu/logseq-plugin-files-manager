@@ -4,7 +4,7 @@ import './proList.css';
 import { AppUserConfigs } from '@logseq/libs/dist/LSPlugin.user';
 import useColumnCount from '../utils/useColCount';
 import { DataItem, Size } from '../data/types';
-import { renderActions, renderCardContent, renderCardTitle, renderListAvatar, renderListContent, renderListDescription, renderListTitle, renderTag } from './proListMeta';
+import { renderListActions, renderCardContent, renderCardTitle, renderListAvatar, renderListContent, renderListDescription, renderListTitle, renderTag, renderCardActions2 } from './proListMeta';
 import { DisplayMode } from '../data/enums';
 
 interface ProListProps {
@@ -23,7 +23,7 @@ const getMetas = (mode: DisplayMode, props: { userConfig: AppUserConfigs, [key: 
         ? {
             title: { render: (_: any, record: any) => renderCardTitle({ record, ...props }) },
             content: { render: (_: any, record: any) => renderCardContent({ record, ...props }) },
-            actions: { render: (_: any, record: any) => renderActions({ record, ...props }) },
+            actions: { render: (_: any, record: any) => renderCardActions2({ record, ...props }) },
         }
         : {
             avatar: { render: (_: any, record: any) => renderListAvatar({ record, ...props }) },
@@ -31,7 +31,7 @@ const getMetas = (mode: DisplayMode, props: { userConfig: AppUserConfigs, [key: 
             description: { render: (_: any, record: any) => renderListDescription({ record, ...props }) },
             content: { render: (_: any, record: any) => renderListContent({ record, ...props }) },
             subTitle: { render: (_: any, record: any) => renderTag({ record, ...props }) },
-            actions: { render: (_: any, record: any) => renderActions({ record, ...props }) },
+            actions: { render: (_: any, record: any) => renderListActions({ record, ...props }) },
         }
 );
 

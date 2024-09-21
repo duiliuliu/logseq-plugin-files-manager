@@ -1,8 +1,9 @@
 // src/components/ActionList.tsx
 import React, { useState, useEffect } from 'react';
-import { Popover } from 'antd';
+import { Dropdown, Popover } from 'antd';
 import ActionItem, { ActionItemProps } from './actionItem';
 import './actionList.css';
+import { ItemType } from 'antd/es/menu/interface';
 
 interface ActionListProps {
     actions?: ActionItemProps[];
@@ -26,9 +27,9 @@ const ActionList: React.FC<ActionListProps> = ({ actions, open, tabItem }) => {
         }
     };
 
-    const handleActionClick = (onCilck: () => void) => {
-        return () => {
-            onCilck()
+    const handleActionClick = (onCilck: (e: any) => void) => {
+        return (e: any) => {
+            onCilck(e)
             setVisible(false);
         }
     };
@@ -65,5 +66,35 @@ const ActionList: React.FC<ActionListProps> = ({ actions, open, tabItem }) => {
         </Popover>
     );
 };
+
+
+export const ActionList2: React.FC<ActionListProps> = ({ actions, open, tabItem }) => {
+    if (!actions) {
+        return <div></div>
+    }
+    const [visible, setVisible] = useState<boolean>(false);
+
+    useEffect(() => {
+        // 当 item.key 等于 activeKey 时，Popover 应该打开
+        setVisible(open);
+    }, [open]);
+
+    return <Dropdown
+        placement="bottomLeft"
+        open={visible}
+        menu={{
+            items: actions?.map((item, index) => ({
+                key: index.toString(),
+                label: item.text,
+                icon: <item.icon size={15} />,
+                onClick: (e) => { item.onClick(e.domEvent) }
+            } as ItemType)),
+        }}
+        onOpenChange={() => setVisible(prev => !prev)}
+        trigger={['hover', 'click',]}
+    >
+        {tabItem}
+    </Dropdown>
+}
 
 export default ActionList;

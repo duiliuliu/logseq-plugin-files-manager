@@ -4,6 +4,7 @@ import { DB } from './db';
 import { DocFormat } from './enums';
 import { prepareAssetsData, preparePagesData } from './prepareData';
 import { renderAuthoItem3 } from '../components/authorItem';
+import { doInitNotifyUser } from '../logseq/logseqPluginInit';
 
 
 export const useRebuildData = (graph: string, dirHandle: any, docFormat: DocFormat, lang?: string) => {
@@ -30,6 +31,7 @@ export const useRebuildData = (graph: string, dirHandle: any, docFormat: DocForm
                 // 如果数据库中已有数据，则不进行重建
                 logger.debug(`rebuildDB end, due to count > 0, no need rebuild`);
                 setPreparing(false); // 数据库已有数据，重建结束
+                doInitNotifyUser(() => { logseq.UI.showMsg(renderAuthoItem3(lang ?? 'en'), 'info', { timeout: 60000 }) })
                 return;
             }
 
