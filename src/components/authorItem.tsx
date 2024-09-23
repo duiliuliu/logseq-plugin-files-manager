@@ -55,7 +55,6 @@ export const renderAuthoItem3 = (lang: string): string => {
     const clickHereText = getI18nConstant(lang, i18n_OPEN_FILE_MANAGER_TIP)
     const quickUse = getI18nConstant(lang, i18n_FILE_MANAGER_USE_TIP)
 
-
     return `
     [:div.autho-item {:id "${buttonId}"}
       [:p [:code "${fileManagerLabel}"]]
