@@ -5,14 +5,13 @@ import { Button, Empty, GetProps, Input, Result, Spin } from 'antd';
 import { ActionItemProps } from './components/actionItem';
 import { ArrowsClockwise, FolderSimplePlus, List, SquaresFour } from '@phosphor-icons/react';
 import Search from 'antd/es/input/Search';
-import { useSize } from 'ahooks';
 import { DisplayMode, DocFormat, TabEnum } from './data/enums';
 import ProList from './components/proList';
 import { useLoadData } from './data/useLoadData';
 import { useRebuildData } from './data/useRebuildData';
 import { useLoadDataCount } from './data/useLoadDataCount';
 import useCalculateHeight from './ui_hooks/useCalculateHeight';
-import { PARENT_MAIN_CONTAINER_ID, i18n_AUTHORIZE, i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH, i18n_BUILDING, i18n_REBUILD_DATA, i18n_SEARCH_PLACEHOLDER, i18n_VIEW_CARD_MODE, i18n_VIEW_LIST_MODE, } from './data/constants';
+import { i18n_AUTHORIZE, i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH, i18n_BUILDING, i18n_REBUILD_DATA, i18n_SEARCH_PLACEHOLDER, i18n_VIEW_CARD_MODE, i18n_VIEW_LIST_MODE, } from './data/constants';
 import { useFileChangeListener } from './data/useFileChangeListener';
 import { useDirectoryHandle } from './utils/fileUtil';
 import getI18nConstant from './i18n/utils';
@@ -21,6 +20,7 @@ import useTabData from './data/useTabData';
 import useTheme from './data/useLoadTheme';
 import { buildGraphPath } from './logseq/utils';
 import { useUpdateMaxNumberOnScroll } from './ui_hooks/useUpdateNumberOnScroll';
+import useComponentSizeAndPosition from './ui_hooks/useSizeAndPos';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -31,7 +31,6 @@ const App: React.FC = () => {
     const [searchValue, setSearchValue] = useState<string>('');
     const [mode, setMode] = useState<DisplayMode>(DisplayMode.LIST); // 默认为列表模式
     const tabContentRef = useRef<HTMLDivElement>(null);
-    const bodySize = useSize(parent.document.getElementById(PARENT_MAIN_CONTAINER_ID))
     const { directoryHandle, initializeDirectory } = useDirectoryHandle({ graph: userConfig.currentGraph })
     const { rebuildData, preparing, needAuth } = useRebuildData(userConfig.currentGraph, directoryHandle, userConfig.preferredFormat as DocFormat, userConfig.preferredLanguage)
     const { typeCount } = useLoadDataCount({ graph: userConfig.currentGraph, preparing });
@@ -73,15 +72,18 @@ const App: React.FC = () => {
         }
     ]
 
+    const { width, height, left, top } = useComponentSizeAndPosition()
+
     return (
         <div className={theme === 'dark' ? 'dark-mode' : 'light-mode'}>
             <div
                 className='fm-container'
                 style={{
-                    width: bodySize?.width ? bodySize?.width : '90%',
-                    height: bodySize?.height ? bodySize?.height : '94%',
-                    marginBlock: 80,
-                    float: 'right',
+                    width: width,
+                    height: height,
+                    left: left,
+                    top: top,
+                    position: 'relative',
                     backgroundColor: `var(--ls-primary-background-color)`,
                     color: `var(--ls-primary-text-color)`,
                     transition: 'background-color 0.3s, color 0.3s',
@@ -93,7 +95,7 @@ const App: React.FC = () => {
                         onTabClick={handleTabClick}
                         tabCounts={typeCount}
                         actions={actions}
-                        appWidth={bodySize?.width} />
+                        appWidth={width} />
 
                     <div className='tab-content' ref={tabContentRef} style={{
                         maxHeight: listHeight, // 设置最大高度
@@ -110,7 +112,7 @@ const App: React.FC = () => {
                                         data={data}
                                         mode={mode}
                                         userConfig={userConfig}
-                                        size={bodySize}
+                                        size={{ width, height }}
                                         emptyNode={<Empty />}
                                         loading={loading}
                                     />

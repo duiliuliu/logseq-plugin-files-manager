@@ -1,6 +1,12 @@
 import React, { useRef } from 'react';
 import { DataType } from '../data/enums';
 import { isMD } from '../utils/fileUtil';
+/**
+    // "react-frame-component": "^5.2.7",
+    // "react-i18next": "^13.3.1",
+    // "react-markdown": "^9.0.1",
+    // "remark-gfm": "^4.0.0",
+ */
 
 // 定义 props 结构
 interface PreviewFrameProps {

@@ -127,7 +127,7 @@ const renderListActions = ({ record, userConfig }: MetaRenderProps) => {
     ]
 
     return <Dropdown
-        // placement="bottomRight"
+        placement="bottomRight"
         menu={{
             items: actions.map((item, index) => ({
                 key: index.toString(),
