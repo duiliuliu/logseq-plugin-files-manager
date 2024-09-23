@@ -1,6 +1,6 @@
 
 import { SimpleCommandKeybinding } from "@logseq/libs/dist/LSPlugin";
-import { i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, PARENT_OPEN_BUTTON_ID } from "../data/constants";
+import { i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, PARENT_OPEN_BUTTON_ID, PLUGIN_ROUTE } from "../data/constants";
 import getI18nConstant from "../i18n/utils";
 import { logger } from "../utils/logger";
 
@@ -42,15 +42,15 @@ export const setupStyles = () => {
     `);
     logseq.setMainUIInlineStyle({
         zIndex: 1,
-    }); 
+    });
 };
 
 // 设置文件管理器导航
 export const setupFileManagerNav = async () => {
     const { preferredLanguage } = await logseq.App.getUserConfigs()
-    const fileManagerDiv = document.createElement('div'); 
+    const fileManagerDiv = document.createElement('div');
     fileManagerDiv.innerHTML = `
-      <a href="#/page/files-manager" class='item group flex items-center text-sm font-medium rounded-md'>
+      <a href="#${PLUGIN_ROUTE}" class='item group flex items-center text-sm font-medium rounded-md'>
         <span class='ui__icon ti ls-icon-calendar'>
           <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><rect width='20' height='20' fill='none'/><rect x='32' y='48' width='192' height='160' rx='8' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='16'/><circle cx='68' cy='84' r='12'/><circle cx='108' cy='84' r='12'/></svg>      </span>
         <span class='flex-1'>${getI18nConstant(preferredLanguage, i18n_FILE_MANAGER_LABEL)}</span>
@@ -66,7 +66,7 @@ export const setupFileManagerNav = async () => {
         navHeader.insertBefore(fileManagerDiv, navHeader.lastChild);
     }
 };
- 
+
 
 export function doInitNotifyUser(showMsg: () => void) {
     logger.debug('logseq.updateSettings', logseq.settings, 'logseq.baseInfo.version', logseq.baseInfo.version)

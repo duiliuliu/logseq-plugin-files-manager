@@ -25,5 +25,7 @@
     "Open the folder with the Logseq": "Logseqでフォルダを開く",
     "Authorize Tip": "Logseqのドキュメントディレクトリを選択して承認をクリックしてください。承認後、ファイルは索引化され、しばらくお待ちください。",
     "Authorize Tip PATH": "あなたのLogseqのパス",
-    "Here": "ここをクリック"
+    "Here": "ここをクリック",
+    "Click here": "👉ここをクリックしてください 👉",
+    "Quickly use the plugin": "プラグインを迅速に使用"
 }

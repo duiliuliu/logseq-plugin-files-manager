@@ -25,5 +25,7 @@
     "Open the folder with the Logseq": "用Logseq打开文件夹",
     "Authorize Tip": "请点击选择Logseq文档目录进行授权，授权后文件将进行索引操作，请稍候。",
     "Authorize Tip PATH": "您的Logseq路径",
-    "Here": "点击这里"
+    "Here": "点击这里",
+    "Click here": "👉请点击这儿 👉",
+    "Quickly use the plugin": "快速使用插件"
 }

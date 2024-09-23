@@ -25,5 +25,7 @@
     "Open the folder with the Logseq": "Open the folder with Logseq",
     "Authorize Tip": "Please click to select your Logseq document directory for authorization. Files will be indexed after authorization, please wait a moment.",
     "Authorize Tip PATH": "Your Logseq path",
-    "Here": "Click here"
+    "Here": "Click here",
+    "Click here": "👉Click here👉",
+    "Quickly use the plugin": "Quickly use the plugin"
 }
