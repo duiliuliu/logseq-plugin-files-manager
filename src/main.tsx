@@ -6,7 +6,8 @@ import './main.css';
 import '@logseq/libs';
 import './i18n/configs';
 import App from './App';
-import { registerCommands, setupStyles, setupFileManagerNav, handleClickOutside, openFileManager, openFileManagerListener } from './logseq/logseqPluginInit';
+import { registerCommands, setupStyles, setupFileManagerNav, openFileManager, openFileManagerListener } from './logseq/logseqPluginInit';
+import { version as __VERSION } from '../package.json'
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -19,10 +20,16 @@ export const renderApp = () => {
 
 // 主函数，初始化并注册必要的命令和样式
 const main = async (_e: any) => {
+  logseq.App.onRouteChanged((e) => {
+    if (e.path === '/page/files-manager') {
+      logseq.showMainUI()
+    } else {
+      logseq.hideMainUI()
+    }
+  })
   await registerCommands();
   await setupStyles();
   await setupFileManagerNav();
-  await handleClickOutside();
   await renderApp();
   await openFileManagerListener()
 };
