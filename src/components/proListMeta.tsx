@@ -13,6 +13,7 @@ import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_TO
 import getI18nConstant from '../i18n/utils';
 import { ActionItemProps, TooltipActionItem } from './actionItem';
 import { ItemType } from 'antd/es/menu/interface';
+import PreviewFrame from './previewItem';
 
 interface MetaRenderProps {
     userConfig: AppUserConfigs;
@@ -23,13 +24,20 @@ interface MetaRenderProps {
 const { info } = Modal;
 
 const showPreviewModalAction = ({ record, userConfig, bodyWidth, bodyHeight }: MetaRenderProps) => {
+
     if (record.path) {
         const width = bodyWidth ? bodyWidth * 0.7 : window.innerWidth * 0.5;
         const height = bodyHeight ? bodyHeight * 0.7 : window.innerHeight * 0.7;
         info({
             title: record.alias,
             icon: renderListAvatar({ record, userConfig }),
-            content: <iframe style={{ width: width * 0.8, height }} src={`${record.path}#toolbar=0`}></iframe>,
+            content: <PreviewFrame
+                src={record.path}
+                height={height} // 例如，高度为 600px
+                width={width} // 例如，宽度为 800px
+                dataType={record.dataType}
+                extName={record.extName}
+            />,
             centered: true,
             closable: false,
             maskClosable: true,

@@ -34,6 +34,10 @@ export const isBook = (ext: string): boolean => {
     return bookFormats.includes(ext?.toLowerCase());
 }
 
+export const isMD = (ext: string): boolean => {
+    return ext?.toLowerCase() === 'md';
+}
+
 export const isDoc = (ext: string): boolean => {
     return bookFormats.includes(ext?.toLowerCase()) || documentFormats.includes(ext?.toLowerCase());
 }

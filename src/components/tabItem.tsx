@@ -20,7 +20,7 @@ const TabItem: React.FC<TabItemProps> = ({ item, iconOnly, activeKey, tabCounts,
             {item.icon}
             {!iconOnly && <strong style={{ marginLeft: '6px', marginRight: '6px' }}>{item.label}</strong>}
             {!iconOnly && activeKey === item.key && tabCounts && (
-                <Badge count={tabCounts[item.key]} overflowCount={999} color='cyan' size='small' />
+                <Badge count={tabCounts[item.key]} overflowCount={9999} color='cyan' size='small' />
             )}
         </div>
     );
