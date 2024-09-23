@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
-import { i18n_FILE_MANAGER_LABEL, i18n_FILE_MANAGER_FEATURE, i18n_FILE_MANAGER_CHANGE_LOG, i18n_AUTHORIZE, i18n_FILE_MANAGER_CHANGE_LOG_LINK, PARENT_OPEN_BUTTON_ID, i18n_HERE } from "../data/constants";
+import { i18n_FILE_MANAGER_LABEL, i18n_FILE_MANAGER_FEATURE, i18n_FILE_MANAGER_CHANGE_LOG, i18n_AUTHORIZE, i18n_FILE_MANAGER_CHANGE_LOG_LINK, PARENT_OPEN_BUTTON_ID, i18n_HERE, i18n_OPEN_FILE_MANAGER_TIP, i18n_FILE_MANAGER_USE_TIP, PLUGIN_ROUTE } from "../data/constants";
 import getI18nConstant from "../i18n/utils";
 import './authoItem.css'
 import React from 'react';
@@ -52,6 +52,9 @@ export const renderAuthoItem3 = (lang: string): string => {
     const fileManagerChangeLogLink = getI18nConstant(lang, i18n_FILE_MANAGER_CHANGE_LOG_LINK);
     const hereText = getI18nConstant(lang, i18n_HERE);
     const buttonId = PARENT_OPEN_BUTTON_ID;
+    const clickHereText = getI18nConstant(lang, i18n_OPEN_FILE_MANAGER_TIP)
+    const quickUse = getI18nConstant(lang, i18n_FILE_MANAGER_USE_TIP)
+
 
     return `
     [:div.autho-item {:id "${buttonId}"}
@@ -59,7 +62,10 @@ export const renderAuthoItem3 = (lang: string): string => {
       [:p [:b "${fileManagerFeature}"] [:br]
           "${fileManagerChangeLog}"
           [:a {:href "${fileManagerChangeLogLink}"}
-              " ${hereText}"] "."] 
+              " ${hereText}"]  [:br]
+           "${quickUse}" "," [:a {:href "#${PLUGIN_ROUTE}"}
+           "${clickHereText}" "."] 
+        ]   
     ]`;
 };
 
