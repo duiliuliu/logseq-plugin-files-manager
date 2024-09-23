@@ -62,7 +62,7 @@ export const renderAuthoItem3 = (lang: string): string => {
       [:p [:b "${fileManagerFeature}"] [:br]
           "${fileManagerChangeLog}"
           [:a {:href "${fileManagerChangeLogLink}"}
-              " ${hereText}"]  [:br]
+              " ${hereText}"] "."  [:br]
            "${quickUse}" "," [:a {:href "#${PLUGIN_ROUTE}"}
            "${clickHereText}" "."] 
         ]   
