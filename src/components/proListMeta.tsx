@@ -193,7 +193,7 @@ const copyFileNodeAction = ({ record, userConfig }: MetaRenderProps): ActionItem
             const relatedBlocks = record.related?.filter(item => item.relatedType === RelatedType.BLOCK);
 
             // 如果存在相关块，使用块的UUID
-            if (relatedBlocks && relatedBlocks?.length > 0) {
+            if (relatedBlocks && relatedBlocks?.length > 0 && !isBook(record.extName!)) {
                 copyValue = `((${relatedBlocks[0].relatedItemUuid}))`;
             } else {
                 // 否则，构建文件路径
