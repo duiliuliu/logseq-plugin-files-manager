@@ -1,8 +1,8 @@
 // src/utils/useUpdateNumberOnScroll.tsx
 
 import React, { useState, useEffect } from 'react';
-import { logger } from './logger';
-
+import { logger } from '../utils/logger';
+ 
 // 工具方法，用于加载更多数据当滚动到底部
 export const useUpdateMaxNumberOnScroll = (growth: number, currentMaxNumber: number, dataSize: number, setMaxNumber: { (value: React.SetStateAction<number>): void; (arg0: (prevMaxNumber: number) => number): void; }) => {
     const [loadMore, setLoadMore] = useState<boolean>(false);

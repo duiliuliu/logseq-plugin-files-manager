@@ -6,13 +6,12 @@ import { ActionItemProps } from './components/actionItem';
 import { ArrowsClockwise, FolderSimplePlus, List, SquaresFour } from '@phosphor-icons/react';
 import Search from 'antd/es/input/Search';
 import { useSize } from 'ahooks';
-import { useUpdateMaxNumberOnScroll } from './utils/useUpdateNumberOnScroll';
 import { DisplayMode, DocFormat, TabEnum } from './data/enums';
 import ProList from './components/proList';
 import { useLoadData } from './data/useLoadData';
 import { useRebuildData } from './data/useRebuildData';
 import { useLoadDataCount } from './data/useLoadDataCount';
-import useCalculateHeight from './utils/useCalculateHeight';
+import useCalculateHeight from './ui_hooks/useCalculateHeight';
 import { PARENT_MAIN_CONTAINER_ID, i18n_AUTHORIZE, i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH, i18n_BUILDING, i18n_REBUILD_DATA, i18n_SEARCH_PLACEHOLDER, i18n_VIEW_CARD_MODE, i18n_VIEW_LIST_MODE, } from './data/constants';
 import { useFileChangeListener } from './data/useFileChangeListener';
 import { useDirectoryHandle } from './utils/fileUtil';
@@ -21,6 +20,7 @@ import { useUserConfigs } from './logseq/useUserConfigs';
 import useTabData from './data/useTabData';
 import useTheme from './data/useLoadTheme';
 import { buildGraphPath } from './logseq/utils';
+import { useUpdateMaxNumberOnScroll } from './ui_hooks/useUpdateNumberOnScroll';
 
 type SearchProps = GetProps<typeof Input.Search>;
 

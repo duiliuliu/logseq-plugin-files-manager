@@ -2,7 +2,7 @@ import React from 'react';
 import { ProList as AntdProList } from '@ant-design/pro-components';
 import './proList.css';
 import { AppUserConfigs } from '@logseq/libs/dist/LSPlugin.user';
-import useColumnCount from '../utils/useColCount';
+import useColumnCount from '../ui_hooks/useColCount';
 import { DataItem, Size } from '../data/types';
 import { renderListActions, renderCardContent, renderCardTitle, renderListAvatar, renderListContent, renderListDescription, renderListTitle, renderTag, renderCardActions2 } from './proListMeta';
 import { DisplayMode } from '../data/enums';
