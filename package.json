@@ -1,7 +1,7 @@
 {
   "name": "logseq-files-manager",
   "description": "Plugin to add thumbnail cards to Logseq that are displayed in order of update.",
-  "version": "0.0.8",
+  "version": "0.10.1",
   "type": "module",
   "main": "dist/index.html",
   "license": "MPL-2.0",
@@ -27,10 +27,11 @@
     "date-fns": "^2.30.0",
     "dexie": "^3.2.4",
     "dexie-react-hooks": "^1.1.7",
+    "edn-data": "^1.1.2",
     "fuse.js": "^7.0.0",
     "i18next": "^23.6.0",
-    "react": "^18.2.0", 
-    "react-i18next": "^13.3.1", 
+    "react": "^18.2.0",
+    "react-i18next": "^13.3.1",
     "tslog": "^4.9.2"
   },
   "devDependencies": {

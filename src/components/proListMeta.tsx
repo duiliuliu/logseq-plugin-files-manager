@@ -1,5 +1,4 @@
-import { AppUserConfigs } from '@logseq/libs/dist/LSPlugin.user';
-import { DataItem } from '../data/types';
+import { AppConfig, DataItem } from '../data/types';
 import { format } from 'date-fns';
 import { getTimeString } from '../utils/timeUtil';
 import React from 'react';
@@ -16,7 +15,7 @@ import { ItemType } from 'antd/es/menu/interface';
 import PreviewFrame from './previewItem';
 
 interface MetaRenderProps {
-    userConfig: AppUserConfigs;
+    userConfig: AppConfig;
     record: DataItem;
     [key: string]: any;
 }
@@ -158,8 +157,7 @@ const renderCardActions2 = ({ record, userConfig }: MetaRenderProps) => {
                     key={index.toString()}
                     icon={item.icon}
                     text={item.text}
-                    onClick={item.onClick} />,
-                onClick: (e) => { item.onClick(e.domEvent) }
+                    onClick={item.onClick} />
             } as ItemType)),
         }}
     >

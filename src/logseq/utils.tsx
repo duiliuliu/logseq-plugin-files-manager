@@ -38,7 +38,7 @@ export const getLogseqPageBlocksTree = async (srcPage: PageIdentity): Promise<Bl
 
       return blocks;
     } catch (error) {
-      logger.error('Failed to get page blocks tree:', error);
+      logger.error(`Failed to get page[${srcPage}] blocks tree:`, error);
       return [];
     }
   }

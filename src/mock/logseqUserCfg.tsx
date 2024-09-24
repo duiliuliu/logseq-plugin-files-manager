@@ -1,7 +1,7 @@
-import { AppUserConfigs } from '@logseq/libs/dist/LSPlugin.user';
+import { AppConfig } from '../data/types';
 
 // src/mocks.ts
-export const mockUserConfigs: AppUserConfigs = {
+export const mockUserConfigs: AppConfig = {
     preferredThemeMode: 'dark', // 或 'light'
     preferredFormat: 'markdown', // 或 'org'
     preferredDateFormat: 'yyyy-MM-dd',

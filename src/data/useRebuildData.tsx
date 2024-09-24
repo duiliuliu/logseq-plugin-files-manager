@@ -4,23 +4,25 @@ import { DB } from './db';
 import { DocFormat } from './enums';
 import { prepareAssetsData, preparePagesData } from './prepareData';
 import { renderAuthoItem3 } from '../components/authorItem';
-import { doInitNotifyUser } from '../logseq/logseqPluginInit';
+import { AppConfig } from './types';
+import { doInitNotifyUser } from '../logseq/logseqNotifyUser';
 
-
-export const useRebuildData = (graph: string, dirHandle: any, docFormat: DocFormat, lang?: string) => {
+export const useRebuildData = (appConfig: AppConfig, dirHandle: any) => {
     // 将状态变量从 loading 改为 preparing
     const [preparing, setPreparing] = useState(false); // 追踪重建操作的进行状态
     const [needAuth, setNeedAuth] = useState(false); // 需要授权 
 
     const rebuildData = useCallback(async (doRebuild?: boolean) => {
+        const graph = appConfig.currentGraph
+        const docFormat = appConfig.preferredFormat as DocFormat
+        const lang = appConfig.preferredLanguage
         logger.debug(`rebuildDB start, graph: ${graph}, docFormat: ${docFormat}, dirHandle: ${dirHandle}`);
-        setPreparing(true); // 重建开始时设置preparing为true
-
         if (!graph) {
             setPreparing(false); // 如果graph为空，则立即设置preparing为false
             return;
         }
 
+        setPreparing(true); // 重建开始时设置preparing为true
         try {
             if (doRebuild) {
                 await DB.data.where('graph').equals(graph).delete();
@@ -37,19 +39,25 @@ export const useRebuildData = (graph: string, dirHandle: any, docFormat: DocForm
 
             if (!dirHandle) {
                 setNeedAuth(true)
-                !doRebuild && logseq.UI.showMsg(renderAuthoItem3(lang ?? 'en'), 'info', { timeout: 60000 })
+                !doRebuild && doInitNotifyUser(() => { logseq.UI.showMsg(renderAuthoItem3(lang ?? 'en'), 'info', { timeout: 60000 }) })
                 return
             }
 
             setNeedAuth(false);
             await prepareAssetsData({ graph }); // 先加载asset 
-            await preparePagesData({ graph, dirHandle, docFormat });
+            await preparePagesData({ appConfig, dirHandle });
         } catch (error) {
             logger.error('Failed to rebuild data:', error);
         } finally {
             setPreparing(false); // 无论成功或失败，重建结束后设置preparing为false
         }
-    }, [graph, dirHandle, docFormat, lang]);
+    }, [appConfig.currentGraph
+        , appConfig.preferredDateFormat
+        , appConfig.journalFileNameFormat
+        , appConfig.journalsDirectory
+        , appConfig.pagesDirectory
+        , appConfig.preferredFormat
+        , dirHandle]);
 
     useEffect(() => {
         rebuildData();

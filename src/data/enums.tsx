@@ -58,6 +58,7 @@ enum RelatedType {
 export enum OperationType {
     CREATE = 'create',
     MODIFIED = 'modified',
+    CONFIG_MODIFIED = 'config_modified',
     DELETE = 'delete'
 }
 

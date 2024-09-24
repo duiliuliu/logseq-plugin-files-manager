@@ -4,14 +4,12 @@ import { DataType, DocFormat, RelatedType } from './enums';
 import { logger } from '../utils/logger';
 import { encodeLogseqFileName, formatFileName, formatFilePath, formatFileSize, getFileInfo } from '../utils/fileUtil';
 import { DB } from './db';
-import { DataItem } from './types';
-import { REG_ASSETS, REG_SPLIT, REG_TAG } from './constants';
+import { AppConfig, DataItem } from './types';
+import { GRAPH_PREFIX, REG_ASSETS, REG_SPLIT, REG_TAG } from './constants';
 import { format, parse } from 'date-fns';
 
 // 准备页面数据的函数
-const preparePagesData = async ({ graph, dirHandle, docFormat }: { graph: string; dirHandle: FileSystemDirectoryHandle | undefined; docFormat: DocFormat }) => {
-    logger.debug(`preparePagesData start, graph: ${graph}, docFormat: ${docFormat}`);
-
+const preparePagesData = async ({ appConfig, dirHandle }: { appConfig: AppConfig; dirHandle: FileSystemDirectoryHandle | undefined; }) => {
     // 获取当前图的所有页面
     const pages = await getAllLogseqPages();
     if (!pages) return;
@@ -20,24 +18,33 @@ const preparePagesData = async ({ graph, dirHandle, docFormat }: { graph: string
     const validPages = pages.filter(page => page.originalName !== 'Contents'); //  日记页面也收录到管理中
 
     // 处理每个页面的异步操作
-    const promises = validPages.map(page => processPage(page, graph, dirHandle, docFormat));
+    const promises = validPages.map(page => processPage(page, dirHandle, appConfig));
     await Promise.all(promises);
 }
 
 // 处理单个页面的函数
-export const processPage = async (page: PageEntity, graph: string, dirHandle: any, docFormat: DocFormat, updated?: boolean) => {
+export const processPage = async (page: PageEntity, dirHandle: any, appConfig: AppConfig, updated?: boolean) => {
     const isJournal = page['journal?'];
+    const graph = appConfig.currentGraph
+    const docFormat = appConfig.preferredFormat as DocFormat
+    const pagesDir = appConfig.pagesDirectory!
+    const journalsDir = appConfig.journalsDirectory!
+    const journalFileTem = appConfig.journalFileNameFormat!
 
     // 获取页面的最新更新时间
     const [updatedTime, size] = await getFileInfo(
         encodeLogseqFileName(isJournal
-            ? format(parse(page.journalDay!.toString(), 'yyyyMMdd', new Date()), 'yyyy_MM_dd')
+            ? format(parse(page.journalDay!.toString(), 'yyyyMMdd', new Date()), journalFileTem)
             : page.originalName),
-        await dirHandle?.getDirectoryHandle(isJournal ? 'journals' : 'pages'),
+        await dirHandle?.getDirectoryHandle(isJournal ? journalsDir : pagesDir),
         docFormat,
         [page.updatedAt ?? 0, undefined])
     if (!updatedTime) {
-        logger.debug(`page no updatetime,page:${page.name}`)
+        logger.warn(`page no updatetime,page:${page.name}`)
+        return;
+    }
+    if (!page.uuid) {
+        logger.warn(`page no uuid,page:${page.name}`)
         return;
     }
 
@@ -48,7 +55,7 @@ export const processPage = async (page: PageEntity, graph: string, dirHandle: an
     // 获取页面的摘要和图片
     const [summary, image, imageUuid] = extractSummary(blocks);
     const originalName = (isJournal
-        ? format(parse(page.journalDay!.toString(), 'yyyyMMdd', new Date()), 'yyyy_MM_dd')
+        ? format(parse(page.journalDay!.toString(), 'yyyyMMdd', new Date()), journalFileTem)
         : encodeLogseqFileName(page.originalName))
         + DocFormat.toFileExt(docFormat);
     if (summary.length > 0 && !(summary.length === 1 && summary[0] === '')) { // 过滤内容为空的页面
@@ -62,7 +69,7 @@ export const processPage = async (page: PageEntity, graph: string, dirHandle: an
             summary,
             image,
             size,
-            path: `${graph.replace('logseq_local_', '')}/${isJournal ? 'journals' : 'pages'}/${originalName}`,
+            path: `${graph.replace(GRAPH_PREFIX, '')}/${isJournal ? journalsDir : pagesDir}/${originalName}`,
             related: [{
                 relatedType: RelatedType.BLOCK,
                 relatedItemUuid: imageUuid
@@ -90,7 +97,7 @@ export const processPage = async (page: PageEntity, graph: string, dirHandle: an
                     alias: asset.alias,
                     related: asset.related,
                     name: asset.name,
-                    path: `${graph.replace('logseq_local_', '')}/assets/${asset.name}`,
+                    path: `${graph.replace(GRAPH_PREFIX, '')}/assets/${asset.name}`,
                     uuid: '',
                     extName: asset.extName,
                 });

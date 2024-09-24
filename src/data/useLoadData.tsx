@@ -32,7 +32,12 @@ export const useLoadData = ({ graph, maxNumber, dataType, searchValue, loadMore,
                 }
                 logger.debug(`fetchData success - graph: ${graph}, data length: ${newData.length}`);
             } catch (error) {
-                logger.warn('Failed to load data:', error); // 处理错误
+                if (error instanceof TypeError) {
+                    logger.warn('Failed to load data:', (error as TypeError).message);
+                } else {
+                    logger.error('Failed to load data:', error);
+                    throw error; // 重新抛出错误，可以在调用此函数的地方进行处理
+                }
             } finally {
                 setLoading(false); // 无论成功或失败，加载结束后设置 loading 为 false
                 logger.debug(`fetchData end - graph: ${graph}, loading: ${loading}`);
@@ -53,8 +58,6 @@ export const doLoadData = async (graph: string, offset: number, limit: number, d
         .where(DataType.isDataType(dataType) ? { graph, dataType } : { graph })
         .and(item => { // 如果有搜索值，检查名称或摘要是否包含该值
             if (searchValue) {
-                logger.debug(`doLoadData search filter,searchValue:${searchValue}`)
-
                 // 检查名称是否匹配
                 if (item.name.includes(searchValue)) return true;
                 if (item.alias.includes(searchValue)) return true;
