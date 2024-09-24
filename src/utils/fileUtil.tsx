@@ -1,10 +1,6 @@
 import normalizePath from 'normalize-path';
 import { logger } from './logger';
-import { useEffect, useState } from 'react';
 import { DocFormat } from '../data/enums';
-import { i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH } from '../data/constants';
-import { buildGraphPath } from '../logseq/utils';
-import getI18nConstant from '../i18n/utils';
 
 const imageFormats = ['png', 'jpg', 'jpeg', 'webp', 'gif']
 // 电子书常见的文件格式
@@ -110,29 +106,29 @@ export const getFileInfo = async (fileName: string, handle: FileSystemDirectoryH
 /**
  * 处理文件名，提取扩展名并生成别名。 
  */
-export function formatFileName(fileName: string): [extName: string, alias: string] {
+export function formatFileName(fileName: string): [extName: string, alias: string, originName: string] {
     if (!fileName) {
-        return ['', '']
+        return ['', '', '']
     }
     const extDotLastIdx = fileName.lastIndexOf('.');
     const extName = extDotLastIdx !== -1 ? fileName.substring(extDotLastIdx + 1) : '';
     const nameWithoutExt = extDotLastIdx !== -1 ? fileName.substring(0, extDotLastIdx) : fileName;
     const alias = nameWithoutExt.length > 24 ? nameWithoutExt.substring(0, 24).replace(/[0-9_.]{5,}(\.|$)/g, '$1') : nameWithoutExt;
 
-    return [extName, alias];
+    return [extName, alias, nameWithoutExt];
 }
 
 // 工具函数：提取文件路径、名称、别名和扩展名
-export const formatFilePath = (itemPath: string): [path: string, name: string, alias: string, extName: string] => {
+export const formatFilePath = (itemPath: string): [path: string, name: string, alias: string, extName: string, originName: string] => {
     if (!itemPath) {
-        return ['', '', '', ''];
+        return ['', '', '', '', ''];
     }
     const normalath = normalizePath(itemPath);
     const name = normalath?.substring(normalath.lastIndexOf('/') + 1) ?? '';
-    if (name.startsWith('.')) return ['', '', '', '']; // 忽略隐藏文件
+    if (name.startsWith('.')) return ['', '', '', '', '']; // 忽略隐藏文件
 
-    const [extName, alias] = formatFileName(name);
-    return [normalath ?? '', name, alias, extName];
+    const [extName, alias, originName] = formatFileName(name);
+    return [normalath ?? '', name, alias, extName, originName];
 };
 
 // 工具函数：格式化文件大小
@@ -140,36 +136,6 @@ export const formatFileSize = (sizeInBytes: number): string => {
     if (sizeInBytes < 1024) return `${sizeInBytes} B`;
     else if (sizeInBytes < 1024 * 1024) return `${(sizeInBytes / 1024).toFixed(2)} KB`;
     return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
-};
-
-
-// 定义一个文件句柄钩子
-export const useDirectoryHandle = ({ graph }: { graph: string; }) => {
-    const [directoryHandle, setDirectoryHandle] = useState<any>(null);
-
-    async function initializeDirectory() {
-        if (graph) {
-            const handle = await window.showDirectoryPicker().catch(e => {
-                logger.warn('get directory failed,', e)
-            });
-            logger.debug(`initializeDirectory, handle: ${handle?.name}`);
-            if (!handle) {
-                return;
-            }
-
-            if (handle.name === getGraphDirName(graph)) {
-                setDirectoryHandle(handle);
-            } else {
-                logseq.UI.showMsg(`${getI18nConstant('en', i18n_AUTHORIZE_TOOLTIP)},${getI18nConstant('en', i18n_AUTHORIZE_TOOLTIP_PATH)}:${buildGraphPath(graph)}`, 'error', { timeout: 3000 });
-            }
-        }
-    }
-
-    useEffect(() => {
-        initializeDirectory();
-    }, [graph]);
-
-    return { directoryHandle, initializeDirectory };
 };
 
 export const getGraphDirName = (graph: string) => {

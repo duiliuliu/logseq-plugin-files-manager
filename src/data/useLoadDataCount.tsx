@@ -9,7 +9,7 @@ export type DataTypeCounts = {
 };
 
 // useDataTypeCount 钩子函数
-export const useLoadDataCount = ({ graph, preparing }: { graph: string, preparing: boolean }) => {
+export const useLoadDataCount = ({ graph, preparing, fileMotified }: { graph: string, preparing: boolean, fileMotified: number }) => {
     const [typeCount, setTypeCount] = useState<DataTypeCounts>({} as DataTypeCounts);
     const [countLoading, setCountLoading] = useState(true);
 
@@ -27,7 +27,7 @@ export const useLoadDataCount = ({ graph, preparing }: { graph: string, preparin
         };
 
         fetchTypeCount();
-    }, [graph, preparing]);
+    }, [graph, preparing, fileMotified]);
 
     return { typeCount, countLoading };
 };
@@ -52,8 +52,12 @@ const getDataTypesCount = async (graph: string): Promise<DataTypeCounts> => {
             }
         });
     } catch (error) {
-        logger.warn('Failed to get data types count:', error);
-        throw error; // 重新抛出错误，可以在调用此函数的地方进行处理
+        if (error instanceof TypeError) {
+            logger.warn('Failed to get data types count:', (error as TypeError).message);
+        } else {
+            logger.error('Failed to get data types count:', error);
+            throw error; // 重新抛出错误，可以在调用此函数的地方进行处理
+        }
     } finally {
         logger.debug(`getDataTypesCount end - graph: ${graph}`);
     }

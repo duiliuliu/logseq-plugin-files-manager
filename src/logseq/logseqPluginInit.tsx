@@ -68,21 +68,3 @@ export const setupFileManagerNav = async () => {
 };
 
 
-export function doInitNotifyUser(showMsg: () => void) {
-    logger.debug('logseq.updateSettings', logseq.settings, 'logseq.baseInfo.version', logseq.baseInfo.version)
-
-    if (!logseq.settings!.notifications) { logseq.settings!.notifications = {} }
-
-    const notifications: { [key: string]: any } = logseq.settings!.notifications as object
-
-    const currentPluginVersion = logseq.baseInfo.version
-    const previousPluginVersion = notifications.previousPluginVersion
-
-    // Notify only old users
-    if (previousPluginVersion && currentPluginVersion !== previousPluginVersion) {
-        showMsg()
-    }
-
-    logseq.updateSettings({ notifications: { previousPluginVersion: currentPluginVersion } })
-}
-

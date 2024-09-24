@@ -1,16 +1,15 @@
 import React from 'react';
 import { ProList as AntdProList } from '@ant-design/pro-components';
 import './proList.css';
-import { AppUserConfigs } from '@logseq/libs/dist/LSPlugin.user';
 import useColumnCount from '../ui_hooks/useColCount';
-import { DataItem, Size } from '../data/types';
+import { AppConfig, DataItem, Size } from '../data/types';
 import { renderListActions, renderCardContent, renderCardTitle, renderListAvatar, renderListContent, renderListDescription, renderListTitle, renderTag, renderCardActions2 } from './proListMeta';
 import { DisplayMode } from '../data/enums';
 
 interface ProListProps {
     mode: DisplayMode;
     data: DataItem[];
-    userConfig: AppUserConfigs;
+    userConfig: AppConfig;
     size?: Size
     emptyNode: React.ReactNode;
     loading?: boolean
@@ -18,7 +17,7 @@ interface ProListProps {
 
 
 // 根据模式返回相应的元数据配置
-const getMetas = (mode: DisplayMode, props: { userConfig: AppUserConfigs, [key: string]: any }) => (
+const getMetas = (mode: DisplayMode, props: { userConfig: AppConfig, [key: string]: any }) => (
     DisplayMode.isCard(mode)
         ? {
             title: { render: (_: any, record: any) => renderCardTitle({ record, ...props }) },

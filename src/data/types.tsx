@@ -1,3 +1,4 @@
+import { AppUserConfigs } from '@logseq/libs/dist/LSPlugin.user';
 import { DataType, RelatedType } from './enums';
 
 // ===================================================================================
@@ -58,12 +59,21 @@ interface Size {
 }
 
 
+interface AppConfig extends AppUserConfigs {
+    pagesDirectory?: string
+    journalsDirectory?: string
+    journalFileNameFormat?: string
+    hiddenDir?: string[]
+}
+
+
 
 // ===================================================================================
 // 导出
 // ===================================================================================
 
 export type {
+    AppConfig,
     DataItem,
     RelatedItem,
     Tab,

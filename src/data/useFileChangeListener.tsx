@@ -1,12 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { logger } from '../utils/logger';
-import { AppUserConfigs, BlockEntity, IDatom, } from '@logseq/libs/dist/LSPlugin.user';
+import { BlockEntity, IDatom, } from '@logseq/libs/dist/LSPlugin.user';
 import { processPage } from './prepareData';
-import { decodeLogseqFileName } from '../utils/fileUtil';
-import { REGEX_PAGE_PATH } from './constants';
-import { DocFormat, OperationType } from './enums';
+import { decodeLogseqFileName, formatFilePath } from '../utils/fileUtil';
+import { USER_CONFIG_FILE } from './constants';
+import { OperationType } from './enums';
 import { getLogseqPageBlocksTree, getPageDetails } from '../logseq/utils';
 import { removePageFromDB } from './db';
+import { AppConfig } from './types';
 
 type FileChanges = {
     blocks: BlockEntity[];
@@ -19,11 +20,12 @@ type FileChanges = {
 }
 
 // 工具函数：处理文件变化
-const handleFileChanged = async (changes: FileChanges, graph: string, dateFormat: string, docFormat: string, directoryHandle: any) => {
-    const [operation, originalName] = parseOperation(changes, dateFormat);
-    logger.debug(`handleFileChanged,operation:${operation},changes:`, changes)
+const handleFileChanged = async (changes: FileChanges, appConfig: AppConfig, directoryHandle: any): Promise<{ configUpdated?: boolean, fileMotified?: boolean }> => {
+    const [operation, originalName] = parseOperation(changes, appConfig.pagesDirectory!, appConfig.journalsDirectory!);
+    logger.debug(`handleFileChanged,operation:${operation},changes:`, changes, 'file', originalName)
 
-    if (operation === OperationType.CREATE) return;
+    if (operation === OperationType.CONFIG_MODIFIED) return { configUpdated: true };
+    if (operation === OperationType.CREATE) return { fileMotified: false };
 
     if (operation === OperationType.MODIFIED) {
         const blocks = await getLogseqPageBlocksTree(originalName).catch(err => {
@@ -31,22 +33,30 @@ const handleFileChanged = async (changes: FileChanges, graph: string, dateFormat
             return null;
         });
 
-        if (!blocks) return;
+        if (!blocks) {
+            logger.warn(`handleFileChanged file${originalName}, query blocks no data`)
+            return { fileMotified: false };
+        }
 
         const pageEntity = await getPageDetails(originalName)
-        if (pageEntity) {
-            processPage(pageEntity, graph, directoryHandle, docFormat as DocFormat, false) // todo dirhandler
+        if (!pageEntity) {
+            logger.warn(`handleFileChanged file${originalName}, query page no data`)
+            return { fileMotified: false };
         }
+
+        processPage(pageEntity, directoryHandle, appConfig, true) // todo dirhandler
+
     }
 
     if (operation === OperationType.DELETE) {
-        logger.debug(`Would remove page from DB: graph=${graph}, name=${originalName}`);
-        removePageFromDB(graph, originalName);
+        logger.debug(`Would remove page from DB: graph=${appConfig.currentGraph}, name=${originalName}`);
+        removePageFromDB(appConfig.currentGraph, originalName);
     }
+    return { configUpdated: true };
 };
 
 // 工具函数：解析操作类型
-const parseOperation = (changes: FileChanges, _dateFormat: string): [OperationType, string] => {
+const parseOperation = (changes: FileChanges, pagesDirectory: string, journalsDirectory: string): [OperationType, string] => {
     let operation = '' as OperationType;
     let originalName = '';
 
@@ -60,11 +70,12 @@ const parseOperation = (changes: FileChanges, _dateFormat: string): [OperationTy
             if (changes.txData.length === 0) continue;
             if (changes.txData[0][1] === 'file/last-modified-at') {
                 const path = block.path;
-                const matchResult = path.match(REGEX_PAGE_PATH);
-                if (matchResult) {
-                    originalName = decodeLogseqFileName(matchResult[2]);
-                    operation = OperationType.MODIFIED;
-                    return [operation, originalName];
+                const [, , , , originalName] = formatFilePath(path)
+                if (path.startsWith(pagesDirectory) || path.startsWith(journalsDirectory)) {
+                    return [OperationType.MODIFIED, originalName];
+                }
+                if (path === USER_CONFIG_FILE) {
+                    return [OperationType.CONFIG_MODIFIED, originalName];
                 }
             }
         }
@@ -82,15 +93,30 @@ const parseOperation = (changes: FileChanges, _dateFormat: string): [OperationTy
 };
 
 // 使用Effect监听文件变化
-export const useFileChangeListener = (userConfig: AppUserConfigs, directoryHandle: any) => {
+export const useFileChangeListener = (appConfig: AppConfig, directoryHandle: any, setUserConfigUpdated: (arg0: number) => void) => {
+    const [fileMotified, setFileMotified] = useState<number>(Date.now())
     useEffect(() => {
         const onFileChanged = async (changes: FileChanges) => {
-            await handleFileChanged(changes, userConfig.currentGraph, userConfig.preferredDateFormat, userConfig.preferredFormat, directoryHandle);
+            const { configUpdated, fileMotified: fileMotifiedT } = await handleFileChanged(changes, appConfig, directoryHandle);
+            if (configUpdated) {
+                setUserConfigUpdated(Date.now())
+            }
+            if (fileMotifiedT) {
+                setFileMotified(prev => Math.round((Date.now() - prev) / 24 * 60 * 60 * 1000)) // 每天一刷新
+            }
         };
 
         const removeOnChanged = logseq.DB.onChanged(onFileChanged);
         return () => {
             removeOnChanged();
         };
-    }, [userConfig.currentGraph, userConfig.preferredDateFormat, userConfig.preferredFormat, directoryHandle]);
+    }, [appConfig.currentGraph
+        , appConfig.preferredDateFormat
+        , appConfig.journalFileNameFormat
+        , appConfig.journalsDirectory
+        , appConfig.pagesDirectory
+        , appConfig.preferredFormat
+        , directoryHandle]);
+
+    return fileMotified;
 };

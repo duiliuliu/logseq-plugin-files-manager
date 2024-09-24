@@ -17,6 +17,8 @@ import {
 // 定义主内容容器的 ID，用于在 DOM 中定位主内容区域
 export const PARENT_MAIN_CONTAINER_ID = 'main-content-container';
 export const PARENT_OPEN_BUTTON_ID = 'files-manager-open'
+export const PARENT_BACK_TOP= 'kef-tocgen-backtop'
+export const PARENT_BACK_BOTTOM= 'kef-tocgen-godown'
 export const PLUGIN_ROUTE = '/page/files-manager'
 
 // 标签文本常量
@@ -61,6 +63,7 @@ export const i18n_HERE = 'Here'; // 点击这儿
 
 // 图表前缀
 export const GRAPH_PREFIX = 'logseq_local_';
+export const USER_CONFIG_FILE = 'logseq/config.edn'
 
 // ===================================================================================
 // 正则常量
@@ -92,9 +95,6 @@ export const REG_TAG = /(^|\s)(#\S+)(?=\s|$)/g;
 // 正则表达式：用于分割字符串，匹配逗号后面紧跟的零个或多个空格，或匹配一个或多个空格
 // 用于处理类似 'tag1, tag2, tag3' 的字符串，分割成 ['tag1', 'tag2', 'tag3']
 export const REG_SPLIT = /,\s*|\s+/;
-
-// 正则表达式：匹配页面路径，捕获页面名称和扩展名
-export const REGEX_PAGE_PATH = /(pages|journals)\/(.*)\.(md|org)/;
 
 // ===================================================================================
 // Tab页

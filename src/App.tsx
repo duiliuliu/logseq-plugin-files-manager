@@ -5,7 +5,7 @@ import { Button, Empty, GetProps, Input, Result, Spin } from 'antd';
 import { ActionItemProps } from './components/actionItem';
 import { ArrowsClockwise, FolderSimplePlus, List, SquaresFour } from '@phosphor-icons/react';
 import Search from 'antd/es/input/Search';
-import { DisplayMode, DocFormat, TabEnum } from './data/enums';
+import { DisplayMode, TabEnum } from './data/enums';
 import ProList from './components/proList';
 import { useLoadData } from './data/useLoadData';
 import { useRebuildData } from './data/useRebuildData';
@@ -13,7 +13,6 @@ import { useLoadDataCount } from './data/useLoadDataCount';
 import useCalculateHeight from './ui_hooks/useCalculateHeight';
 import { i18n_AUTHORIZE, i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH, i18n_BUILDING, i18n_REBUILD_DATA, i18n_SEARCH_PLACEHOLDER, i18n_VIEW_CARD_MODE, i18n_VIEW_LIST_MODE, } from './data/constants';
 import { useFileChangeListener } from './data/useFileChangeListener';
-import { useDirectoryHandle } from './utils/fileUtil';
 import getI18nConstant from './i18n/utils';
 import { useUserConfigs } from './logseq/useUserConfigs';
 import useTabData from './data/useTabData';
@@ -21,19 +20,23 @@ import useTheme from './data/useLoadTheme';
 import { buildGraphPath } from './logseq/utils';
 import { useUpdateMaxNumberOnScroll } from './ui_hooks/useUpdateNumberOnScroll';
 import useComponentSizeAndPosition from './ui_hooks/useSizeAndPos';
+import { useDirectoryHandle } from './ui_hooks/useDirectoryHandle';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
 const App: React.FC = () => {
-    const userConfig = useUserConfigs();
+    const [userConfigUpdated, setUserConfigUpdated] = useState<number>(Date.now())
+    const userConfig = useUserConfigs(userConfigUpdated);
+    const { directoryHandle, initializeDirectory } = useDirectoryHandle({ graph: userConfig.currentGraph })
+    const fileMotified = useFileChangeListener(userConfig, directoryHandle, setUserConfigUpdated)   // 使用 useFileChangeListener Hook 来监听文件变化
+    const { rebuildData, preparing, needAuth } = useRebuildData(userConfig, directoryHandle,)
+    const { typeCount } = useLoadDataCount({ graph: userConfig.currentGraph, preparing, fileMotified });
+
     const tabData = useTabData(userConfig.preferredLanguage)
     const [currentTab, setCurrentTab] = useState(tabData[0].key);
     const [searchValue, setSearchValue] = useState<string>('');
     const [mode, setMode] = useState<DisplayMode>(DisplayMode.LIST); // 默认为列表模式
     const tabContentRef = useRef<HTMLDivElement>(null);
-    const { directoryHandle, initializeDirectory } = useDirectoryHandle({ graph: userConfig.currentGraph })
-    const { rebuildData, preparing, needAuth } = useRebuildData(userConfig.currentGraph, directoryHandle, userConfig.preferredFormat as DocFormat, userConfig.preferredLanguage)
-    const { typeCount } = useLoadDataCount({ graph: userConfig.currentGraph, preparing });
     const listHeight = useCalculateHeight(40); // 使用自定义钩子计算高度
     const calBatchSize = () => (DisplayMode.isCard(mode) ? 40 : 20)
     const [maxNumber, setMaxNumber] = useState<number>(calBatchSize);
@@ -47,9 +50,6 @@ const App: React.FC = () => {
         preparing
     });
     const [theme] = useTheme(userConfig.preferredThemeMode)
-
-    useFileChangeListener(userConfig, directoryHandle)   // 使用 useFileChangeListener Hook 来监听文件变化
-
 
     const handleTabClick = (tabKey: string) => {
         setCurrentTab(tabKey);
