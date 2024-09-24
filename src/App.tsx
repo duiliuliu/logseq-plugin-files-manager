@@ -105,7 +105,7 @@ const App: React.FC = () => {
                             needAuth ?
                                 <Result
                                     title={`${getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE_TOOLTIP)} ${getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE_TOOLTIP_PATH)}:${buildGraphPath(userConfig.currentGraph)}`}
-                                    extra={<Button icon={<FolderSimplePlus />} onClick={initializeDirectory} type="default">{getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE)}</Button>}
+                                    extra={<Button icon={<FolderSimplePlus />} onClick={() => initializeDirectory()} type="default">{getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE)}</Button>}
                                 />
                                 : <Spin spinning={preparing} tip={getI18nConstant(userConfig.preferredLanguage, i18n_BUILDING)} percent='auto' delay={100}>
                                     <ProList
