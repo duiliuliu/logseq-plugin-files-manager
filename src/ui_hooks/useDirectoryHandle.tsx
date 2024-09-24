@@ -10,8 +10,8 @@ import { logger } from "../utils/logger";
 export const useDirectoryHandle = ({ graph }: { graph: string; }) => {
     const [directoryHandle, setDirectoryHandle] = useState<any>(null);
 
-    async function initializeDirectory() {
-        if (graph) {
+    async function initializeDirectory(hidden?: boolean) {
+        if (graph && !hidden) {
             const handle = await window.showDirectoryPicker().catch(e => {
                 logger.warn('get directory failed,', e)
             });
@@ -29,7 +29,7 @@ export const useDirectoryHandle = ({ graph }: { graph: string; }) => {
     }
 
     useEffect(() => {
-        initializeDirectory();
+        initializeDirectory(true);
     }, [graph]);
 
     return { directoryHandle, initializeDirectory };
