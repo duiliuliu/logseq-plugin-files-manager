@@ -18,7 +18,7 @@ import { useUserConfigs } from './logseq/useUserConfigs';
 import useTabData from './data/useTabData';
 import useTheme from './data/useLoadTheme';
 import { buildGraphPath } from './logseq/utils';
-import { useUpdateMaxNumberOnScroll } from './ui_hooks/useUpdateNumberOnScroll';
+import { useUpdateMaxNumberOnScroll } from './ui_hooks/useUpdateOnScroll';
 import useComponentSizeAndPosition from './ui_hooks/useSizeAndPos';
 import { useDirectoryHandle } from './ui_hooks/useDirectoryHandle';
 
