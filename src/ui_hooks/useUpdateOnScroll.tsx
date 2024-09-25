@@ -26,11 +26,22 @@ export const useUpdateMaxNumberOnScroll = (growth: number, currentMaxNumber: num
     return (refEL: React.RefObject<HTMLElement>) => {
         useEffect(() => {
             if (refEL.current) {
+                const backTop = parent.document.getElementsByClassName(PARENT_BACK_TOP).item(0) as HTMLElement;
+                const backBottom = parent.document.getElementsByClassName(PARENT_BACK_BOTTOM).item(0) as HTMLElement;;
 
                 // 处理滚动的函数
-                const doHandleScroll = () => { handleScroll(refEL?.current!); };
+                const doHandleScroll = () => {
+                    handleScroll(refEL?.current!);
+                    backTop && (backTop.style.display = 'block');
+                    backTop && (backTop.style.opacity = '0.7');
+                    backBottom && (backBottom.style.display = 'block')
+                    backBottom && (backBottom.style.display = '0.7')
+                };
                 // 滚动到顶部的函数
-                const scrollTop = () => { refEL.current?.scrollTo({ top: 0, behavior: 'smooth' }) }
+                const scrollTop = () => {
+                    refEL.current?.scrollTo({ top: 0, behavior: 'smooth' });
+                    backTop && (backTop.style.display = 'none');
+                }
                 // 滚动到底部的函数
                 const scrollBottom = () => {
                     refEL.current?.scrollTo({ top: refEL.current.scrollHeight - refEL.current.clientHeight - 20, behavior: 'smooth' })
@@ -39,15 +50,13 @@ export const useUpdateMaxNumberOnScroll = (growth: number, currentMaxNumber: num
 
                 // 添加事件监听器 
                 refEL.current.addEventListener('scroll', doHandleScroll);
-                const backTop = parent.document.getElementsByClassName(PARENT_BACK_TOP)
-                if (backTop && backTop.length > 0) backTop[0].addEventListener('click', scrollTop)
-                const backBottom = parent.document.getElementsByClassName(PARENT_BACK_BOTTOM)
-                if (backBottom && backBottom.length > 0) backBottom[0].addEventListener('click', scrollBottom)
+                backTop?.addEventListener('click', scrollTop);
+                backBottom?.addEventListener('click', scrollBottom);
 
                 return () => {
                     refEL?.current?.removeEventListener('scroll', doHandleScroll);
-                    if (backTop && backTop.length > 0) backTop[0].removeEventListener('click', scrollTop)
-                    if (backBottom && backBottom.length > 0) backBottom[0].removeEventListener('click', scrollBottom)
+                    backTop?.removeEventListener('click', scrollTop);
+                    backBottom?.removeEventListener('click', scrollBottom);
                 };
             }
         }, [growth, currentMaxNumber, dataSize]); // 仅在 growth 或 dataSize 变化时重新绑定事件
