@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import Tabs from './components/tabs';
 import { Button, Empty, GetProps, Input, Result, Spin } from 'antd';
 import { ActionItemProps } from './components/actionItem';
-import { ArrowsClockwise, FolderSimplePlus, List, SquaresFour } from '@phosphor-icons/react';
+import { ArrowsClockwise, FolderSimplePlus, List, Newspaper, SquaresFour } from '@phosphor-icons/react';
 import Search from 'antd/es/input/Search';
 import { DisplayMode, TabEnum } from './data/enums';
 import ProList from './components/proList';
@@ -11,7 +11,7 @@ import { useLoadData } from './data/useLoadData';
 import { useRebuildData } from './data/useRebuildData';
 import { useLoadDataCount } from './data/useLoadDataCount';
 import useCalculateHeight from './ui_hooks/useCalculateHeight';
-import { i18n_AUTHORIZE, i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH, i18n_BUILDING, i18n_REBUILD_DATA, i18n_SEARCH_PLACEHOLDER, i18n_VIEW_CARD_MODE, i18n_VIEW_LIST_MODE, } from './data/constants';
+import { i18n_AUTHORIZE, i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH, i18n_BUILDING, i18n_LOG_TOOLTIP, i18n_REBUILD_DATA, i18n_SEARCH_PLACEHOLDER, i18n_VIEW_CARD_MODE, i18n_VIEW_LIST_MODE, LOG_PAGE, } from './data/constants';
 import { useFileChangeListener } from './data/useFileChangeListener';
 import getI18nConstant from './i18n/utils';
 import { useUserConfigs } from './logseq/useUserConfigs';
@@ -21,6 +21,7 @@ import { buildGraphPath } from './logseq/utils';
 import { useUpdateMaxNumberOnScroll } from './ui_hooks/useUpdateOnScroll';
 import useComponentSizeAndPosition from './ui_hooks/useSizeAndPos';
 import { useDirectoryHandle } from './ui_hooks/useDirectoryHandle';
+import { initLogCfg } from './logseq/logseqAddOptLog';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -62,6 +63,8 @@ const App: React.FC = () => {
 
     const toggleMode = () => { setMode((prevMode) => (DisplayMode.isCard(prevMode) ? DisplayMode.LIST : DisplayMode.CARD)); };
 
+    const viewLog = async () => { await initLogCfg(); logseq.App.pushState('page', { name: LOG_PAGE }) };
+
     const actions: ActionItemProps[] = [
         {
             icon: ArrowsClockwise,
@@ -71,6 +74,10 @@ const App: React.FC = () => {
             icon: DisplayMode.isCard(mode) ? List : SquaresFour,
             text: DisplayMode.isCard(mode) ? getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_LIST_MODE) : getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_CARD_MODE),
             onClick: toggleMode
+        }, {
+            icon: Newspaper,
+            text: getI18nConstant(userConfig.preferredLanguage, i18n_LOG_TOOLTIP),
+            onClick: viewLog
         }
     ]
 
@@ -100,7 +107,7 @@ const App: React.FC = () => {
 
                     <div className='tab-content' ref={tabContentRef} style={{
                         maxHeight: listHeight, // 设置最大高度
-                        minHeight: height-100,
+                        minHeight: height - 100,
                         overflow: 'auto', // 启用滚动
                     }} >
                         {

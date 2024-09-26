@@ -9,6 +9,7 @@ import App from './App';
 import { registerCommands, setupStyles, setupFileManagerNav, openFileManager, openFileManagerListener, showMainUIIfFilesManager } from './logseq/logseqPluginInit';
 import { version as __VERSION } from '../package.json'
 import { PLUGIN_ROUTE } from './data/constants';
+import { initLogCfg } from './logseq/logseqAddOptLog';
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -34,6 +35,7 @@ const main = async (_e: any) => {
   await renderApp();
   await openFileManagerListener()
   await showMainUIIfFilesManager()
+  await initLogCfg(true)
 };
 
 if (import.meta.env.DEV) {
