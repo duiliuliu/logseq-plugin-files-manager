@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
  * @param headerOffset 头部偏移量，默认值为100。
  * @returns 计算后的列表高度。
  */
-const useCalculateHeight = (headerOffset: number = 100) => {
+const useCalculateHeight = (headerOffset: number = 100, bodyHeight: number = window.innerHeight) => {
   const [listHeight, setListHeight] = useState<number>(500); // 默认高度
 
   useEffect(() => {
@@ -18,8 +18,7 @@ const useCalculateHeight = (headerOffset: number = 100) => {
     * 如果计算出的高度小于400px，则将列表高度设置为400px。
     */
     const calculateHeight = () => {
-      const screenHeight = window.innerHeight;
-      const availableHeight = screenHeight - headerOffset;
+      const availableHeight = bodyHeight - headerOffset;
       setListHeight(availableHeight > 400 ? availableHeight : 400); // 确保最小高度为400px
     };
 

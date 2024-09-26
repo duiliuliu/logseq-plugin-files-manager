@@ -37,7 +37,6 @@ const App: React.FC = () => {
     const [searchValue, setSearchValue] = useState<string>('');
     const [mode, setMode] = useState<DisplayMode>(DisplayMode.LIST); // 默认为列表模式
     const tabContentRef = useRef<HTMLDivElement>(null);
-    const listHeight = useCalculateHeight(40); // 使用自定义钩子计算高度
     const calBatchSize = () => (DisplayMode.isCard(mode) ? 40 : 20)
     const [maxNumber, setMaxNumber] = useState<number>(calBatchSize);
     const { loadMore, scrollPosition } = useUpdateMaxNumberOnScroll(calBatchSize(), maxNumber, typeCount[currentTab as TabEnum], setMaxNumber)(tabContentRef)
@@ -50,6 +49,9 @@ const App: React.FC = () => {
         preparing
     });
     const [theme] = useTheme(userConfig.preferredThemeMode)
+    const { width, height, left, top } = useComponentSizeAndPosition()
+    const listHeight = useCalculateHeight(40, height); // 使用自定义钩子计算高度
+
 
     const handleTabClick = (tabKey: string) => {
         setCurrentTab(tabKey);
@@ -72,7 +74,6 @@ const App: React.FC = () => {
         }
     ]
 
-    const { width, height, left, top } = useComponentSizeAndPosition()
 
     return (
         <div className={theme === 'dark' ? 'dark-mode' : 'light-mode'}>
@@ -99,6 +100,7 @@ const App: React.FC = () => {
 
                     <div className='tab-content' ref={tabContentRef} style={{
                         maxHeight: listHeight, // 设置最大高度
+                        minHeight: height-100,
                         overflow: 'auto', // 启用滚动
                     }} >
                         {
