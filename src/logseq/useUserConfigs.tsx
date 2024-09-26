@@ -44,6 +44,7 @@ const fetchAppConfig = async (appConfig: AppConfig) => {
             appConfig.pagesDirectory = configObj['pages-directory'] ?? 'pages'
             appConfig.journalsDirectory = configObj['journals-directory'] ?? 'journals'
             appConfig.journalFileNameFormat = configObj['journal/file-name-format'] ?? 'yyyy_MM_dd'
+            appConfig.assetsDirectory = 'assets'
         } else {
             logger.error("No content found or the result is empty. file:", USER_CONFIG_FILE);
         }

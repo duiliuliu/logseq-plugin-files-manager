@@ -10,27 +10,31 @@ import { logger } from "../utils/logger";
 export const useDirectoryHandle = ({ graph }: { graph: string; }) => {
     const [directoryHandle, setDirectoryHandle] = useState<any>(null);
 
-    async function initializeDirectory(hidden?: boolean) {
-        if (graph && !hidden) {
-            const handle = await window.showDirectoryPicker().catch(e => {
+    async function getDirectoryHandle(ignore?: boolean): Promise<FileSystemDirectoryHandle | undefined> {
+        if (directoryHandle) {
+            return directoryHandle
+        }
+        if (graph && !ignore) {
+            const handle = await window.showDirectoryPicker({ mode: 'readwrite' }).catch(e => {
                 logger.warn('get directory failed,', e)
             });
-            logger.debug(`initializeDirectory, handle: ${handle?.name}`);
             if (!handle) {
+                logger.warn('get directory failed, handle is not found')
                 return;
             }
-
             if (handle.name === getGraphDirName(graph)) {
                 setDirectoryHandle(handle);
             } else {
                 logseq.UI.showMsg(`${getI18nConstant('en', i18n_AUTHORIZE_TOOLTIP)},${getI18nConstant('en', i18n_AUTHORIZE_TOOLTIP_PATH)}:${buildGraphPath(graph)}`, 'error', { timeout: 3000 });
             }
         }
+
+        return directoryHandle
     }
 
     useEffect(() => {
-        initializeDirectory(true);
+        getDirectoryHandle(true);
     }, [graph]);
 
-    return { directoryHandle, initializeDirectory };
+    return { directoryHandle, getDirectoryHandle };
 };

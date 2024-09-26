@@ -58,10 +58,19 @@ interface Size {
     height: number; // 尺寸的高度，通常以像素为单位
 }
 
+/**
+ * Position 接口定义了元素的位置
+ */
+interface Position {
+    left: number;
+    top: number;
+}
+
 
 interface AppConfig extends AppUserConfigs {
     pagesDirectory?: string
     journalsDirectory?: string
+    assetsDirectory?: string
     journalFileNameFormat?: string
     hiddenDir?: string[]
 }
@@ -77,5 +86,6 @@ export type {
     DataItem,
     RelatedItem,
     Tab,
-    Size
+    Size,
+    Position
 };

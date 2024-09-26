@@ -27,25 +27,32 @@ You can launch the file manager in any of the following ways:
 ![Building Data](./images/app-building-en.png)
 
 ## Feature Introduction
-1. **Open Files**  
-   - Directly open Logseq files within Logseq.
-   - Attachment files will be opened based on their file type: PDF files will open within Logseq, while other file types will open using the default system program.
+> Discover and experience more features awaiting your exploration.
 
-2. **Copy File Path**  
-   - One-click copy of the complete file path for quick access in other applications.
-
-3. **Search Files**  
-   - A quick search function to help you locate the required files among a large number of files.
-
-4. **Card View and List View**  
+1. **Card View and List View**  
    - You can switch the display method in settings, displaying files in card or list form, providing a more intuitive file preview and operation interface.
    - ![卡片视图](./images/app-card-en.png)
    - 卡片与列表切换：![卡片与列表切换](./images/app-card-switch-en.png)
 
+2. **Open Files**  
+   - Directly open Logseq files within Logseq.
+   - Attachment files will be opened based on their file type: PDF files will open within Logseq, while other file types will open using the default system program.
+
+3. **Copy File Path**  
+   - One-click copy of the complete file path for quick access in other applications.
+
+4. **Search Files**  
+   - A quick search function to help you locate the required files among a large number of files.
+
 5. **File Preview**
    - You can click on the file name to preview the file content. Please note: Due to browser limitations, some files may not support preview.
    - ![文件预览](./images/app-preview.jpg)
-   
+   - Double-click the filename to copy the filename for previewed files.
+
+6. **Right-Click Menu**
+  - While viewing the list, users can trigger a comprehensive menu of functions by right-clicking on any file entry. This menu offers quick access to common file operations, making file management more efficient and convenient.
+  - ![rightMouseMenu](./images/right-mouse-menu.png)
+  
 
 ### Development Plan
 

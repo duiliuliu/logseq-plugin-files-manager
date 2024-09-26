@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ProList as AntdProList } from '@ant-design/pro-components';
 import './proList.css';
 import useColumnCount from '../ui_hooks/useColCount';
-import { AppConfig, DataItem, Size } from '../data/types';
-import { renderListActions, renderCardContent, renderCardTitle, renderListAvatar, renderListContent, renderListDescription, renderListTitle, renderTag, renderCardActions2 } from './proListMeta';
+import { AppConfig, DataItem, Position, Size } from '../data/types';
+import { renderListActions, renderCardContent, renderCardTitle, renderListAvatar, renderListContent, renderListDescription, renderListTitle, renderTag, renderCardActions2, renderContextMenuActions } from './proListMeta';
 import { DisplayMode } from '../data/enums';
+import { PARENT_MAIN_CONTAINER_ID } from '../data/constants';
 
 interface ProListProps {
     mode: DisplayMode;
@@ -13,6 +14,7 @@ interface ProListProps {
     size?: Size
     emptyNode: React.ReactNode;
     loading?: boolean
+    [key: string]: any;
 }
 
 
@@ -35,30 +37,56 @@ const getMetas = (mode: DisplayMode, props: { userConfig: AppConfig, [key: strin
 );
 
 
-const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNode, loading }) => {
+const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNode, loading, dirhandler, scrollPosition }: ProListProps) => {
     if (!data || data.length === 0) return emptyNode;
 
     const colCount = useColumnCount(size?.width);
+    const [rightMenuItem, setRightMenuItem] = useState<DataItem>(data[0]);
+    const [rightMenuDisplay, setRightMenuDisplay] = useState<boolean>(false);
+    const [rightMenuPosition, setRightMenuPosition] = useState<Position>({} as Position)
 
     return (
-        <AntdProList<DataItem>
-            ghost={true}
-            itemCardProps={{ ghost: true, className: 'list', bodyStyle: { padding: 0, paddingLeft: 18 }, }}
-            rowKey='name'
-            dataSource={data}
-            showActions='hover'
-            showExtra='always'
-            grid={DisplayMode.isCard(mode) ? { gutter: colCount < 4 ? 8 : 16, column: colCount } : undefined}
-            editable={{
-                onSave: async (_key, _record, _originRow) => {
-                    // console.log(key, record, originRow);
-                    return true;
-                },
-            }}
-            metas={getMetas(mode, { userConfig, bodyWidth: size?.width, bodyHeight: size?.height })} // 根据mode选择不同的metas
-            virtual
-            loading={loading}
-        />
+        <div>
+            <AntdProList<DataItem>
+                ghost={true}
+                itemCardProps={{ ghost: true, className: 'list', bodyStyle: { padding: 0, paddingLeft: 18 }, }}
+                rowKey='name'
+                dataSource={data}
+                showActions='hover'
+                showExtra='always'
+                grid={DisplayMode.isCard(mode) ? { gutter: colCount < 4 ? 8 : 16, column: colCount } : undefined}
+                onRow={(record: any) => {
+                    return {
+                        onContextMenu: (e) => {
+                            // 获取主容器的位置和尺寸信息
+                            const mainContainer = parent.document.getElementById(PARENT_MAIN_CONTAINER_ID);
+                            const rect = mainContainer?.getBoundingClientRect() ?? { x: 0, y: 0 };
+
+                            // 显示右键菜单，并设置菜单项和位置
+                            setRightMenuDisplay(true)
+                            setRightMenuItem(record)
+                            setRightMenuPosition({ left: e.pageX - rect.x, top: scrollPosition.top + e.pageY - 80 - rect.y })
+                        }
+                    };
+                }}
+                metas={getMetas(mode, { userConfig, bodyWidth: size?.width, bodyHeight: size?.height, dirhandler })} // 根据mode选择不同的metas
+                virtual
+                loading={loading}
+            />
+            <div style={{
+                display: rightMenuDisplay ? 'block' : 'none',
+                backgroundColor: `var(--ls-primary-background-color)`,
+                color: `var(--ls-primary-text-color)`,
+                position: 'absolute',
+                left: rightMenuPosition.left,
+                top: rightMenuPosition.top,
+                boxShadow: '0px 8px 16px 0px rgba(0,0,0,0.2)', /* 阴影效果 */
+                transition: 'opacity 0.5s ease, visibility 0.5s ease',
+                zIndex: 2
+            }}>
+                {renderContextMenuActions({ record: rightMenuItem, userConfig, dirhandler }, setRightMenuDisplay)}
+            </div>
+        </div>
     );
 };
 
