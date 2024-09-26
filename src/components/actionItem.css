@@ -5,15 +5,16 @@
   padding: 8px 12px;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s;
+  transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
+  /* 添加颜色过渡 */
 }
 
-.action-item:hover {
+.action-item:hover:not(.disabled) {
   background-color: #f0f0f0;
   /* 鼠标悬停时的背景颜色 */
 }
 
-.action-item:focus {
+.action-item:focus:not(.disabled) {
   outline: none;
   /* 移除默认的聚焦轮廓 */
   background-color: #e0e0e0;
@@ -22,7 +23,20 @@
   /* 聚焦时的阴影 */
 }
 
-.action-item:active {
+.action-item:active:not(.disabled) {
   background-color: #d0d0d0;
   /* 点击时的背景颜色 */
+}
+
+.action-item.disabled {
+  color: gray;
+  /* 禁用状态的文字颜色 */
+  background-color: #f9f9f9;
+  /* 禁用状态的背景颜色 */
+  cursor: not-allowed;
+  /* 禁用状态的光标 */
+  opacity: 0.6;
+  /* 添加透明度以增强禁用效果 */
+  pointer-events: none;
+  /* 禁用点击事件 */
 }

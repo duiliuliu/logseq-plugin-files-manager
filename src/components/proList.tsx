@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ProList as AntdProList } from '@ant-design/pro-components';
 import './proList.css';
 import useColumnCount from '../ui_hooks/useColCount';
@@ -45,6 +45,23 @@ const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNo
     const [rightMenuDisplay, setRightMenuDisplay] = useState<boolean>(false);
     const [rightMenuPosition, setRightMenuPosition] = useState<Position>({} as Position)
 
+    const handleDocumentClick = (event: MouseEvent) => {
+        // 检查点击事件的目标是否不在 Popover 内部
+        if (!(event.target as Element).closest('.right-menu')) {
+            setRightMenuDisplay(false);
+        }
+    };
+
+    useEffect(() => {
+        // 监听点击事件，以便在点击外部时关闭 Popover
+        document.addEventListener('click', handleDocumentClick);
+
+        return () => {
+            // 组件卸载时移除事件监听器
+            document.removeEventListener('click', handleDocumentClick);
+        };
+    }, []);
+
     return (
         <div>
             <AntdProList<DataItem>
@@ -73,7 +90,7 @@ const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNo
                 virtual
                 loading={loading}
             />
-            <div style={{
+            <div className='right-menu' style={{
                 display: rightMenuDisplay ? 'block' : 'none',
                 backgroundColor: `var(--ls-primary-background-color)`,
                 color: `var(--ls-primary-text-color)`,
@@ -83,7 +100,7 @@ const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNo
                 boxShadow: '0px 8px 16px 0px rgba(0,0,0,0.2)', /* 阴影效果 */
                 transition: 'opacity 0.5s ease, visibility 0.5s ease',
                 zIndex: 2
-            }}>
+            }}  >
                 {renderContextMenuActions({ record: rightMenuItem, userConfig, dirhandler }, setRightMenuDisplay)}
             </div>
         </div>
