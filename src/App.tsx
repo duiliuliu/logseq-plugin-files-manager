@@ -27,7 +27,7 @@ type SearchProps = GetProps<typeof Input.Search>;
 const App: React.FC = () => {
     const [userConfigUpdated, setUserConfigUpdated] = useState<number>(Date.now())
     const userConfig = useUserConfigs(userConfigUpdated);
-    const { directoryHandle, initializeDirectory } = useDirectoryHandle({ graph: userConfig.currentGraph })
+    const { directoryHandle, getDirectoryHandle } = useDirectoryHandle({ graph: userConfig.currentGraph })
     const fileMotified = useFileChangeListener(userConfig, directoryHandle, setUserConfigUpdated)   // 使用 useFileChangeListener Hook 来监听文件变化
     const { rebuildData, preparing, needAuth } = useRebuildData(userConfig, directoryHandle,)
     const { typeCount } = useLoadDataCount({ graph: userConfig.currentGraph, preparing, fileMotified });
@@ -40,7 +40,7 @@ const App: React.FC = () => {
     const listHeight = useCalculateHeight(40); // 使用自定义钩子计算高度
     const calBatchSize = () => (DisplayMode.isCard(mode) ? 40 : 20)
     const [maxNumber, setMaxNumber] = useState<number>(calBatchSize);
-    const loadMore = useUpdateMaxNumberOnScroll(calBatchSize(), maxNumber, typeCount[currentTab as TabEnum], setMaxNumber)(tabContentRef)
+    const { loadMore, scrollPosition } = useUpdateMaxNumberOnScroll(calBatchSize(), maxNumber, typeCount[currentTab as TabEnum], setMaxNumber)(tabContentRef)
     const { data, loading } = useLoadData({
         graph: userConfig.currentGraph, // 假设有一个默认图 
         maxNumber, //  根据滚动轴，调整maxCardNumber数量
@@ -105,7 +105,7 @@ const App: React.FC = () => {
                             needAuth ?
                                 <Result
                                     title={`${getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE_TOOLTIP)} ${getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE_TOOLTIP_PATH)}:${buildGraphPath(userConfig.currentGraph)}`}
-                                    extra={<Button icon={<FolderSimplePlus />} onClick={() => initializeDirectory()} type="default">{getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE)}</Button>}
+                                    extra={<Button icon={<FolderSimplePlus />} onClick={() => getDirectoryHandle()} type="default">{getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE)}</Button>}
                                 />
                                 : <Spin spinning={preparing} tip={getI18nConstant(userConfig.preferredLanguage, i18n_BUILDING)} percent='auto' delay={100}>
                                     <ProList
@@ -115,6 +115,8 @@ const App: React.FC = () => {
                                         size={{ width, height }}
                                         emptyNode={<Empty />}
                                         loading={loading}
+                                        dirhandler={getDirectoryHandle}
+                                        scrollPosition={scrollPosition}
                                     />
                                 </Spin>
                         }

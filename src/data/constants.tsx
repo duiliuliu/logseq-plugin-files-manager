@@ -17,8 +17,8 @@ import {
 // 定义主内容容器的 ID，用于在 DOM 中定位主内容区域
 export const PARENT_MAIN_CONTAINER_ID = 'main-content-container';
 export const PARENT_OPEN_BUTTON_ID = 'files-manager-open'
-export const PARENT_BACK_TOP= 'kef-tocgen-backtop'
-export const PARENT_BACK_BOTTOM= 'kef-tocgen-godown'
+export const PARENT_BACK_TOP = 'kef-tocgen-backtop'
+export const PARENT_BACK_BOTTOM = 'kef-tocgen-godown'
 export const PLUGIN_ROUTE = '/page/files-manager'
 
 // 标签文本常量
@@ -32,17 +32,17 @@ export const i18n_PAGES_LABEL = 'Pages';
 export const i18n_JOURNALS_LABEL = 'Journals';
 export const i18n_SETTINGS_LABEL = 'Settings';
 
-export const i18n_OPEN_FILE_MANAGER_LABEL = 'Open File Manager';
-export const i18n_FILE_MANAGER_LABEL = 'File Manager';
+export const i18n_OPEN_FILE_MANAGER_LABEL = 'Open File Manager'; // Open Files Manager
+export const i18n_FILE_MANAGER_LABEL = 'File Manager'; // Files Manager
 export const i18n_FILE_MANAGER_FEATURE = 'File Manager Feature'; // 本插件专为提高您管理日常文档和附件的效率而设计，帮助您轻松处理和组织与Logseq相关的文件。
 export const i18n_FILE_MANAGER_CHANGE_LOG = 'File Manager Change Log' // 新插件版本引入了许多新功能。查看详情
 export const i18n_FILE_MANAGER_CHANGE_LOG_LINK = 'File Manager Change Log Link' // https://github.com/duiliuliu/logseq-plugin-files-manager/releases
 
-export const i18n_OPEN_FILE_MANAGER_TIP = 'Click here' // 👉请点击这儿 👉
+export const i18n_OPEN_FILE_MANAGER_TIP = 'Click here' // 👉👉请点击这儿 
 export const i18n_FILE_MANAGER_USE_TIP = 'Quickly use the plugin' // 快速使用插件
 
 // 搜索占位符文本
-export const i18n_SEARCH_PLACEHOLDER = 'search pages';
+export const i18n_SEARCH_PLACEHOLDER = 'Search pages';
 
 // 页面常量
 export const i18n_VIEW_CARD_MODE = 'Card View';
@@ -52,8 +52,16 @@ export const i18n_BUILDING = 'Building';
 
 // 工具提示文本常量
 export const i18n_AUTHORIZE = 'Authorize';
-export const i18n_COPY_TOOLTIP = 'Copy filepath';
-export const i18n_OPEN_TOOLTIP = 'Open the folder';
+export const i18n_COPY_PATH_TOOLTIP = 'Copy block';
+export const i18n_COPY_TITLE_TOOLTIP = 'Copy title';
+export const i18n_PREVIEW_TOOLTIP = 'Preview file';
+export const i18n_OPEN_FILE_TOOLTIP = 'Open the file';
+export const i18n_OPEN_FOLDER_TOOLTIP = 'Open the folder';
+export const i18n_OPEN_FOLDER_ERROR = 'Open the folder failed';
+export const i18n_DELETE_TOOLTIP = 'Delete the file';
+export const i18n_DELETE_SUCCESS = 'Delete the file success';
+export const i18n_DELETE_ERROR = 'Delete the file failed';
+export const i18n_FILE_DENY = 'Deny the file operate'; // The request is not allowed by the user agent
 export const i18n_COPY_SUCCESS = 'Copied to clipboard success';
 export const i18n_OPEN_WITH_OS = 'Open the folder with the Logseq';
 export const i18n_AUTHORIZE_TOOLTIP = 'Authorize Tip' //请点击选择logseq文档目录进行授权,授权后文件会进行索引操作,请耐心等待片刻

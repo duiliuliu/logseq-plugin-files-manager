@@ -4,66 +4,240 @@ import { getTimeString } from '../utils/timeUtil';
 import React from 'react';
 import { DataType, RelatedType } from '../data/enums';
 import { Dropdown, Modal, Space, Tag } from 'antd';
-import { Copy, DotsThree, FolderOpen } from '@phosphor-icons/react';
+import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, Trash } from '@phosphor-icons/react';
 import { logger } from '../utils/logger';
-import { isBook, isImage } from '../utils/fileUtil';
+import { isBook, isImage, verifyPermission } from '../utils/fileUtil';
 import { buildGraphPath, copyToClipboard } from '../logseq/utils';
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_TOOLTIP, i18n_OPEN_TOOLTIP } from '../data/constants';
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
-import { ActionItemProps, TooltipActionItem } from './actionItem';
+import ActionItem, { ActionItemProps, TooltipActionItem } from './actionItem';
 import { ItemType } from 'antd/es/menu/interface';
 import PreviewFrame from './previewItem';
+import { removePageFromDB } from '../data/db';
 
+
+// 定义 MetaRenderProps 接口，用于传递给渲染函数的属性
 interface MetaRenderProps {
     userConfig: AppConfig;
     record: DataItem;
     [key: string]: any;
 }
 
+// 引入 Modal 中的 info 方法，用于显示信息弹窗
 const { info } = Modal;
 
-const showPreviewModalAction = ({ record, userConfig, bodyWidth, bodyHeight }: MetaRenderProps) => {
+// =============== Action Functions ===============
 
-    if (record.path) {
-        const width = bodyWidth ? bodyWidth * 0.7 : window.innerWidth * 0.5;
-        const height = bodyHeight ? bodyHeight * 0.7 : window.innerHeight * 0.7;
-        info({
-            title: record.alias,
-            icon: renderListAvatar({ record, userConfig }),
-            content: <PreviewFrame
-                src={record.path}
-                height={height} // 例如，高度为 600px
-                width={width} // 例如，宽度为 800px
-                dataType={record.dataType}
-                extName={record.extName}
-            />,
-            centered: true,
-            closable: false,
-            maskClosable: true,
-            keyboard: true,
-            footer: <div></div>,
-            width, height
-        });
+/**
+ * 显示预览模态框的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, bodyWidth, bodyHeight, setRightMenuDisplay 的属性
+ */
+const showPreviewModalAction = ({ record, userConfig, bodyWidth, bodyHeight, setRightMenuDisplay }: MetaRenderProps) => ({
+    icon: Eye,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_PREVIEW_TOOLTIP),
+    onClick: () => {
+        setRightMenuDisplay && setRightMenuDisplay(false)
+        if (record.path) {
+            const width = bodyWidth ? bodyWidth * 0.7 : window.innerWidth * 0.5;
+            const height = bodyHeight ? bodyHeight * 0.7 : window.innerHeight * 0.7;
+            info({
+                title: <p onDoubleClick={copyTitleAction({ record, userConfig }).onClick}>{record.alias} </p>,
+                icon: renderListAvatar({ record, userConfig }),
+                content: <PreviewFrame
+                    src={record.path}
+                    height={height}
+                    width={width}
+                    dataType={record.dataType}
+                    extName={record.extName}
+                />,
+                centered: true,
+                closable: false,
+                maskClosable: true,
+                keyboard: true,
+                footer: <div></div>,
+                width, height
+            });
+        }
     }
-};
+});
 
+/**
+ * 复制标题的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, setRightMenuDisplay 的属性
+ */
+const copyTitleAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps) => ({
+    icon: CopySimple,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_COPY_TITLE_TOOLTIP),
+    onClick: () => {
+        setRightMenuDisplay && setRightMenuDisplay(false)
+        copyToClipboard(record.alias)
+        logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_COPY_SUCCESS), 'success');
+    }
+});
+
+/**
+ * 复制文件路径的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, setRightMenuDisplay 的属性
+ */
+const copyFileNodeAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
+    icon: Copy,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_COPY_PATH_TOOLTIP),
+    onClick: () => {
+        let copyValue = '';
+        setRightMenuDisplay && setRightMenuDisplay(false)
+
+        // 检查是否为资产文件类型
+        if (DataType.isAssetFile(record.dataType)) {
+            // 获取相关块
+            const relatedBlocks = record.related?.filter(item => item.relatedType === RelatedType.BLOCK);
+
+            // 如果存在相关块，使用块的UUID
+            if (relatedBlocks && relatedBlocks?.length > 0 && !isBook(record.extName!)) {
+                copyValue = `((${relatedBlocks[0].relatedItemUuid}))`;
+            } else {
+                // 否则，构建文件路径
+                const filePath = record.path?.replace(ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH);
+                copyValue = DataType.IMG_ASSET === record.dataType
+                    ? `![${record.alias}](${filePath})` // 图片资产使用Markdown图片语法
+                    : `[${record.alias}](${filePath})`; // 其他资产使用Markdown链接语法
+            }
+        } else {
+            // 如果不是资产文件，使用Logseq的页面链接语法
+            copyValue = `[[${record.alias}]]`;
+        }
+
+        // 将值复制到剪贴板
+        copyToClipboard(copyValue);
+
+        // 显示成功消息 
+        logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_COPY_SUCCESS), 'success');
+    }
+})
+
+
+/**
+ * 打开文件的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, setRightMenuDisplay 的属性
+ */
+const openFileAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
+    icon: FolderPlus,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FILE_TOOLTIP),
+    onClick: (e) => {
+        setRightMenuDisplay && setRightMenuDisplay(false)
+
+        if (record.extName && isBook(record.extName)) {
+            logger.debug(`logseq.App.builtInOpen, path:${record.path}`)
+            // @ts-ignore
+            logseq.Assets.builtInOpen(record.path)
+        } else if (!DataType.isAssetFile(record.dataType)) {
+            if (e.nativeEvent.shiftKey) {
+                logseq.Editor.openInRightSidebar(record.uuid!);
+            }
+            else {
+                logger.debug(`logseq.App.pushState, page:${record.name}`)
+                logseq.App.pushState('page', { name: record.alias, });
+            }
+        } else {
+            logger.debug(`logseq.App.openPath, path:${record.path}`)
+            logseq.App.openPath(record.path)
+        }
+        e.stopPropagation();
+        logseq.hideMainUI({ restoreEditingCursor: true });
+    }
+})
+
+/**
+ * 打开文件夹的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, setRightMenuDisplay 的属性
+ */
+const openFolderAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
+    icon: FolderOpen,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FILE_TOOLTIP),
+    onClick: async (e) => {
+        setRightMenuDisplay && setRightMenuDisplay(false)
+        try {
+            await logseq.App.showItemInFolder(record.path)
+        } catch (error) {
+            logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FOLDER_ERROR)}" [:br][:br] "${error}"]`, 'error')
+        }
+        e.stopPropagation();
+        logseq.hideMainUI({ restoreEditingCursor: true });
+    }
+})
+
+/**
+ * 删除文件的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, dirhandler, setRightMenuDisplay 的属性
+ */
+const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
+    icon: Trash,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_TOOLTIP),
+    onClick: async (_e) => {
+        setRightMenuDisplay && setRightMenuDisplay(false)
+
+        if (DataType.isAssetFile(record.dataType)) {
+            const dirHandler = (await getDirectoryHandle()) as FileSystemDirectoryHandle
+            const assetdirHandler = await dirHandler?.getDirectoryHandle(userConfig.assetsDirectory!)
+            const permiss = await verifyPermission(assetdirHandler, true)
+            if (!permiss) {
+                logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY), 'warn')
+            } else {
+                await assetdirHandler.removeEntry(record.name).then(() => {
+                    removePageFromDB(userConfig.currentGraph, record.name)
+                    logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
+                }, (reason => {
+                    logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR)}" [:br][:br] "${reason}"]`, 'error')
+                }))
+            }
+        }
+
+        if (record.dataType === DataType.JOURNAL || record.dataType === DataType.PAGE) {
+            logseq.Editor.deletePage(record.alias).then(() => {
+                logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
+            }, (reason => {
+                logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR)}" [:br][:br] "${reason}"]`, 'error')
+            }))
+        }
+
+    }
+})
+
+// =============== Render list component ===============
+
+/**
+ * 渲染列表标题
+ * @param {MetaRenderProps} props - 包含 record, userConfig, bodyWidth, bodyHeight 的属性
+ */
 const renderListTitle = ({ record, userConfig, bodyWidth, bodyHeight }: MetaRenderProps) => (
-    <div className='list-title' onClick={() => showPreviewModalAction({ record, userConfig, bodyWidth, bodyHeight })} >
+    <div className='list-title'
+        onDoubleClick={copyTitleAction({ record, userConfig }).onClick}
+        onClick={showPreviewModalAction({ record, userConfig, bodyWidth, bodyHeight }).onClick} >
         {record.alias ? record.alias : record.name}
     </div>
 );
 
+/**
+ * 渲染列表描述
+ * @param {MetaRenderProps} props - 包含 record, userConfig 的属性
+ */
 const renderListDescription = ({ record, userConfig }: MetaRenderProps) => (
     <div className='list-description'>
         {record.size ? record.size + ' • ' : ''}{format(new Date(record.updatedTime!), userConfig.preferredDateFormat)} {getTimeString(record.updatedTime!)}
     </div>
 );
 
+/**
+ * 渲染列表头像
+ * @param {MetaRenderProps} props - 包含 record 的属性
+ */
 const renderListAvatar = ({ record }: MetaRenderProps) => (
     <div className='list-avatar'>{record.extName ? record.extName.toUpperCase() : '🕰'}</div>
 );
 
-// 渲染列表内容的函数，接受包含记录和用户配置的对象作为参数
+/**
+ * 渲染列表内容
+ * @param {MetaRenderProps} props - 包含 record, userConfig 的属性
+ */
 const renderListContent = ({ record, userConfig }: MetaRenderProps) => {
     // 提取图像内容
     const imgContent = record.image || record.dataType === DataType.IMG_ASSET ? (
@@ -103,6 +277,10 @@ const renderListContent = ({ record, userConfig }: MetaRenderProps) => {
     );
 };
 
+/**
+ * 渲染标签
+ * @param {MetaRenderProps} props - 包含 record 的属性
+ */
 const renderTag = ({ record }: MetaRenderProps) => {
     return (
         <Space size={0}>
@@ -118,149 +296,23 @@ const renderTag = ({ record }: MetaRenderProps) => {
     );
 }
 
-const renderListActions = ({ record, userConfig }: MetaRenderProps) => {
+// =============== Render card component ===============
 
-    const actions = [
-        openFileAction({ record, userConfig }),
-        copyFileNodeAction({ record, userConfig })
-    ]
-
-    return <Dropdown
-        placement="bottomRight"
-        menu={{
-            items: actions.map((item, index) => ({
-                key: index.toString(),
-                label: item.text,
-                icon: <item.icon size={15} weight={'duotone'} />,
-                onClick: (e) => { item.onClick(e.domEvent) }
-            } as ItemType)),
-        }}
-    >
-        <DotsThree size={24} />
-    </Dropdown>
-};
-
-
-const renderCardActions2 = ({ record, userConfig }: MetaRenderProps) => {
-
-    const actions = [
-        openFileAction({ record, userConfig }),
-        copyFileNodeAction({ record, userConfig })
-    ]
-
-    return <Dropdown
-        // placement="bottomRight"
-        menu={{
-            items: actions.map((item, index) => ({
-                key: index.toString(),
-                icon: <TooltipActionItem
-                    key={index.toString()}
-                    icon={item.icon}
-                    text={item.text}
-                    onClick={item.onClick} />
-            } as ItemType)),
-        }}
-    >
-        <DotsThree size={24} />
-    </Dropdown>
-};
-
-
-const renderCardActions = ({ record, userConfig }: MetaRenderProps) => {
-
-    const actions = [
-        openFileAction({ record, userConfig }),
-        copyFileNodeAction({ record, userConfig })
-    ]
-
-    return <span className='list-actions' >
-        <Space.Compact block>
-            {actions.map((item, index) => (
-                <TooltipActionItem
-                    key={index.toString()}
-                    icon={item.icon}
-                    text={item.text}
-                    onClick={item.onClick} />
-            ))}
-
-        </Space.Compact>
-    </span>
-};
-
-const copyFileNodeAction = ({ record, userConfig }: MetaRenderProps): ActionItemProps => ({
-    icon: Copy,
-    text: getI18nConstant(userConfig.preferredLanguage, i18n_COPY_TOOLTIP),
-    onClick: () => {
-        let copyValue = '';
-
-        // 检查是否为资产文件类型
-        if (DataType.isAssetFile(record.dataType)) {
-            // 获取相关块
-            const relatedBlocks = record.related?.filter(item => item.relatedType === RelatedType.BLOCK);
-
-            // 如果存在相关块，使用块的UUID
-            if (relatedBlocks && relatedBlocks?.length > 0 && !isBook(record.extName!)) {
-                copyValue = `((${relatedBlocks[0].relatedItemUuid}))`;
-            } else {
-                // 否则，构建文件路径
-                const filePath = record.path?.replace(ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH);
-                copyValue = DataType.IMG_ASSET === record.dataType
-                    ? `![${record.alias}](${filePath})` // 图片资产使用Markdown图片语法
-                    : `[${record.alias}](${filePath})`; // 其他资产使用Markdown链接语法
-            }
-        } else {
-            // 如果不是资产文件，使用Logseq的页面链接语法
-            copyValue = `[[${record.alias}]]`;
-        }
-
-        // 将值复制到剪贴板
-        copyToClipboard(copyValue);
-
-        // 显示成功消息 
-        logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_COPY_SUCCESS), 'success');
-    }
-})
-
-
-const openFileAction = ({ record, userConfig }: MetaRenderProps): ActionItemProps => (
-    {
-        icon: FolderOpen,
-        text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_TOOLTIP),
-        onClick: (e) => {
-            if (record.extName && isBook(record.extName)) {
-                // logger.debug(`window.open, path:${record.path}`)
-                // window.open(record.path)
-                // logger.debug(`logseq.App.openPath, path:${record.path}`)
-                // logseq.App.openPath(record.path)
-                logger.debug(`logseq.App.builtInOpen, path:${record.path}`)
-                // @ts-ignore
-                logseq.Assets.builtInOpen(record.path)
-            } else if (!DataType.isAssetFile(record.dataType)) {
-                if (e.nativeEvent.shiftKey) {
-                    logseq.Editor.openInRightSidebar(record.uuid!);
-                }
-                else {
-                    logger.debug(`logseq.App.pushState, page:${record.name}`)
-                    logseq.App.pushState('page', { name: record.alias, });
-                }
-            } else {
-                logger.debug(`logseq.App.openPath, path:${record.path}`)
-                // logseq.App.showItemInFolder(record.path)
-                logseq.App.openPath(record.path)
-            }
-            e.stopPropagation();
-            logseq.hideMainUI({ restoreEditingCursor: true });
-        }
-    }
-)
-
-const renderCardTitle = ({ record, }: MetaRenderProps) => (
+/**
+ * 渲染卡片标题
+ * @param {MetaRenderProps} props - 包含 record, userConfig 的属性
+ */
+const renderCardTitle = ({ record, userConfig }: MetaRenderProps) => (
     <div className='card-title-container'>
-        <div className='card-avatar'>{record.extName ? record.extName.toUpperCase() : '🕰'}</div>
+        <div className='card-avatar' onDoubleClick={() => copyTitleAction({ record, userConfig })}>{record.extName ? record.extName.toUpperCase() : '🕰'}</div>
         {(record.dataType === DataType.PAGE || record.dataType === DataType.JOURNAL) && <div className='card-description'>{record.alias}</div>}
     </div>
 );
 
+/**
+ * 渲染卡片内容
+ * @param {MetaRenderProps} props - 包含 record, userConfig, bodyWidth, bodyHeight 的属性
+ */
 const renderCardContent = ({ record, userConfig, bodyWidth, bodyHeight }: MetaRenderProps) => {
     if (record.summary && record.summary.length > 0) {
         return (
@@ -296,15 +348,124 @@ const renderCardContent = ({ record, userConfig, bodyWidth, bodyHeight }: MetaRe
     }
 };
 
+// =============== Render actions Functions ===============
+
+/**
+ * 渲染上下文菜单操作
+ * @param {MetaRenderProps} props - 包含 record, userConfig, dirhandler 的属性
+ * @param {React.Dispatch<React.SetStateAction<boolean>>} setRightMenuDisplay - 设置右键菜单显示状态的函数
+ */
+const renderContextMenuActions = ({ record, userConfig, dirhandler }: MetaRenderProps, setRightMenuDisplay: React.Dispatch<React.SetStateAction<boolean>>) => {
+    const actions = [
+        openFileAction({ record, userConfig, setRightMenuDisplay }),
+        copyFileNodeAction({ record, userConfig, setRightMenuDisplay }),
+        deleteFileAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
+        openFolderAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
+        showPreviewModalAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
+        copyTitleAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
+    ]
+
+    return <span className='list-actions' >
+        <Space.Compact direction="vertical">
+            {actions.map((item, index) => (
+                <ActionItem
+                    key={index.toString()}
+                    icon={item.icon}
+                    text={item.text}
+                    onClick={item.onClick} />
+            ))}
+        </Space.Compact>
+    </span>
+};
+
+/**
+ * 渲染列表操作
+ * @param {MetaRenderProps} props - 包含 record, userConfig, dirhandler 的属性
+ */
+const renderListActions = ({ record, userConfig, dirhandler }: MetaRenderProps) => {
+    const actions = [
+        openFileAction({ record, userConfig }),
+        copyFileNodeAction({ record, userConfig }),
+        deleteFileAction({ record, userConfig, dirhandler })
+    ]
+
+    return <Dropdown
+        placement="bottomRight"
+        menu={{
+            items: actions.map((item, index) => ({
+                key: index.toString(),
+                label: item.text,
+                icon: <item.icon size={15} weight={'regular'} />,
+                onClick: (e) => { item.onClick(e.domEvent) }
+            } as ItemType)),
+        }}
+    >
+        <DotsThree size={24} />
+    </Dropdown>
+};
+
+/**
+ * 渲染卡片操作2
+ * @param {MetaRenderProps} props - 包含 record, userConfig, dirhandler 的属性
+ */
+const renderCardActions2 = ({ record, userConfig, dirhandler }: MetaRenderProps) => {
+    const actions = [
+        openFileAction({ record, userConfig }),
+        copyFileNodeAction({ record, userConfig }),
+        deleteFileAction({ record, userConfig, dirhandler })
+    ]
+
+    return <Dropdown
+        menu={{
+            items: actions.map((item, index) => ({
+                key: index.toString(),
+                icon: <TooltipActionItem
+                    key={index.toString()}
+                    icon={item.icon}
+                    text={item.text}
+                    onClick={item.onClick} />
+            } as ItemType)),
+        }}
+    >
+        <DotsThree size={24} />
+    </Dropdown>
+};
+
+/**
+ * 渲染卡片操作
+ * @param {MetaRenderProps} props - 包含 record, userConfig, dirhandler 的属性
+ */
+const renderCardActions = ({ record, userConfig, dirhandler }: MetaRenderProps) => {
+
+    const actions = [
+        openFileAction({ record, userConfig }),
+        copyFileNodeAction({ record, userConfig }),
+        deleteFileAction({ record, userConfig, dirhandler })
+    ]
+
+    return <span className='list-actions' >
+        <Space.Compact block>
+            {actions.map((item, index) => (
+                <TooltipActionItem
+                    key={index.toString()}
+                    icon={item.icon}
+                    text={item.text}
+                    onClick={item.onClick} />
+            ))}
+        </Space.Compact>
+    </span>
+};
+
 export {
     renderListTitle,
     renderListDescription,
     renderListAvatar,
     renderListContent,
     renderTag,
+    renderContextMenuActions,
     renderListActions,
     renderCardActions,
     renderCardActions2,
     renderCardTitle,
     renderCardContent
-};
+}; 

@@ -3,12 +3,19 @@
 import React, { useState, useEffect } from 'react';
 import { logger } from '../utils/logger';
 import { PARENT_BACK_BOTTOM, PARENT_BACK_TOP } from '../data/constants';
+import { Position } from '../data/types';
 
 // 工具方法，用于加载更多数据当滚动到底部
 export const useUpdateMaxNumberOnScroll = (growth: number, currentMaxNumber: number, dataSize: number, setMaxNumber: { (value: React.SetStateAction<number>): void; (arg0: (prevMaxNumber: number) => number): void; }) => {
     const [loadMore, setLoadMore] = useState<boolean>(false);
+    const [scrollPosition, setScrollPosition] = useState<Position>({ left: 0, top: 0 });
+
 
     const handleScroll = (element?: HTMLElement) => {
+        if (!element) {
+            return
+        }
+
         if (dataSize == 0) {
             dataSize = 1000
         }
@@ -21,6 +28,8 @@ export const useUpdateMaxNumberOnScroll = (growth: number, currentMaxNumber: num
         } else {
             setLoadMore(false)
         }
+
+        setScrollPosition({ top: element.scrollTop, left: element.scrollLeft })
     };
 
     return (refEL: React.RefObject<HTMLElement>) => {
@@ -61,7 +70,7 @@ export const useUpdateMaxNumberOnScroll = (growth: number, currentMaxNumber: num
             }
         }, [growth, currentMaxNumber, dataSize]); // 仅在 growth 或 dataSize 变化时重新绑定事件
 
-        return loadMore;
+        return {loadMore, scrollPosition};
     };
 };
 

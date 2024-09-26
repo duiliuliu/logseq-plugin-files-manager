@@ -13,7 +13,7 @@ export interface ActionItemProps {
 const ActionItem: React.FC<ActionItemProps> = ({ icon: Icon, text, onClick }) => {
   return (
     <div className='action-item' onClick={onClick}>
-      <span><Icon size={15} weight='bold' /></span>
+      <span><Icon size={15} weight='regular' /></span>&nbsp;&nbsp;
       <strong>{text}</strong>
     </div>
   );
@@ -29,6 +29,6 @@ export const TooltipActionItem = ({ icon: Icon, text, onClick }: ActionItemProps
     </Tooltip>
   )
 }
- 
+
 
 export default ActionItem;

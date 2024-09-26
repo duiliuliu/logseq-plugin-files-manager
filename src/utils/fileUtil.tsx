@@ -144,3 +144,24 @@ export const getGraphDirName = (graph: string) => {
     // 使用pop方法获取数组的最后一个元素
     return parts.pop();
 }
+
+export async function verifyPermission(dirHandle: FileSystemHandle | FileSystemDirectoryHandle, readWrite: boolean) {
+    if (!dirHandle) {
+        return false
+    }
+    const options = {};
+    if (readWrite) {
+        // @ts-ignore
+        options.mode = 'readwrite';
+    }
+    // Check if permission was already granted. If so, return true.
+    if ((await dirHandle.queryPermission(options)) === 'granted') {
+        return true;
+    }
+    // Request permission. If the user grants permission, return true.
+    if ((await dirHandle.requestPermission(options)) === 'granted') {
+        return true;
+    }
+    // The user didn't grant permission, so return false.
+    return false;
+}
