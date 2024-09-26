@@ -157,11 +157,11 @@ const openFolderAction = ({ record, userConfig, setRightMenuDisplay }: MetaRende
         setRightMenuDisplay && setRightMenuDisplay(false)
         try {
             await logseq.App.showItemInFolder(record.path)
+            e.stopPropagation();
+            logseq.hideMainUI({ restoreEditingCursor: true });
         } catch (error) {
             logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FOLDER_ERROR)}" [:br][:br] "${error}"]`, 'error')
         }
-        e.stopPropagation();
-        logseq.hideMainUI({ restoreEditingCursor: true });
     }
 })
 
