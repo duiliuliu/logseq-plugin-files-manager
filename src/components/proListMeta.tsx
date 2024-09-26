@@ -4,11 +4,11 @@ import { getTimeString } from '../utils/timeUtil';
 import React from 'react';
 import { DataType, RelatedType } from '../data/enums';
 import { Dropdown, Modal, Space, Tag } from 'antd';
-import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, Trash } from '@phosphor-icons/react';
+import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, Swap, Trash } from '@phosphor-icons/react';
 import { logger } from '../utils/logger';
 import { isBook, isImage, verifyPermission } from '../utils/fileUtil';
 import { buildGraphPath, copyToClipboard } from '../logseq/utils';
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP } from '../data/constants';
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
 import ActionItem, { ActionItemProps, TooltipActionItem } from './actionItem';
 import { ItemType } from 'antd/es/menu/interface';
@@ -32,7 +32,7 @@ const { info } = Modal;
  * 显示预览模态框的 Action 函数
  * @param {MetaRenderProps} props - 包含 record, userConfig, bodyWidth, bodyHeight, setRightMenuDisplay 的属性
  */
-const showPreviewModalAction = ({ record, userConfig, bodyWidth, bodyHeight, setRightMenuDisplay }: MetaRenderProps) => ({
+const showPreviewModalAction = ({ record, userConfig, bodyWidth, bodyHeight, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
     icon: Eye,
     text: getI18nConstant(userConfig.preferredLanguage, i18n_PREVIEW_TOOLTIP),
     onClick: () => {
@@ -65,7 +65,7 @@ const showPreviewModalAction = ({ record, userConfig, bodyWidth, bodyHeight, set
  * 复制标题的 Action 函数
  * @param {MetaRenderProps} props - 包含 record, userConfig, setRightMenuDisplay 的属性
  */
-const copyTitleAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps) => ({
+const copyTitleAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
     icon: CopySimple,
     text: getI18nConstant(userConfig.preferredLanguage, i18n_COPY_TITLE_TOOLTIP),
     onClick: () => {
@@ -201,6 +201,20 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
 
     }
 })
+
+
+
+/**
+ * 重命名文件的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, dirhandler, setRightMenuDisplay 的属性
+ */
+const renameFileAction = ({ userConfig }: MetaRenderProps): ActionItemProps => ({
+    icon: Swap,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_RENAME_TOOLTIP),
+    onClick: async (_e) => { console.log("还在支持中, 敬请期待！") },
+    disable: true
+})
+
 
 // =============== Render list component ===============
 
@@ -360,6 +374,7 @@ const renderContextMenuActions = ({ record, userConfig, dirhandler }: MetaRender
         openFileAction({ record, userConfig, setRightMenuDisplay }),
         copyFileNodeAction({ record, userConfig, setRightMenuDisplay }),
         deleteFileAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
+        renameFileAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         openFolderAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         showPreviewModalAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         copyTitleAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
@@ -372,7 +387,9 @@ const renderContextMenuActions = ({ record, userConfig, dirhandler }: MetaRender
                     key={index.toString()}
                     icon={item.icon}
                     text={item.text}
-                    onClick={item.onClick} />
+                    onClick={item.onClick}
+                    disable={item.disable}
+                />
             ))}
         </Space.Compact>
     </span>

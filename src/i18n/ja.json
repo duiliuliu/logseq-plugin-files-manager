@@ -27,6 +27,7 @@
     "Open the file": "ファイルを開く",
     "Open the folder": "フォルダーを開く",
     "Open the folder failed": "フォルダーを開くに失敗",
+    "Rename the file": "ファイルをリネーム",
     "Delete the file": "ファイルを削除",
     "Delete the file success": "削除成功",
     "Delete the file failed": "削除失敗",

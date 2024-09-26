@@ -59,6 +59,7 @@ export const i18n_OPEN_FILE_TOOLTIP = 'Open the file';
 export const i18n_OPEN_FOLDER_TOOLTIP = 'Open the folder';
 export const i18n_OPEN_FOLDER_ERROR = 'Open the folder failed';
 export const i18n_DELETE_TOOLTIP = 'Delete the file';
+export const i18n_RENAME_TOOLTIP = 'Rename the file';
 export const i18n_DELETE_SUCCESS = 'Delete the file success';
 export const i18n_DELETE_ERROR = 'Delete the file failed';
 export const i18n_FILE_DENY = 'Deny the file operate'; // The request is not allowed by the user agent
