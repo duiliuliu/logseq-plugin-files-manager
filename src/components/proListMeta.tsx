@@ -8,7 +8,7 @@ import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, Trash } from 
 import { logger } from '../utils/logger';
 import { isBook, isImage, verifyPermission } from '../utils/fileUtil';
 import { buildGraphPath, copyToClipboard } from '../logseq/utils';
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR } from '../data/constants';
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
 import ActionItem, { ActionItemProps, TooltipActionItem } from './actionItem';
 import { ItemType } from 'antd/es/menu/interface';
@@ -152,7 +152,7 @@ const openFileAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderP
  */
 const openFolderAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
     icon: FolderOpen,
-    text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FILE_TOOLTIP),
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FOLDER_TOOLTIP),
     onClick: async (e) => {
         setRightMenuDisplay && setRightMenuDisplay(false)
         try {
