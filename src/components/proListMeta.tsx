@@ -175,7 +175,7 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
     text: getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_TOOLTIP),
     onClick: async (_e) => {
         setRightMenuDisplay && setRightMenuDisplay(false)
-        let res = OPERATE_FAILED
+        let result = OPERATE_FAILED
         let content = '...'
 
         if (DataType.isAssetFile(record.dataType)) {
@@ -184,17 +184,17 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
             const permiss = await verifyPermission(assetdirHandler, true)
             if (!permiss) {
                 logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY), 'warn')
-                res = OPERATE_FAILED
+                result = OPERATE_FAILED
                 content = getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY)
             } else {
                 await assetdirHandler.removeEntry(record.name).then(() => {
                     removePageFromDB(userConfig.currentGraph, record.name)
                     logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
-                    res = OPERATE_SUCCESS
+                    result = OPERATE_SUCCESS
                     content = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS)
                 }, (reason => {
                     logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR)}" [:br][:br] "${reason}"]`, 'error')
-                    res = OPERATE_FAILED
+                    result = OPERATE_FAILED
                     content = reason
                 }))
             }
@@ -203,11 +203,11 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
         if (record.dataType === DataType.JOURNAL || record.dataType === DataType.PAGE) {
             await logseq.Editor.deletePage(record.alias).then(() => {
                 logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
-                res = OPERATE_SUCCESS
+                result = OPERATE_SUCCESS
                 content = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS)
             }, (reason => {
                 logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR)}" [:br][:br] "${reason}"]`, 'error')
-                res = OPERATE_FAILED
+                result = OPERATE_FAILED
                 content = reason
             }))
         }
@@ -218,7 +218,7 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
             fileType: record.dataType,
             operate: OperationType.DELETE,
             refBlock: '',  // TODO
-            res
+            result
         })
     }
 })

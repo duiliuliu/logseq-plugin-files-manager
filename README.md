@@ -27,7 +27,6 @@ You can launch the file manager in any of the following ways:
 ![Building Data](./images/app-building-en.png)
 
 ## Feature Introduction
-> Discover and experience more features awaiting your exploration.
 
 1. **Card View and List View**  
    - You can switch the display method in settings, displaying files in card or list form, providing a more intuitive file preview and operation interface.
@@ -53,6 +52,9 @@ You can launch the file manager in any of the following ways:
   - While viewing the list, users can trigger a comprehensive menu of functions by right-clicking on any file entry. This menu offers quick access to common file operations, making file management more efficient and convenient.
   - ![rightMouseMenu](./images/right-mouse-menu.png)
   
+> Discover and experience more features awaiting your exploration.
+
+![app-log](./images/app-log.png)
 
 ### Development Plan
 
