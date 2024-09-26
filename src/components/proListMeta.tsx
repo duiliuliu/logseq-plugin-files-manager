@@ -2,18 +2,19 @@ import { AppConfig, DataItem } from '../data/types';
 import { format } from 'date-fns';
 import { getTimeString } from '../utils/timeUtil';
 import React from 'react';
-import { DataType, RelatedType } from '../data/enums';
+import { DataType, OperationType, RelatedType } from '../data/enums';
 import { Dropdown, Modal, Space, Tag } from 'antd';
 import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, Swap, Trash } from '@phosphor-icons/react';
 import { logger } from '../utils/logger';
 import { isBook, isImage, verifyPermission } from '../utils/fileUtil';
 import { buildGraphPath, copyToClipboard } from '../logseq/utils';
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP } from '../data/constants';
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP, OPERATE_FAILED, OPERATE_SUCCESS } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
 import ActionItem, { ActionItemProps, TooltipActionItem } from './actionItem';
 import { ItemType } from 'antd/es/menu/interface';
 import PreviewFrame from './previewItem';
 import { removePageFromDB } from '../data/db';
+import { trace } from '../logseq/logseqAddOptLog';
 
 
 // 定义 MetaRenderProps 接口，用于传递给渲染函数的属性
@@ -174,6 +175,8 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
     text: getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_TOOLTIP),
     onClick: async (_e) => {
         setRightMenuDisplay && setRightMenuDisplay(false)
+        let res = OPERATE_FAILED
+        let content = '...'
 
         if (DataType.isAssetFile(record.dataType)) {
             const dirHandler = (await getDirectoryHandle()) as FileSystemDirectoryHandle
@@ -181,28 +184,44 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
             const permiss = await verifyPermission(assetdirHandler, true)
             if (!permiss) {
                 logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY), 'warn')
+                res = OPERATE_FAILED
+                content = getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY)
             } else {
                 await assetdirHandler.removeEntry(record.name).then(() => {
                     removePageFromDB(userConfig.currentGraph, record.name)
                     logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
+                    res = OPERATE_SUCCESS
+                    content = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS)
                 }, (reason => {
                     logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR)}" [:br][:br] "${reason}"]`, 'error')
+                    res = OPERATE_FAILED
+                    content = reason
                 }))
             }
         }
 
         if (record.dataType === DataType.JOURNAL || record.dataType === DataType.PAGE) {
-            logseq.Editor.deletePage(record.alias).then(() => {
+            await logseq.Editor.deletePage(record.alias).then(() => {
                 logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
+                res = OPERATE_SUCCESS
+                content = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS)
             }, (reason => {
                 logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR)}" [:br][:br] "${reason}"]`, 'error')
+                res = OPERATE_FAILED
+                content = reason
             }))
         }
 
+        trace(userConfig, content, {
+            file: record.name,
+            fileAlias: record.alias,
+            fileType: record.dataType,
+            operate: OperationType.DELETE,
+            refBlock: '',  // TODO
+            res
+        })
     }
 })
-
-
 
 /**
  * 重命名文件的 Action 函数

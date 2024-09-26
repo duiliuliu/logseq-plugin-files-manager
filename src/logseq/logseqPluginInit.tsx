@@ -1,6 +1,6 @@
 
 import { SimpleCommandKeybinding } from "@logseq/libs/dist/LSPlugin";
-import { i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, PARENT_OPEN_BUTTON_ID, PLUGIN_ROUTE } from "../data/constants";
+import { HOME_PAGE, i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, PARENT_OPEN_BUTTON_ID, PLUGIN_ROUTE } from "../data/constants";
 import getI18nConstant from "../i18n/utils";
 import { logger } from "../utils/logger";
 
@@ -11,7 +11,6 @@ export const refreshLogseqInit = () => {
 // 打开文件管理器的函数
 export const openFileManager = () => {
     logger.debug(`openFileManager`)
-
     logseq.showMainUI();
 };
 
@@ -25,7 +24,7 @@ export const showMainUIIfFilesManager = async (): Promise<void> => {
     const currPage = await logseq.Editor.getCurrentPage();
 
     // 检查当前页面的原始名称是否为 'files-manager'
-    if (currPage?.originalName === 'files-manager') {
+    if (currPage?.originalName === HOME_PAGE) {
         // 如果条件满足，则显示主 UI
         logseq.showMainUI();
     }

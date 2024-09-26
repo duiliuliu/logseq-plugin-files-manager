@@ -59,7 +59,8 @@ export enum OperationType {
     CREATE = 'create',
     MODIFIED = 'modified',
     CONFIG_MODIFIED = 'config_modified',
-    DELETE = 'delete'
+    DELETE = 'delete',
+    RENAME = 'rename'
 }
 
 // ===================================================================================

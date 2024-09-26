@@ -19,7 +19,18 @@ export const PARENT_MAIN_CONTAINER_ID = 'main-content-container';
 export const PARENT_OPEN_BUTTON_ID = 'files-manager-open'
 export const PARENT_BACK_TOP = 'kef-tocgen-backtop'
 export const PARENT_BACK_BOTTOM = 'kef-tocgen-godown'
+
 export const PLUGIN_ROUTE = '/page/files-manager'
+export const LOG_PAGE = 'files-manager-log';
+export const HOME_PAGE = 'files-manager';
+
+export const OPERATE_SUCCESS = 'success'
+export const OPERATE_FAILED = 'failed'
+
+
+// 图表前缀
+export const GRAPH_PREFIX = 'logseq_local_';
+export const USER_CONFIG_FILE = 'logseq/config.edn'
 
 // 标签文本常量
 export const __i18n_LOAD_MARK = 'i18n_mark'; // 1
@@ -52,6 +63,7 @@ export const i18n_BUILDING = 'Building';
 
 // 工具提示文本常量
 export const i18n_AUTHORIZE = 'Authorize';
+export const i18n_LOG_TOOLTIP = 'View log';
 export const i18n_COPY_PATH_TOOLTIP = 'Copy block';
 export const i18n_COPY_TITLE_TOOLTIP = 'Copy title';
 export const i18n_PREVIEW_TOOLTIP = 'Preview file';
@@ -68,11 +80,6 @@ export const i18n_OPEN_WITH_OS = 'Open the folder with the Logseq';
 export const i18n_AUTHORIZE_TOOLTIP = 'Authorize Tip' //请点击选择logseq文档目录进行授权,授权后文件会进行索引操作,请耐心等待片刻
 export const i18n_AUTHORIZE_TOOLTIP_PATH = 'Authorize Tip PATH' //您的Logseq路劲
 export const i18n_HERE = 'Here'; // 点击这儿
-
-
-// 图表前缀
-export const GRAPH_PREFIX = 'logseq_local_';
-export const USER_CONFIG_FILE = 'logseq/config.edn'
 
 // ===================================================================================
 // 正则常量
