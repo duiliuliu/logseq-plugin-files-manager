@@ -15,6 +15,23 @@ export const openFileManager = () => {
     logseq.showMainUI();
 };
 
+/**
+ * 如果当前页面是 'files-manager'，则显示主 UI。
+ * 
+ * @returns {Promise<void>} 完成操作时解析的 Promise。
+ */
+export const showMainUIIfFilesManager = async (): Promise<void> => {
+    // 从 Logseq 获取当前页面
+    const currPage = await logseq.Editor.getCurrentPage();
+
+    // 检查当前页面的原始名称是否为 'files-manager'
+    if (currPage?.originalName === 'files-manager') {
+        // 如果条件满足，则显示主 UI
+        logseq.showMainUI();
+    }
+}
+
+
 // 打开文件管理器的函数
 export const openFileManagerListener = () => {
     parent.document.querySelector(`#${PARENT_OPEN_BUTTON_ID}`)?.addEventListener('click', openFileManager)

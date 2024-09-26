@@ -6,7 +6,7 @@ import './main.css';
 import '@logseq/libs';
 import './i18n/configs';
 import App from './App';
-import { registerCommands, setupStyles, setupFileManagerNav, openFileManager, openFileManagerListener } from './logseq/logseqPluginInit';
+import { registerCommands, setupStyles, setupFileManagerNav, openFileManager, openFileManagerListener, showMainUIIfFilesManager } from './logseq/logseqPluginInit';
 import { version as __VERSION } from '../package.json'
 import { PLUGIN_ROUTE } from './data/constants';
 
@@ -33,6 +33,7 @@ const main = async (_e: any) => {
   await setupFileManagerNav();
   await renderApp();
   await openFileManagerListener()
+  await showMainUIIfFilesManager()
 };
 
 if (import.meta.env.DEV) {
