@@ -17,6 +17,7 @@ export const getLspDeleteFormat = async (lang?: string): Promise<string> => {
     const setting = await logseq.settings
     return setting?.deleteFormart ?? getI18nConstant(lang || 'en', i18n_DEFAULT_DELETE_FORMAT)
 }
+
 export const initLspSettingSchema = async (lang?: string) => {
     const { language } = lang ? { language: lang } : await logseq.App.getUserConfigs()
 
