@@ -61,6 +61,8 @@ export const useUserConfigs = (userConfigUpdated: number) => {
 
     useEffect(() => {
         fetchUserConfigs(setUserConfigs);
+        setupFileManagerNav(userConfigs.preferredLanguage)
+        initLspSettingSchema(userConfigs.preferredLanguage)
 
         const graphChangeListen = (e: any) => {
             logger.debug(`onCurrentGraphChanged:${JSON.stringify(e)}`)

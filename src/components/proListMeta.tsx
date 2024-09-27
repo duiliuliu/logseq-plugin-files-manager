@@ -15,7 +15,7 @@ import { ItemType } from 'antd/es/menu/interface';
 import PreviewFrame from './previewItem';
 import { removePageFromDB } from '../data/db';
 import { trace } from '../logseq/logseqAddOptLog';
-import { deleteLogseqPage } from '../logseq/logseqDeletePage';
+import { deleteLogseqAsset, deleteLogseqPage } from '../logseq/logseqDeletePage';
 
 
 // 定义 MetaRenderProps 接口，用于传递给渲染函数的属性
@@ -206,31 +206,28 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
         let content = '...'
         let refBlocks = ''
 
-        if (DataType.isAssetFile(record.dataType)) {
-            const dirHandler = (await getDirectoryHandle()) as FileSystemDirectoryHandle
-            const assetdirHandler = await dirHandler?.getDirectoryHandle(userConfig.assetsDirectory!)
-            const permiss = await verifyPermission(assetdirHandler, true)
-            if (!permiss) {
-                logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY), 'warn')
-                result = OPERATE_FAILED
-                content = getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY)
-            } else {
-                await assetdirHandler.removeEntry(record.name).then(() => {
+        try {
+            if (DataType.isAssetFile(record.dataType)) {
+                const dirHandler = (await getDirectoryHandle()) as FileSystemDirectoryHandle
+                const assetdirHandler = await dirHandler?.getDirectoryHandle(userConfig.assetsDirectory!)
+                const permiss = await verifyPermission(assetdirHandler, true)
+                if (!permiss) {
+                    logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY), 'warn')
+                    result = OPERATE_FAILED
+                    content = getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY)
+                } else {
+                    await assetdirHandler.removeEntry(record.name)
                     removePageFromDB(userConfig.currentGraph, record.name)
+                    // 删除日志或页面的其他相关数据
+                    refBlocks = (await deleteLogseqAsset(record.alias, record, userConfig)).join(', ');
+
                     logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
                     result = OPERATE_SUCCESS
                     content = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS)
-                }, (reason => {
-                    logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR)}" [:br][:br] "${reason}"]`, 'error')
-                    result = OPERATE_FAILED
-                    content = reason
-                }))
+                }
             }
-        }
 
-        if (record.dataType === DataType.JOURNAL || record.dataType === DataType.PAGE) {
-            try {
-
+            if (record.dataType === DataType.JOURNAL || record.dataType === DataType.PAGE) {
                 // 删除日志或页面的其他相关数据
                 refBlocks = (await deleteLogseqPage(record.alias, userConfig)).join(', ');
                 // 删除页面
@@ -240,14 +237,16 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
                 result = OPERATE_SUCCESS;
                 content = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS);
                 logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info');
-            } catch (error) {
-                const errorMessage = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR);
-                const errorDetails = `[:p "${errorMessage}" [:br][:br] "${error}"]`;
-                result = OPERATE_FAILED;
-                content = error instanceof Error ? error.message : `${error}`;
-                logseq.UI.showMsg(errorDetails, 'error');
             }
+
+        } catch (error) {
+            const errorMessage = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR);
+            const errorDetails = `[:p "${errorMessage}" [:br][:br] "${error}"]`;
+            result = OPERATE_FAILED;
+            content = error instanceof Error ? error.message : `${error}`;
+            logseq.UI.showMsg(errorDetails, 'error');
         }
+
 
         trace(userConfig, content, {
             file: record.name,
