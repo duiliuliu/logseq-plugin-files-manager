@@ -4,9 +4,6 @@ import { HOME_PAGE, i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, PAREN
 import getI18nConstant from "../i18n/utils";
 import { logger } from "../utils/logger";
 
-export const refreshLogseqInit = () => {
-    setupFileManagerNav();
-};
 
 // 打开文件管理器的函数
 export const openFileManager = () => {
@@ -59,11 +56,41 @@ export const setupStyles = () => {
     logseq.setMainUIInlineStyle({
         zIndex: 1,
     });
+
+
+    logseq.provideStyle(String.raw`
+        /* Tooltip container */
+        .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+        }
+
+        /* Tooltip text */
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 160px;
+        background-color: black;
+        color: #fff;
+        text-align: center;
+        padding: 5px 0;
+        border-radius: 6px;
+        
+        /* Position the tooltip text - see examples below! */
+        position: absolute;
+        z-index: 1;
+        }
+
+        /* Show the tooltip text when you mouse over the tooltip container */
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        }
+     `)
 };
 
 // 设置文件管理器导航
-export const setupFileManagerNav = async () => {
-    const { preferredLanguage } = await logseq.App.getUserConfigs()
+export const setupFileManagerNav = async (lang?: string) => {
+    const { preferredLanguage } = lang ? { preferredLanguage: lang } : await logseq.App.getUserConfigs()
     const fileManagerDiv = document.createElement('div');
     fileManagerDiv.innerHTML = `
       <a href="#${PLUGIN_ROUTE}" class='item group flex items-center text-sm font-medium rounded-md'>

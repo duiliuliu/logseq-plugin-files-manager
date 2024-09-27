@@ -1,6 +1,7 @@
 import normalizePath from 'normalize-path';
 import { logger } from './logger';
 import { DocFormat } from '../data/enums';
+import { format, parse } from 'date-fns';
 
 const imageFormats = ['png', 'jpg', 'jpeg', 'webp', 'gif']
 // 电子书常见的文件格式
@@ -164,4 +165,14 @@ export async function verifyPermission(dirHandle: FileSystemHandle | FileSystemD
     }
     // The user didn't grant permission, so return false.
     return false;
+}
+
+export const formatJournalPageName = (journalDay: number | undefined, originalName: string, journalFileTem: string, dateFormat: string): string => {
+    return journalDay
+        ? parseAndFormatJournal(journalDay.toString(), 'yyyyMMdd', journalFileTem)
+        : parseAndFormatJournal(originalName, dateFormat, journalFileTem)
+}
+
+export const parseAndFormatJournal = (str: string, parseFormat: string, dateFormat: string) => {
+    return format(parse(str, parseFormat, new Date()), dateFormat)
 }

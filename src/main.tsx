@@ -10,6 +10,7 @@ import { registerCommands, setupStyles, setupFileManagerNav, openFileManager, op
 import { version as __VERSION } from '../package.json'
 import { PLUGIN_ROUTE } from './data/constants';
 import { initLogCfg } from './logseq/logseqAddOptLog';
+import { initLspSettingSchema } from './logseq/logseqSetting';
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -32,9 +33,10 @@ const main = async (_e: any) => {
   await registerCommands();
   await setupStyles();
   await setupFileManagerNav();
-  await renderApp();
-  await openFileManagerListener()
-  await showMainUIIfFilesManager()
+  initLspSettingSchema();
+  renderApp();
+  openFileManagerListener();
+  await showMainUIIfFilesManager();
   await initLogCfg(true)
 };
 

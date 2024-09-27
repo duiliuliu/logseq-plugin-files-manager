@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import i18n from "../i18n/configs";
 import { mockUserConfigs } from "../mock/logseqUserCfg";
 import { logger } from "../utils/logger";
-import { refreshLogseqInit } from "./logseqPluginInit";
+import { setupFileManagerNav } from "./logseqPluginInit";
 import { AppConfig } from "../data/types";
 import { parseEDNString } from "edn-data";
 import { USER_CONFIG_FILE } from "../data/constants";
+import { initLspSettingSchema } from "./logseqSetting";
 
 const fetchUserConfigs = async (setUserConfigs: (arg0: AppConfig) => void) => {
     logger.debug(`useUserConfigs update`)
@@ -16,10 +17,10 @@ const fetchUserConfigs = async (setUserConfigs: (arg0: AppConfig) => void) => {
             i18n.changeLanguage(mockUserConfigs.preferredLanguage);
         } else {
             const userCfg = await logseq.App.getUserConfigs();
+
             await fetchAppConfig(userCfg)
             setUserConfigs(userCfg);
             i18n.changeLanguage(userCfg.preferredLanguage);
-            logseq.updateSettings({ appConfigs: { language: userCfg.preferredLanguage } })
             document.querySelector('html')?.setAttribute('lang', userCfg.preferredLanguage);
             // logger.debug(`useUserConfigs update,userConfigs:`, userCfg)
         }
@@ -27,6 +28,7 @@ const fetchUserConfigs = async (setUserConfigs: (arg0: AppConfig) => void) => {
         logger.error('Failed to fetch user configs:', error);
     }
 };
+
 
 const fetchAppConfig = async (appConfig: AppConfig) => {
 
@@ -60,28 +62,38 @@ export const useUserConfigs = (userConfigUpdated: number) => {
     useEffect(() => {
         fetchUserConfigs(setUserConfigs);
 
-        const listen = (e: any) => {
+        const graphChangeListen = (e: any) => {
             logger.debug(`onCurrentGraphChanged:${JSON.stringify(e)}`)
             fetchUserConfigs(setUserConfigs);
         };
-        logseq.App.onCurrentGraphChanged(listen);
+        logseq.App.onCurrentGraphChanged(graphChangeListen);
 
+        return () => {
+            logseq.App.offCurrentGraphChanged(graphChangeListen);
+        }
+    }, [userConfigUpdated]);
+
+
+    useEffect(() => {
         // 设置监听器以监听html元素的lang属性变化
-        const observer = new MutationObserver(mutations => {
+        const observer = new MutationObserver(async mutations => {
             for (let mutation of mutations) {
                 if (mutation.attributeName === 'lang') {
-                    fetchUserConfigs(setUserConfigs)
-                    refreshLogseqInit()
+                    const { preferredLanguage } = await logseq.App.getUserConfigs()
+                    if (preferredLanguage != userConfigs.preferredLanguage) {
+                        await fetchUserConfigs(setUserConfigs)
+                        await setupFileManagerNav(preferredLanguage)
+                        await initLspSettingSchema(preferredLanguage)
+                    }
                 }
             }
         });
         observer.observe(parent.document.documentElement, { attributes: true });
 
         return () => {
-            logseq.App.offCurrentGraphChanged(listen);
             observer.disconnect(); // 清除MutationObserver
         }
-    }, [userConfigUpdated]);
+    }, [])
 
     return userConfigs
 };
