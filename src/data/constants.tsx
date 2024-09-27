@@ -27,7 +27,6 @@ export const HOME_PAGE = 'files-manager';
 export const OPERATE_SUCCESS = 'success'
 export const OPERATE_FAILED = 'failed'
 
-
 // 图表前缀
 export const GRAPH_PREFIX = 'logseq_local_';
 export const USER_CONFIG_FILE = 'logseq/config.edn'
@@ -67,6 +66,7 @@ export const i18n_LOG_TOOLTIP = 'View log';
 export const i18n_COPY_PATH_TOOLTIP = 'Copy block';
 export const i18n_COPY_TITLE_TOOLTIP = 'Copy title';
 export const i18n_PREVIEW_TOOLTIP = 'Preview file';
+export const i18n_DEV_DATA_INFO = 'Dev show data info';
 export const i18n_OPEN_FILE_TOOLTIP = 'Open the file';
 export const i18n_OPEN_FOLDER_TOOLTIP = 'Open the folder';
 export const i18n_OPEN_FOLDER_ERROR = 'Open the folder failed';
@@ -80,6 +80,15 @@ export const i18n_OPEN_WITH_OS = 'Open the folder with the Logseq';
 export const i18n_AUTHORIZE_TOOLTIP = 'Authorize Tip' //请点击选择logseq文档目录进行授权,授权后文件会进行索引操作,请耐心等待片刻
 export const i18n_AUTHORIZE_TOOLTIP_PATH = 'Authorize Tip PATH' //您的Logseq路劲
 export const i18n_HERE = 'Here'; // 点击这儿
+
+export const i18n_DEFAULT_DELETE_FORMAT = 'Delete format' // '<div class="tooltip"><s>${name}</s><span class="tooltiptext">${name} has deledted in time ${date} ${time}</span> </div>'
+
+// 配置
+export const i8n_DELETE_FORMAT_TITLE = 'Delete format title'  // 删除操作配置
+export const i8n_DELETE_FORMAT_DESC = 'Delete format desc' // 配置指定模板，可替换被删除的文章名称
+export const i8n_DELETE_FORMAT_VAR_DESC = 'Delete format var desc' // 支持以下变量
+
+
 
 // ===================================================================================
 // 正则常量

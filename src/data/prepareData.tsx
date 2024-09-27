@@ -1,84 +1,101 @@
 import { BlockEntity, BlockUUIDTuple, PageEntity } from '@logseq/libs/dist/LSPlugin.user';
-import { getAllLogseqPages, getLogseqFiles, getLogseqPageBlocksTree } from '../logseq/utils';
+import { getLogseqFiles, getLogseqPageBlocksTree } from '../logseq/utils';
+import { getAllLogseqPages, getAllLogseqPagesAndFile } from '../logseq/logseqGetAllPage';
 import { DataType, DocFormat, RelatedType } from './enums';
 import { logger } from '../utils/logger';
-import { encodeLogseqFileName, formatFileName, formatFilePath, formatFileSize, getFileInfo } from '../utils/fileUtil';
+import { encodeLogseqFileName, formatFileName, formatFilePath, formatFileSize, formatJournalPageName, getFileInfo } from '../utils/fileUtil';
 import { DB } from './db';
 import { AppConfig, DataItem } from './types';
 import { GRAPH_PREFIX, REG_ASSETS, REG_SPLIT, REG_TAG } from './constants';
-import { format, parse } from 'date-fns';
+import { objUnderlineToSmallCamel } from '../utils/objectUtil';
 
 // 准备页面数据的函数
 const preparePagesData = async ({ appConfig, dirHandle }: { appConfig: AppConfig; dirHandle: FileSystemDirectoryHandle | undefined; }) => {
-    // 获取当前图的所有页面
-    const pages = await getAllLogseqPages();
-    if (!pages) return;
-
-    // 过滤掉日记和目录页面
-    const validPages = pages.filter(page => page.originalName !== 'Contents'); //  日记页面也收录到管理中
-
-    // 处理每个页面的异步操作
-    const promises = validPages.map(page => processPage(page, dirHandle, appConfig));
-    await Promise.all(promises);
+    let v = '2'
+    if (v === '1') {
+        // 获取当前图的所有页面
+        const pages = await getAllLogseqPages();
+        if (!pages) return;
+        // 过滤掉日记和目录页面
+        const validPages = pages.filter(page => page.originalName !== 'Contents'); //  日记页面也收录到管理中  
+        // 处理每个页面的异步操作
+        const promises = validPages.map(pageE => processPage({ pageE, dirHandle, appConfig }));
+        await Promise.all(promises);
+    }
+    if (v == '2') {
+        const data = await getAllLogseqPagesAndFile();
+        if (!data || data.length === 0) return;
+        const promises = data.map(entity => {
+            const [fileE, pageE] = entity
+            // @ts-ignore
+            processPage({ pageE: ({ ...objUnderlineToSmallCamel(pageE), path: fileE.path } as PageEntity), dirHandle, appConfig })
+        });
+        await Promise.all(promises);
+    }
 }
 
+export interface processPageProps { pageE: PageEntity, dirHandle: any, appConfig: AppConfig, updated?: boolean }
+
 // 处理单个页面的函数
-export const processPage = async (page: PageEntity, dirHandle: any, appConfig: AppConfig, updated?: boolean) => {
-    const isJournal = page['journal?'];
+export const processPage = async ({ pageE, dirHandle, appConfig, updated }: processPageProps) => {
+    const isJournal = pageE['journal?'];
     const graph = appConfig.currentGraph
+    const dateFormat = appConfig.preferredDateFormat
     const docFormat = appConfig.preferredFormat as DocFormat
     const pagesDir = appConfig.pagesDirectory!
     const journalsDir = appConfig.journalsDirectory!
     const journalFileTem = appConfig.journalFileNameFormat!
+    // logger.debug('processPage', 'processPageProps', { pageE, dirHandle, appConfig, updated })
 
     // 获取页面的最新更新时间
     const [updatedTime, size] = await getFileInfo(
         encodeLogseqFileName(isJournal
-            ? format(parse(page.journalDay!.toString(), 'yyyyMMdd', new Date()), journalFileTem)
-            : page.originalName),
+            ? formatJournalPageName(pageE.journalDay, pageE.originalName, journalFileTem, dateFormat)
+            : pageE.originalName),
         await dirHandle?.getDirectoryHandle(isJournal ? journalsDir : pagesDir),
         docFormat,
-        [page.updatedAt ?? 0, undefined])
+        [pageE.updatedAt ?? 0, undefined])
     if (!updatedTime) {
-        logger.warn(`page no updatetime,page:${page.name}`)
+        logger.warn(`page no updatetime,page:${pageE.name}`)
         return;
     }
-    if (!page.uuid) {
-        logger.warn(`page no uuid,page:${page.name}`)
+    if (!pageE.uuid) {
+        logger.warn(`page no uuid,page:${pageE.name}`)
         return;
     }
 
     // 获取页面的所有块
-    const blocks = await getLogseqPageBlocksTree(page.uuid);
+    const blocks = await getLogseqPageBlocksTree(pageE.uuid);
     if (!blocks || blocks.length === 0) return;
 
     // 获取页面的摘要和图片
     const [summary, image, imageUuid] = extractSummary(blocks);
     const originalName = (isJournal
-        ? format(parse(page.journalDay!.toString(), 'yyyyMMdd', new Date()), journalFileTem)
-        : encodeLogseqFileName(page.originalName))
+        ? formatJournalPageName(pageE.journalDay, pageE.originalName, journalFileTem, dateFormat)
+        : encodeLogseqFileName(pageE.originalName))
         + DocFormat.toFileExt(docFormat);
     if (summary.length > 0 && !(summary.length === 1 && summary[0] === '')) { // 过滤内容为空的页面
         await DB.data.put({ // put 操作：新增或更新，等同于upsert
             graph,
             dataType: isJournal ? DataType.JOURNAL : DataType.PAGE,
-            alias: page.name,
+            alias: pageE.originalName,
             name: originalName,
-            uuid: page.uuid,
+            uuid: pageE.uuid,
             updatedTime,
             summary,
             image,
             size,
-            path: `${graph.replace(GRAPH_PREFIX, '')}/${isJournal ? journalsDir : pagesDir}/${originalName}`,
+            path: pageE.path ? `${graph.replace(GRAPH_PREFIX, '')}/${pageE.path}` : `${graph.replace(GRAPH_PREFIX, '')}/${isJournal ? journalsDir : pagesDir}/${originalName}`,
             related: [{
                 relatedType: RelatedType.BLOCK,
                 relatedItemUuid: imageUuid
-            }]
+            }],
+            createdTime: pageE.properties?.createdTime
         });
     }
 
     // 提取页面块中的资产和标签
-    const assetsAndTags = extractAssetsAndTagsFromPage(page, blocks);
+    const assetsAndTags = extractAssetsAndTagsFromPage(pageE, blocks);
     if (updated) {
         assetsAndTags.forEach(async asset => {
             const item = await DB.data.get([asset.name]);
@@ -192,7 +209,6 @@ const extractAssetsAndTagsFromPage = (page: PageEntity, blocks: BlockEntity[]): 
     extractAssetsAndTagsFromProperties(page.properties || {}, page.originalName, relatedAssets);
     (blocks || []).forEach(block => extractAssetsAndTagsFromBlock(page.originalName, block, relatedAssets));
 
-    logger.debug(`extractAssetsAndTagsFromPage end, relatedAssets: ${relatedAssets.length}, ${relatedAssets.length > 0 ? relatedAssets[0].alias : ''}`);
     return relatedAssets;
 };
 
@@ -241,7 +257,6 @@ const extractAssetsAndTagsFromBlock = (pageName: string, block: BlockEntity, rel
     }
 
     if (block.properties) {
-        logger.debug(`page:${block.properties},property:${JSON.stringify(block.properties)}`)
         extractAssetsAndTagsFromProperties(block.properties, pageName, relatedAssets, block.uuid, block.content)
     }
 

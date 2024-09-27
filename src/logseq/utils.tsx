@@ -1,29 +1,10 @@
 // src/utils.ts
 import { BlockEntity, PageEntity, PageIdentity } from '@logseq/libs/dist/LSPlugin';
-import { mockLogseqPages, mockLogseqPages90 } from '../mock/logseqPages';
+import { mockLogseqPages } from '../mock/logseqPages';
 import { mockBlocks50 as mockLogseqBlocks } from '../mock/logseqBlocks';
 import { logger } from '../utils/logger';
 import { mockLogseqFiles70 } from '../mock/logseqFile';
 import { GRAPH_PREFIX } from '../data/constants';
-
-// 获取所有Logseq页面
-export const getAllLogseqPages = async (): Promise<PageEntity[] | null> => {
-  if (import.meta.env.DEV) {
-    // 在开发环境中返回 mock 数据
-    logger.debug(`getAllLogseqPages mock,dataLength:${mockLogseqPages90.length}`)
-    return mockLogseqPages90;
-  } else {
-    try {
-      const pages = await logseq.Editor.getAllPages();
-      logger.debug(`getAllLogseqPages end`)
-
-      return pages;
-    } catch (error) {
-      logger.error('Failed to get all pages:', error);
-      return null;
-    }
-  }
-};
 
 // 获取Logseq树
 export const getLogseqPageBlocksTree = async (srcPage: PageIdentity): Promise<BlockEntity[]> => {
@@ -80,7 +61,6 @@ export const getPageDetails = async (srcPage: PageIdentity): Promise<PageEntity 
   } else {
     try {
       const page = await logseq.Editor.getPage(srcPage);
-      logger.debug(`getPageDetails end for page: ${srcPage}`);
       return page;
     } catch (error) {
       logger.error(`Failed to get details for page: ${srcPage}`, error);

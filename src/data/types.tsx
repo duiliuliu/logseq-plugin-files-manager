@@ -14,6 +14,7 @@ interface DataItem {
     name: string;           // 数据项的名称
     uuid: string;           // 数据项的唯一标识符
     updatedTime: number;    // 数据项的更新时间
+    createdTime?: number;    // 数据项的创建时间
     alias: string;          // 数据项的别名
     path?: string;          // 资产的路径
 

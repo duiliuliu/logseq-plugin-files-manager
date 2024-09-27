@@ -33,24 +33,32 @@ You can launch the file manager in any of the following ways:
    - ![卡片视图](./images/app-card-en.png)
    - 卡片与列表切换：![卡片与列表切换](./images/app-card-switch-en.png)
 
-2. **Open Files**  
+2. **Right-Click Menu**
+  - While viewing the list, users can trigger a comprehensive menu of functions by right-clicking on any file entry. This menu offers quick access to common file operations, making file management more efficient and convenient.
+  - ![rightMouseMenu](./images/right-mouse-menu.png)
+
+3. **Open Files**  
    - Directly open Logseq files within Logseq.
    - Attachment files will be opened based on their file type: PDF files will open within Logseq, while other file types will open using the default system program.
 
-3. **Copy File Path**  
+4. **Copy File Path**  
    - One-click copy of the complete file path for quick access in other applications.
 
-4. **Search Files**  
+5. **Search Files**  
    - A quick search function to help you locate the required files among a large number of files.
 
-5. **File Preview**
+6. **File Preview**
    - You can click on the file name to preview the file content. Please note: Due to browser limitations, some files may not support preview.
    - ![文件预览](./images/app-preview.jpg)
    - Double-click the filename to copy the filename for previewed files.
 
-6. **Right-Click Menu**
-  - While viewing the list, users can trigger a comprehensive menu of functions by right-clicking on any file entry. This menu offers quick access to common file operations, making file management more efficient and convenient.
-  - ![rightMouseMenu](./images/right-mouse-menu.png)
+7. **File Deletion**
+   - By clicking the "Delete" button, the file will be permanently removed, and the names of all associated files will be automatically replaced. The deletion process will be meticulously documented.
+   - Style of document reference after deletion: ![delete-page](./images/delete-page.png)
+   - Aggregated style of document reference after deletion: ![delete-page-hour](./images/delete-page-hour.png)
+   - Deletion and other operation logs: ![app-log](./images/app-log.png)
+   - You can now personalize the deletion style template through the settings to meet your specific needs ![delete-page-setting](./images/delete-page-setting.png)
+
   
 > Discover and experience more features awaiting your exploration.
 

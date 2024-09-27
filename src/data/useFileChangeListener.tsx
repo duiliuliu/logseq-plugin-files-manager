@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { logger } from '../utils/logger';
 import { BlockEntity, IDatom, } from '@logseq/libs/dist/LSPlugin.user';
 import { processPage } from './prepareData';
-import { decodeLogseqFileName, formatFilePath } from '../utils/fileUtil';
+import { decodeLogseqFileName, encodeLogseqFileName, formatFilePath, parseAndFormatJournal } from '../utils/fileUtil';
 import { USER_CONFIG_FILE } from './constants';
-import { OperationType } from './enums';
+import { DocFormat, OperationType } from './enums';
 import { getLogseqPageBlocksTree, getPageDetails } from '../logseq/utils';
 import { removePageFromDB } from './db';
 import { AppConfig } from './types';
@@ -21,31 +21,30 @@ type FileChanges = {
 
 // 工具函数：处理文件变化
 const handleFileChanged = async (changes: FileChanges, appConfig: AppConfig, directoryHandle: any): Promise<{ configUpdated?: boolean, fileMotified?: boolean }> => {
-    const [operation, originalName] = parseOperation(changes, appConfig.pagesDirectory!, appConfig.journalsDirectory!);
-    logger.debug(`handleFileChanged,operation:${operation},changes:`, changes, 'file', originalName)
+    const [operation, originalName, alias] = parseOperation(changes, appConfig);
+    // logger.debug(`handleFileChanged,operation:${operation},changes:`, changes, 'file', originalName)
 
     if (operation === OperationType.CONFIG_MODIFIED) return { configUpdated: true };
     if (operation === OperationType.CREATE) return { fileMotified: false };
 
     if (operation === OperationType.MODIFIED) {
-        const blocks = await getLogseqPageBlocksTree(originalName).catch(err => {
-            logger.error(`Failed to get blocks: ${originalName}`, err);
+        const blocks = await getLogseqPageBlocksTree(encodeLogseqFileName(alias)).catch(err => {
+            logger.error(`Failed to get blocks: ${alias}`, err);
             return null;
         });
 
         if (!blocks) {
-            logger.warn(`handleFileChanged file${originalName}, query blocks no data`)
+            logger.warn(`handleFileChanged file[${alias}], query blocks no data`)
             return { fileMotified: false };
         }
 
-        const pageEntity = await getPageDetails(originalName)
-        if (!pageEntity) {
-            logger.warn(`handleFileChanged file${originalName}, query page no data`)
+        const pageE = await getPageDetails(encodeLogseqFileName(alias))
+        if (!pageE) {
+            logger.warn(`handleFileChanged file[${alias}], query page no data`)
             return { fileMotified: false };
         }
 
-        processPage(pageEntity, directoryHandle, appConfig, true) // todo dirhandler
-
+        processPage({ pageE, dirHandle: directoryHandle, appConfig, updated: true })
     }
 
     if (operation === OperationType.DELETE) {
@@ -56,13 +55,15 @@ const handleFileChanged = async (changes: FileChanges, appConfig: AppConfig, dir
 };
 
 // 工具函数：解析操作类型
-const parseOperation = (changes: FileChanges, pagesDirectory: string, journalsDirectory: string): [OperationType, string] => {
+const parseOperation = (changes: FileChanges, { pagesDirectory, journalsDirectory, journalFileNameFormat, preferredDateFormat, preferredFormat }: AppConfig): [OperationType, string, string] => {
     let operation = '' as OperationType;
     let originalName = '';
+    let alias = ''
 
     if (changes.txMeta?.outlinerOp === 'create-page') {
         operation = OperationType.CREATE;
-        return [operation, decodeLogseqFileName(changes.blocks[0].originalName)];
+        originalName = decodeLogseqFileName(changes.blocks[0].originalName)
+        return [operation, originalName + DocFormat.toFileExt(preferredFormat), originalName];
     }
 
     for (const block of changes.blocks) {
@@ -71,11 +72,15 @@ const parseOperation = (changes: FileChanges, pagesDirectory: string, journalsDi
             if (changes.txData[0][1] === 'file/last-modified-at') {
                 const path = block.path;
                 const [, , , , originalName] = formatFilePath(path)
-                if (path.startsWith(pagesDirectory) || path.startsWith(journalsDirectory)) {
-                    return [OperationType.MODIFIED, originalName];
+                if (path.startsWith(pagesDirectory)) {
+                    return [OperationType.MODIFIED, originalName + DocFormat.toFileExt(preferredFormat), originalName];
+                }
+                if (path.startsWith(journalsDirectory)) {
+                    alias = parseAndFormatJournal(originalName, journalFileNameFormat!, preferredDateFormat)
+                    return [OperationType.MODIFIED, originalName + DocFormat.toFileExt(preferredFormat), alias];
                 }
                 if (path === USER_CONFIG_FILE) {
-                    return [OperationType.CONFIG_MODIFIED, originalName];
+                    return [OperationType.CONFIG_MODIFIED, originalName + DocFormat.toFileExt(preferredFormat), originalName];
                 }
             }
         }
@@ -85,11 +90,11 @@ const parseOperation = (changes: FileChanges, pagesDirectory: string, journalsDi
         if (data.length === 5 && data[1] === 'block/original-name') {
             originalName = decodeLogseqFileName(data[2]);
             operation = data[4] === false ? OperationType.DELETE : OperationType.CREATE;
-            return [operation, originalName];
+            return [operation, originalName + DocFormat.toFileExt(preferredFormat), originalName];
         }
     }
 
-    return [operation, originalName];
+    return [operation, originalName + DocFormat.toFileExt(preferredFormat), originalName];
 };
 
 // 使用Effect监听文件变化

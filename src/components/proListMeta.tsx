@@ -5,16 +5,17 @@ import React from 'react';
 import { DataType, OperationType, RelatedType } from '../data/enums';
 import { Dropdown, Modal, Space, Tag } from 'antd';
 import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, Swap, Trash } from '@phosphor-icons/react';
-import { logger } from '../utils/logger';
+import { isDebug, logger } from '../utils/logger';
 import { isBook, isImage, verifyPermission } from '../utils/fileUtil';
 import { buildGraphPath, copyToClipboard } from '../logseq/utils';
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP, OPERATE_FAILED, OPERATE_SUCCESS } from '../data/constants';
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP, OPERATE_FAILED, OPERATE_SUCCESS, i18n_DEV_DATA_INFO } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
 import ActionItem, { ActionItemProps, TooltipActionItem } from './actionItem';
 import { ItemType } from 'antd/es/menu/interface';
 import PreviewFrame from './previewItem';
 import { removePageFromDB } from '../data/db';
 import { trace } from '../logseq/logseqAddOptLog';
+import { deleteLogseqPage } from '../logseq/logseqDeletePage';
 
 
 // 定义 MetaRenderProps 接口，用于传递给渲染函数的属性
@@ -28,6 +29,32 @@ interface MetaRenderProps {
 const { info } = Modal;
 
 // =============== Action Functions ===============
+
+const showDebugInfoAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
+    icon: Eye,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_DEV_DATA_INFO),
+    onClick: () => {
+        setRightMenuDisplay && setRightMenuDisplay(false)
+        info({
+            title: <p onDoubleClick={copyTitleAction({ record, userConfig }).onClick}>{record.alias} </p>,
+            icon: renderListAvatar({ record, userConfig }),
+            centered: true,
+            content: <pre style={{
+                backgroundColor: '#f4f4f4',
+                padding: '10px',
+                border: '1px solid #ddd;',
+                borderRadius: '5px',
+                width: 340,
+                height: 160,
+                overflow: 'auto'
+            }}> <code>{JSON.stringify(record, null, 4)}</code></pre>,
+            closable: false,
+            maskClosable: true,
+            keyboard: true,
+            footer: <div></div>,
+        });
+    }
+})
 
 /**
  * 显示预览模态框的 Action 函数
@@ -177,6 +204,7 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
         setRightMenuDisplay && setRightMenuDisplay(false)
         let result = OPERATE_FAILED
         let content = '...'
+        let refBlocks = ''
 
         if (DataType.isAssetFile(record.dataType)) {
             const dirHandler = (await getDirectoryHandle()) as FileSystemDirectoryHandle
@@ -201,15 +229,24 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
         }
 
         if (record.dataType === DataType.JOURNAL || record.dataType === DataType.PAGE) {
-            await logseq.Editor.deletePage(record.alias).then(() => {
-                logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
-                result = OPERATE_SUCCESS
-                content = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS)
-            }, (reason => {
-                logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR)}" [:br][:br] "${reason}"]`, 'error')
-                result = OPERATE_FAILED
-                content = reason
-            }))
+            try {
+
+                // 删除日志或页面的其他相关数据
+                refBlocks = (await deleteLogseqPage(record.alias, userConfig)).join(', ');
+                // 删除页面
+                await logseq.Editor.deletePage(record.alias);
+
+                // 成功提示
+                result = OPERATE_SUCCESS;
+                content = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS);
+                logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info');
+            } catch (error) {
+                const errorMessage = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_ERROR);
+                const errorDetails = `[:p "${errorMessage}" [:br][:br] "${error}"]`;
+                result = OPERATE_FAILED;
+                content = error instanceof Error ? error.message : `${error}`;
+                logseq.UI.showMsg(errorDetails, 'error');
+            }
         }
 
         trace(userConfig, content, {
@@ -217,7 +254,7 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
             fileAlias: record.alias,
             fileType: record.dataType,
             operate: OperationType.DELETE,
-            refBlock: '',  // TODO
+            refBlocks,
             result
         })
     }
@@ -398,6 +435,7 @@ const renderContextMenuActions = ({ record, userConfig, dirhandler }: MetaRender
         showPreviewModalAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         copyTitleAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
     ]
+    isDebug && actions.push(showDebugInfoAction({ record, userConfig, dirhandler, setRightMenuDisplay }))
 
     return <span className='list-actions' >
         <Space.Compact direction="vertical">
