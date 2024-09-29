@@ -22,6 +22,13 @@ export const enhanceLspPropsIcon = async (userConfigs: AppConfig) => {
         if (routes.includes(e.path)) {
             return
         }
+        if (e.path === '/all-pages') {
+            doEnhanceLspAllPageIcon()
+            return
+        }
+        if (e.path === '/page/calendar') {
+            return
+        }
         isInitialScroll = true
         doEnhanceLspPropsIcon()
     }
@@ -59,4 +66,11 @@ const doEnhanceLspPropsIcon = async () => {
     logger.debug('doEnhanceLspPropsIcon start')
     const nodes = parent?.document?.querySelectorAll('span.page-property-key')
     nodes?.forEach(node => node.setAttribute('data-ref', (node as HTMLSpanElement).innerText))
+}
+
+const doEnhanceLspAllPageIcon = async () => {
+    logger.debug('doEnhanceLspPropsIcon start')
+    const nodes = parent?.document?.querySelectorAll('span.pr-1')
+    // @ts-ignore
+    nodes?.forEach(node => node.style ? node.style.display = 'none' : (node.style = { display: 'none' }))
 }
