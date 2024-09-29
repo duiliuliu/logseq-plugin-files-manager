@@ -8,9 +8,11 @@ import './i18n/configs';
 import App from './App';
 import { registerCommands, setupStyles, setupFileManagerNav, openFileManager, openFileManagerListener, showMainUIIfFilesManager } from './logseq/logseqPluginInit';
 import { version as __VERSION } from '../package.json'
-import { PLUGIN_ROUTE } from './data/constants';
-import { initLogCfg } from './logseq/logseqAddOptLog';
+import { PLUGIN_ROUTE, SETTING_ROUTE } from './data/constants';
+import { initLogCfg } from './logseq/feat/logseqAddOptLog';
 import { initLspSettingSchema } from './logseq/logseqSetting';
+import { initIconList } from './logseq/feat/logseqDefaultPageProps';
+import { logger } from './utils/logger';
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -24,12 +26,17 @@ export const renderApp = () => {
 // 主函数，初始化并注册必要的命令和样式
 const main = async (_e: any) => {
   logseq.App.onRouteChanged((e) => {
+    logger.debug('onRouteChanged', e)
     if (e.path === PLUGIN_ROUTE) {
+      logseq.showMainUI()
+    } else if (e.path === SETTING_ROUTE) {
+      logseq.showSettingsUI()
       logseq.showMainUI()
     } else {
       logseq.hideMainUI()
     }
   })
+  initIconList()
   await registerCommands();
   await setupStyles();
   await setupFileManagerNav();

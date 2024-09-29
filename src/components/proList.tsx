@@ -62,6 +62,17 @@ const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNo
         };
     }, []);
 
+    const handleMenuEvent = (e: React.MouseEvent<any, MouseEvent> | React.MouseEvent<HTMLElement, MouseEvent>, record: DataItem) => {
+        // 获取主容器的位置和尺寸信息
+        const mainContainer = parent.document.getElementById(PARENT_MAIN_CONTAINER_ID);
+        const rect = mainContainer?.getBoundingClientRect() ?? { x: 0, y: 0 };
+
+        // 显示右键菜单，并设置菜单项和位置
+        setRightMenuDisplay(true)
+        setRightMenuItem(record)
+        setRightMenuPosition({ left: e.pageX - rect.x, top: scrollPosition.top + e.pageY - 80 - rect.y })
+    }
+
     return (
         <div>
             <AntdProList<DataItem>
@@ -72,20 +83,8 @@ const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNo
                 showActions='hover'
                 showExtra='always'
                 grid={DisplayMode.isCard(mode) ? { gutter: colCount < 4 ? 8 : 16, column: colCount } : undefined}
-                onRow={(record: any) => {
-                    return {
-                        onContextMenu: (e) => {
-                            // 获取主容器的位置和尺寸信息
-                            const mainContainer = parent.document.getElementById(PARENT_MAIN_CONTAINER_ID);
-                            const rect = mainContainer?.getBoundingClientRect() ?? { x: 0, y: 0 };
-
-                            // 显示右键菜单，并设置菜单项和位置
-                            setRightMenuDisplay(true)
-                            setRightMenuItem(record)
-                            setRightMenuPosition({ left: e.pageX - rect.x, top: scrollPosition.top + e.pageY - 80 - rect.y })
-                        }
-                    };
-                }}
+                onRow={(record: any) => ({ onContextMenu: (e) => { handleMenuEvent(e, record) } })}
+                // onItem={(record: any) => ({ onContextMenu: (e) => { handleMenuEvent(e, record) } })}
                 metas={getMetas(mode, { userConfig, bodyWidth: size?.width, bodyHeight: size?.height, dirhandler })} // 根据mode选择不同的metas
                 virtual
                 loading={loading}

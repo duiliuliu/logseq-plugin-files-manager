@@ -1,11 +1,11 @@
 import { format } from "date-fns";
-import { AppConfig, DataItem } from "../data/types";
-import { logger } from "../utils/logger";
-import { getLspDeleteFormat as getLspSettingDeleFormat } from "./logseqSetting"
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH } from "../data/constants";
-import { DataType } from "../data/enums";
-
-
+import { AppConfig, DataItem } from "../../data/types";
+import { logger } from "../../utils/logger";
+import { getLspDeleteFormat as getLspSettingDeleFormat } from "../logseqSetting"
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_DEFAULT_DELETE_FORMAT, i8n_DELETE_FORMAT_TITLE } from "../../data/constants";
+import { DataType } from "../../data/enums";
+import { objectTemplateFromat } from "../../utils/objectUtil";
+import { getI18nConstantByPreLang } from "../../i18n/utils";
 
 export const deleteLogseqAsset = async (name: string, record: DataItem, userConfig: AppConfig): Promise<Array<string>> => {
     try {
@@ -78,6 +78,11 @@ export const deleteLogseqPage = async (name: string, userConfig: AppConfig): Pro
     }
 }
 
-const formatDeleteString = (temp: string, data: { name?: string, date?: string, time?: string }): string => {
-    return new Function(...Object.keys(data), `return \` ${temp} \`;`)(...Object.values(data))
+const formatDeleteString = (temp: string, data: { name?: string, date?: string, time?: string, [key: string]: any }): string => {
+    try {
+        return ` ${objectTemplateFromat(temp, data)} `
+    } catch (error) {
+        logseq.UI.showMsg(`get ${getI18nConstantByPreLang(i8n_DELETE_FORMAT_TITLE)} error,error:${error}`)
+        return ` ${objectTemplateFromat(getI18nConstantByPreLang(i18n_DEFAULT_DELETE_FORMAT), data)} `
+    }
 }

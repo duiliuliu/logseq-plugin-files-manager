@@ -4,18 +4,18 @@ import { getTimeString } from '../utils/timeUtil';
 import React from 'react';
 import { DataType, OperationType, RelatedType } from '../data/enums';
 import { Dropdown, Modal, Space, Tag } from 'antd';
-import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, Swap, Trash } from '@phosphor-icons/react';
+import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, GearSix, Swap, Trash } from '@phosphor-icons/react';
 import { isDebug, logger } from '../utils/logger';
 import { isBook, isImage, verifyPermission } from '../utils/fileUtil';
-import { buildGraphPath, copyToClipboard } from '../logseq/utils';
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP, OPERATE_FAILED, OPERATE_SUCCESS, i18n_DEV_DATA_INFO } from '../data/constants';
+import { buildGraphPath, copyToClipboard } from '../logseq/logseqCommonProxy';
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP, OPERATE_FAILED, OPERATE_SUCCESS, i18n_DEV_DATA_INFO, i18n_OPEN_PLUGN_SETTING_TOOLTIP } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
 import ActionItem, { ActionItemProps, TooltipActionItem } from './actionItem';
 import { ItemType } from 'antd/es/menu/interface';
 import PreviewFrame from './previewItem';
 import { removePageFromDB } from '../data/db';
-import { trace } from '../logseq/logseqAddOptLog';
-import { deleteLogseqAsset, deleteLogseqPage } from '../logseq/logseqDeletePage';
+import { trace } from '../logseq/feat/logseqAddOptLog';
+import { deleteLogseqAsset, deleteLogseqPage } from '../logseq/feat/logseqDeletePage';
 
 
 // 定义 MetaRenderProps 接口，用于传递给渲染函数的属性
@@ -263,12 +263,23 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
  * 重命名文件的 Action 函数
  * @param {MetaRenderProps} props - 包含 record, userConfig, dirhandler, setRightMenuDisplay 的属性
  */
-const renameFileAction = ({ userConfig }: MetaRenderProps): ActionItemProps => ({
+const renameFileAction = ({ userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
     icon: Swap,
     text: getI18nConstant(userConfig.preferredLanguage, i18n_RENAME_TOOLTIP),
-    onClick: async (_e) => { console.log("还在支持中, 敬请期待！") },
+    onClick: async (_e) => { setRightMenuDisplay && setRightMenuDisplay(false); console.log("还在支持中, 敬请期待！") },
     disable: true
 })
+
+/**
+ * 重命名文件的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, dirhandler, setRightMenuDisplay 的属性
+ */
+const openPluginSettingAction = ({ userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
+    icon: GearSix,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_PLUGN_SETTING_TOOLTIP),
+    onClick: async (_e) => { setRightMenuDisplay && setRightMenuDisplay(false); logseq.showSettingsUI() },
+})
+
 
 
 // =============== Render list component ===============
@@ -433,6 +444,7 @@ const renderContextMenuActions = ({ record, userConfig, dirhandler }: MetaRender
         openFolderAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         showPreviewModalAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         copyTitleAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
+        openPluginSettingAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
     ]
     isDebug && actions.push(showDebugInfoAction({ record, userConfig, dirhandler, setRightMenuDisplay }))
 
@@ -445,6 +457,7 @@ const renderContextMenuActions = ({ record, userConfig, dirhandler }: MetaRender
                     text={item.text}
                     onClick={item.onClick}
                     disable={item.disable}
+                    compact
                 />
             ))}
         </Space.Compact>

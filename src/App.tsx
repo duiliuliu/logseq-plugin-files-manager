@@ -17,11 +17,11 @@ import getI18nConstant from './i18n/utils';
 import { useUserConfigs } from './logseq/useUserConfigs';
 import useTabData from './data/useTabData';
 import useTheme from './data/useLoadTheme';
-import { buildGraphPath } from './logseq/utils';
+import { buildGraphPath } from './logseq/logseqCommonProxy';
 import { useUpdateMaxNumberOnScroll } from './ui_hooks/useUpdateOnScroll';
 import useComponentSizeAndPosition from './ui_hooks/useSizeAndPos';
 import { useDirectoryHandle } from './ui_hooks/useDirectoryHandle';
-import { initLogCfg } from './logseq/logseqAddOptLog';
+import { initLogCfg } from './logseq/feat/logseqAddOptLog';
 
 type SearchProps = GetProps<typeof Input.Search>;
 

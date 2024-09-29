@@ -5,9 +5,10 @@ import { processPage } from './prepareData';
 import { decodeLogseqFileName, encodeLogseqFileName, formatFilePath, parseAndFormatJournal } from '../utils/fileUtil';
 import { USER_CONFIG_FILE } from './constants';
 import { DocFormat, OperationType } from './enums';
-import { getLogseqPageBlocksTree, getPageDetails } from '../logseq/utils';
+import { getLogseqPageBlocksTree, getPageDetails } from '../logseq/logseqCommonProxy';
 import { removePageFromDB } from './db';
 import { AppConfig } from './types';
+import { addLogseqDefaultPageProps } from '../logseq/feat/logseqDefaultPageProps';
 
 type FileChanges = {
     blocks: BlockEntity[];
@@ -25,7 +26,10 @@ const handleFileChanged = async (changes: FileChanges, appConfig: AppConfig, dir
     // logger.debug(`handleFileChanged,operation:${operation},changes:`, changes, 'file', originalName)
 
     if (operation === OperationType.CONFIG_MODIFIED) return { configUpdated: true };
-    if (operation === OperationType.CREATE) return { fileMotified: false };
+    if (operation === OperationType.CREATE) {
+        addLogseqDefaultPageProps(alias)
+        return { fileMotified: false }
+    };
 
     if (operation === OperationType.MODIFIED) {
         const blocks = await getLogseqPageBlocksTree(encodeLogseqFileName(alias)).catch(err => {

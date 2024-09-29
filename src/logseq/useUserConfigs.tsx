@@ -7,6 +7,7 @@ import { AppConfig } from "../data/types";
 import { parseEDNString } from "edn-data";
 import { USER_CONFIG_FILE } from "../data/constants";
 import { initLspSettingSchema } from "./logseqSetting";
+import { enhanceLspPropsIcon } from "./feat/logseqEnhancePropsIcon";
 
 const fetchUserConfigs = async (setUserConfigs: (arg0: AppConfig) => void) => {
     logger.debug(`useUserConfigs update`)
@@ -47,6 +48,7 @@ const fetchAppConfig = async (appConfig: AppConfig) => {
             appConfig.journalsDirectory = configObj['journals-directory'] ?? 'journals'
             appConfig.journalFileNameFormat = configObj['journal/file-name-format'] ?? 'yyyy_MM_dd'
             appConfig.assetsDirectory = 'assets'
+            appConfig.propertyPagesEnabled = configObj['property-pages/enabled?'] ?? true
         } else {
             logger.error("No content found or the result is empty. file:", USER_CONFIG_FILE);
         }
@@ -59,10 +61,12 @@ const fetchAppConfig = async (appConfig: AppConfig) => {
 export const useUserConfigs = (userConfigUpdated: number) => {
     const [userConfigs, setUserConfigs] = useState<AppConfig>({} as AppConfig);
 
+    // 用户APP配置
     useEffect(() => {
         fetchUserConfigs(setUserConfigs);
         setupFileManagerNav(userConfigs.preferredLanguage)
         initLspSettingSchema(userConfigs.preferredLanguage)
+        enhanceLspPropsIcon(userConfigs)
 
         const graphChangeListen = (e: any) => {
             logger.debug(`onCurrentGraphChanged:${JSON.stringify(e)}`)
@@ -75,7 +79,14 @@ export const useUserConfigs = (userConfigUpdated: number) => {
         }
     }, [userConfigUpdated]);
 
+    // 用户PLUGIN配置
+    useEffect(() => {
+        logseq.onSettingsChanged((_k, _v) => {
+            enhanceLspPropsIcon(userConfigs)
+        })
+    }, [])
 
+    // 用户语言配置
     useEffect(() => {
         // 设置监听器以监听html元素的lang属性变化
         const observer = new MutationObserver(async mutations => {

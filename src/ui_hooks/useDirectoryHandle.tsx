@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH } from "../data/constants";
 import getI18nConstant from "../i18n/utils";
-import { buildGraphPath } from "../logseq/utils";
+import { buildGraphPath } from "../logseq/logseqCommonProxy";
 import { getGraphDirName } from "../utils/fileUtil";
 import { logger } from "../utils/logger";
 

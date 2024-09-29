@@ -1,6 +1,6 @@
 
 import { SimpleCommandKeybinding } from "@logseq/libs/dist/LSPlugin";
-import { HOME_PAGE, i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, PARENT_OPEN_BUTTON_ID, PLUGIN_ROUTE } from "../data/constants";
+import { HOME_PAGE, i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, PARENT_OPEN_BUTTON_ID, PLUGIN_ROUTE, SETTING_PAGE } from "../data/constants";
 import getI18nConstant from "../i18n/utils";
 import { logger } from "../utils/logger";
 
@@ -24,6 +24,10 @@ export const showMainUIIfFilesManager = async (): Promise<void> => {
     if (currPage?.originalName === HOME_PAGE) {
         // 如果条件满足，则显示主 UI
         logseq.showMainUI();
+    }
+    if (currPage?.originalName === SETTING_PAGE) {
+        logseq.showMainUI();
+        logseq.showSettingsUI();
     }
 }
 
@@ -64,39 +68,51 @@ export const setupStyles = () => {
         position: relative;
         display: inline-block;
         border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+        cursor: pointer; /* 鼠标指针变为手形 */
         }
 
         /* Tooltip text */
         .tooltip .tooltiptext {
-        visibility: hidden;
-        width: 160px;
+        visibility: hidden; 
         background-color: black;
         color: #fff;
         text-align: center;
         padding: 5px 0;
         border-radius: 6px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 轻微的阴影效果 */
         
         /* Position the tooltip text - see examples below! */
         position: absolute;
-        z-index: 1;
-        }
+        z-index: 3;
+
+        /* 动画效果 */
+        transition: opacity 0.3s;
+        opacity: 0;
+
+        /* 宽度设置 */
+        min-width: 120px; /* 设置最小宽度 */
+        max-width: 60vw; /* 设置最大宽度为视口宽度的60% */
+        width: max-content; /* 宽度根据内容自动调整 */
+        word-wrap: break-word; /* 确保长单词可以换行 */
+        } 
 
         /* Show the tooltip text when you mouse over the tooltip container */
         .tooltip:hover .tooltiptext {
         visibility: visible;
+        opacity: 1;
         }
      `)
 };
 
 // 设置文件管理器导航
 export const setupFileManagerNav = async (lang?: string) => {
-    const { preferredLanguage } = lang ? { preferredLanguage: lang } : await logseq.App.getUserConfigs()
+    !lang && ({ preferredLanguage: lang } = await logseq.App.getUserConfigs())
     const fileManagerDiv = document.createElement('div');
     fileManagerDiv.innerHTML = `
       <a href="#${PLUGIN_ROUTE}" class='item group flex items-center text-sm font-medium rounded-md'>
         <span class='ui__icon ti ls-icon-calendar'>
           <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><rect width='20' height='20' fill='none'/><rect x='32' y='48' width='192' height='160' rx='8' fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='16'/><circle cx='68' cy='84' r='12'/><circle cx='108' cy='84' r='12'/></svg>      </span>
-        <span class='flex-1'>${getI18nConstant(preferredLanguage, i18n_FILE_MANAGER_LABEL)}</span>
+        <span class='flex-1'>${getI18nConstant(lang, i18n_FILE_MANAGER_LABEL)}</span>
       </a>
     `;
     fileManagerDiv.className = `fileManager-nav`;
