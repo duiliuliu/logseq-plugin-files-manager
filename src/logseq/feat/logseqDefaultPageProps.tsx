@@ -49,7 +49,8 @@ export const addLogseqDefaultPageProps = async (name: string) => {
             logger.debug('addLogseqDefaultPageProps insert firstBlock')
             // 如果页面没有区块，创建新页面并添加属性。
             page && await Promise.all(Object.entries(defaultProps).map(([k, v]) => logseq.Editor.upsertBlockProperty(page.uuid, k, v)))
-            visible && await logseq.Editor.appendBlockInPage(name, '', { properties: defaultProps });
+            visible && await logseq.Editor.appendBlockInPage(name, '', { properties: defaultProps })
+            await logseq.Editor.appendBlockInPage(name, "")
         }
     } catch (error) {
         // 显示错误消息。
@@ -96,7 +97,7 @@ const getLogseqDefaultPageProps = async (page: PageEntity) => {
 
             const itemValue = objectTemplateFromat(properties[item], { ...data, page });
             // 属性值为空则忽略
-            logger.debug('getLspDefaultPageProps', 'itemValue', itemValue, );
+            logger.debug('getLspDefaultPageProps', 'itemValue', itemValue,);
 
             itemValue && (objDest[item] = itemValue);
         });
