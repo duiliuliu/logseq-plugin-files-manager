@@ -67,7 +67,7 @@ export const initLspSettingSchema = async (lang?: string,) => {
             title: '',
             type: 'string',
             default: '{}',
-            description: ' e.g.: {"createdTime":"${getDatetime()}"}',
+            description: ' e.g.: `{"createdTime":"${getDatetime()}","icon":"${randomIcon(page)}"}` ',
             inputAs: 'textarea',
         },
         {
