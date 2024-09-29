@@ -24,39 +24,51 @@ export const initIconList = async () => {
  */
 export const addLogseqDefaultPageProps = async (name: string) => {
     try {
-        // 获取 Logseq 默认页面属性。
+        // 获取页面对象，如果不存在则返回
         const page = await logseq.Editor.getPage(name);
         if (!page) {
-            return
-        }
-        const { properties: defaultProps, visible } = await getLogseqDefaultPageProps(page);
-
-        // 如果没有默认属性或属性为空，则不执行任何操作。
-        if (!defaultProps || Object.keys(defaultProps).length === 0) {
+            logger.debug(`Page ${name} not found`);
             return;
         }
-        logger.debug('addLogseqDefaultPageProps', 'properties', defaultProps, 'visible', visible);
 
-        // 获取页面的区块树。
+        // 获取默认页面属性和可见性设置
+        const { properties: defaultProps, visible } = await getLogseqDefaultPageProps(page);
+        if (!defaultProps || Object.keys(defaultProps).length === 0) {
+            logger.debug('No default properties to apply');
+            return;
+        }
+
+        logger.debug('Adding default properties to the first block', defaultProps, visible);
+
+        // 获取页面的区块树，并检查是否存在第一个区块
         const blocks = await logseq.Editor.getPageBlocksTree(name);
         const firstBlock = blocks.at(0);
 
-        // 如果页面存在第一个区块，则更新或添加属性。
-        if (firstBlock) {
-            logger.debug('addLogseqDefaultPageProps update firstBlock', firstBlock)
-            await Promise.all(Object.entries(defaultProps).map(([k, v]) => logseq.Editor.upsertBlockProperty(firstBlock.uuid, k, v)))
-        } else {
-            logger.debug('addLogseqDefaultPageProps insert firstBlock')
-            // 如果页面没有区块，创建新页面并添加属性。
-            page && await Promise.all(Object.entries(defaultProps).map(([k, v]) => logseq.Editor.upsertBlockProperty(page.uuid, k, v)))
-            visible && await logseq.Editor.appendBlockInPage(name, '', { properties: defaultProps })
-            await logseq.Editor.appendBlockInPage(name, "")
-        }
+        // 更新页面和第一个区块的属性
+        await updateBlockProperties(page.uuid, defaultProps);
+        const newBlock = visible && await logseq.Editor.appendBlockInPage(name, '', { properties: { ...page.properties, ...defaultProps } });
+        // 检查是否存在第一个区块
+        firstBlock && newBlock && await logseq.Editor.moveBlock(newBlock.uuid, firstBlock.uuid, { before: true, children: true })
+        logseq.Editor.exitEditingMode()
     } catch (error) {
-        // 显示错误消息。
-        logseq.UI.showMsg(`Adding default properties to page [${name}] failed: ${error}`, 'error');
-        logger.error(`Adding default properties to page [${name}] failed`, error)
+        // 捕获并显示错误消息
+        const errorMsg = `Adding default properties to page [${name}] failed: ${error}`;
+        logger.error(errorMsg);
+        logseq.UI.showMsg(errorMsg, 'error');
     }
+};
+
+/**
+ * 更新区块的属性
+ * @param block 区块对象
+ * @param properties 要更新的属性对象
+ */
+const updateBlockProperties = async (blockUid: string, properties: { [s: string]: unknown; }) => {
+    await Promise.all(
+        Object.entries(properties).map(([key, value]) =>
+            logseq.Editor.upsertBlockProperty(blockUid, key, value)
+        )
+    );
 };
 
 // 定义一个类型，表示一个对象，其键是字符串，值是可调用的函数，这些函数返回一个字符串。
