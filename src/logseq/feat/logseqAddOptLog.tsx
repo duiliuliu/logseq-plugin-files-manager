@@ -7,9 +7,11 @@ import { AppConfig } from "../../data/types";
 export const initLogCfg = async (back?: boolean) => {
     let logPage = await logseq.Editor.getPage(LOG_PAGE)
     if (!logPage || !logPage?.properties?.source) {
+        const tempElement = document.createElement('span');
+        tempElement.innerHTML = `&#xf021;`;
         logPage = await logseq.Editor.createPage('files-manager-log', {
             source: '[[files-manager]]',
-            icon: '󰈙'
+            icon: tempElement.innerText,
         })
         logseq.Editor.appendBlockInPage(LOG_PAGE, `query-table:: true
 #+BEGIN_QUERY
