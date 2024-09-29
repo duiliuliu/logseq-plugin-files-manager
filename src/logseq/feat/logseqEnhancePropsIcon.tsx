@@ -22,6 +22,9 @@ export const enhanceLspPropsIcon = async (userConfigs: AppConfig) => {
         if (routes.includes(e.path)) {
             return
         }
+        if (e.path === '/all-pages' || e.path === '/page/calendar') {
+            return
+        }
         isInitialScroll = true
         doEnhanceLspPropsIcon()
     }

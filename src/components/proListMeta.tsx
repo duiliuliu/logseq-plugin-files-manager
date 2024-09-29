@@ -311,7 +311,7 @@ const renderListDescription = ({ record, userConfig }: MetaRenderProps) => (
  * @param {MetaRenderProps} props - 包含 record 的属性
  */
 const renderListAvatar = ({ record }: MetaRenderProps) => (
-    <div className='list-avatar'>{record.extName ? record.extName.toUpperCase() : '🕰'}</div>
+    <div className='list-avatar'>{record.icon ? record.icon : record.extName ? record.extName.toUpperCase() : '🕰'}</div>
 );
 
 /**
@@ -384,7 +384,7 @@ const renderTag = ({ record }: MetaRenderProps) => {
  */
 const renderCardTitle = ({ record, userConfig }: MetaRenderProps) => (
     <div className='card-title-container'>
-        <div className='card-avatar' onDoubleClick={() => copyTitleAction({ record, userConfig })}>{record.extName ? record.extName.toUpperCase() : '🕰'}</div>
+        <div className='card-avatar' onDoubleClick={() => copyTitleAction({ record, userConfig })}>{record.icon ? record.icon : record.extName ? record.extName.toUpperCase() : '🕰'}</div>
         {(record.dataType === DataType.PAGE || record.dataType === DataType.JOURNAL) && <div className='card-description'>{record.alias}</div>}
     </div>
 );

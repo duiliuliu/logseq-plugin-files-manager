@@ -46,6 +46,7 @@ export const addLogseqDefaultPageProps = async (name: string) => {
 
         // 更新页面和第一个区块的属性
         await updateBlockProperties(page.uuid, defaultProps);
+        delete defaultProps.icon
         const newBlock = visible && await logseq.Editor.appendBlockInPage(name, '', { properties: { ...page.properties, ...defaultProps } });
         // 检查是否存在第一个区块
         firstBlock && newBlock && await logseq.Editor.moveBlock(newBlock.uuid, firstBlock.uuid, { before: true, children: true })

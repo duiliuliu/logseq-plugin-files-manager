@@ -90,7 +90,8 @@ export const processPage = async ({ pageE, dirHandle, appConfig, updated }: proc
                 relatedType: RelatedType.BLOCK,
                 relatedItemUuid: imageUuid
             }],
-            createdTime: pageE.properties?.createdTime
+            createdTime: pageE.properties?.createdTime,
+            icon: pageE.properties?.icon
         });
     }
 
