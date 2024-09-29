@@ -7,7 +7,6 @@
   "license": "MPL-2.0",
   "repository": "duiliuliu/logseq-files-manager",
   "scripts": {
-    "test": "jest",
     "dev": "vite",
     "build:dev": "tsc && vite build --mode development",
     "build": "tsc && vite build",

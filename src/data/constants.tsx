@@ -21,8 +21,11 @@ export const PARENT_BACK_TOP = 'kef-tocgen-backtop'
 export const PARENT_BACK_BOTTOM = 'kef-tocgen-godown'
 
 export const PLUGIN_ROUTE = '/page/files-manager'
+export const SETTING_ROUTE = '/page/files-manager-setting'
+export const LOG_ROUTE = '/page/files-manager-log'
 export const LOG_PAGE = 'files-manager-log';
 export const HOME_PAGE = 'files-manager';
+export const SETTING_PAGE = 'files-manager-setting';
 
 export const OPERATE_SUCCESS = 'success'
 export const OPERATE_FAILED = 'failed'
@@ -72,6 +75,7 @@ export const i18n_OPEN_FOLDER_TOOLTIP = 'Open the folder';
 export const i18n_OPEN_FOLDER_ERROR = 'Open the folder failed';
 export const i18n_DELETE_TOOLTIP = 'Delete the file';
 export const i18n_RENAME_TOOLTIP = 'Rename the file';
+export const i18n_OPEN_PLUGN_SETTING_TOOLTIP = 'Open plugin setting';
 export const i18n_DELETE_SUCCESS = 'Delete the file success';
 export const i18n_DELETE_ERROR = 'Delete the file failed';
 export const i18n_FILE_DENY = 'Deny the file operate'; // The request is not allowed by the user agent
@@ -81,13 +85,26 @@ export const i18n_AUTHORIZE_TOOLTIP = 'Authorize Tip' //请点击选择logseq文
 export const i18n_AUTHORIZE_TOOLTIP_PATH = 'Authorize Tip PATH' //您的Logseq路劲
 export const i18n_HERE = 'Here'; // 点击这儿
 
-export const i18n_DEFAULT_DELETE_FORMAT = 'Delete format' // '<div class="tooltip"><s>${name}</s><span class="tooltiptext">${name} has deledted in time ${date} ${time}</span> </div>'
 
 // 配置
+export const i18n_GET_PLUGIN_CONFIG_ERROR = 'Get plugin config error' // 获取插件配置失败，请检查您的插件配置格式
+
+export const i18n_DEFAULT_DELETE_FORMAT = 'Delete format' // '<div class="tooltip"><s>${name}</s><span class="tooltiptext">${name} has deledted in time ${date} ${time}</span> </div>'
 export const i8n_DELETE_FORMAT_TITLE = 'Delete format title'  // 删除操作配置
 export const i8n_DELETE_FORMAT_DESC = 'Delete format desc' // 配置指定模板，可替换被删除的文章名称
 export const i8n_DELETE_FORMAT_VAR_DESC = 'Delete format var desc' // 支持以下变量
 
+export const i8n_PROPS_ICON_TITLE = 'Props icon enhance config'  // 属性图标强化配置
+export const i8n_PROPS_ICON_DESC = 'Props icon enhance config desc' // 对插件【Awesome-links】的优化，当logseq配置 :property-pages/enabled?=false 时，【Awesome-links】插件的属性图标不再显示，本功能对此优化，开启后会支持图标继续显示
+
+export const i8n_PAGE_DEFAULT_PROPS_TITLE = 'Default page properties'  // 页面默认属性
+export const i8n_PAGE_DEFAULT_PROPS_VISIBLE_DESC = 'Default page properties visible desc' // 页面新建时，可配置默认属性,配置的默认属性是否可见
+export const i8n_PAGE_DEFAULT_PROPS_DESC = 'Default page properties desc' // 页面新建时，可配置默认属性，属性值为空则忽略，如需添加默认为空的属性，可配置值为空格; 请注意属性不要和系统属性冲突，如需设置属性createTime，请固定配置 "createdTime":"${getDatetime()}", 该属性本插件有计划使用
+export const i8n_PAGE_DEFAULT_PROPS_VAR_DESC = 'Default page properties var desc' // 支持以下变量
+
+export const i8n_CUSTOMS_VARIABLE_TITLE = 'Custom variable config'  // 自定义变量配置
+export const i8n_CUSTOMS_VARIABLE_DESC = 'Custom variable config desc' // 支持自定义变量，用于上方模板，变量类型为：type CustomVariable = (input?: any) => string
+export const i8n_CUSTOMS_VARIABLE_VAR_DESC = 'Custom variable config var desc' // 已支持变量
 
 
 // ===================================================================================

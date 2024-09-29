@@ -76,7 +76,7 @@ export const copyToClipboard = (text: string) => {
     // clipboard api 复制
     navigator.clipboard.writeText(text);
   } else {
-    var textarea = document.createElement('textarea');
+    const textarea = document.createElement('textarea');
     document.body.appendChild(textarea);
     // 隐藏此输入框
     textarea.style.position = 'fixed';

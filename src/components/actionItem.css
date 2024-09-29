@@ -1,10 +1,8 @@
-/* src/components/ActionItem.css */
+/* 正常模式样式 */
 .action-item {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
   border-radius: 4px;
-  cursor: pointer;
   transition: background-color 0.3s, box-shadow 0.3s, color 0.3s;
   /* 添加颜色过渡 */
 }
@@ -39,4 +37,17 @@
   /* 添加透明度以增强禁用效果 */
   pointer-events: none;
   /* 禁用点击事件 */
+}
+
+/* 紧凑模式样式 */
+.action-item.compact {
+  padding: 4px 6px;
+  font-size: 0.8em;
+  font-family: "Helvetica Neue", "PingFang SC", "Microsoft YaHei", "Source Han Sans SC", sans-serif;
+}
+
+.action-item.compact svg {
+  width: 11px;
+  /* 减小图标大小 */
+  height: 11px;
 }

@@ -1,3 +1,4 @@
+import { CustomVariable } from "../logseq/logseqSetting";
 import { logger } from "./logger";
 
 
@@ -16,3 +17,25 @@ export const objUnderlineToSmallCamel = (objSrc: any, _char = '_' /** todo */) =
     logger.debug('objUnderlineToSmallCamel', objDest)
     return objDest;
 }
+
+export const objectTemplateFromat = (temp: string, obj: Object): string => {
+    return new Function(...Object.keys(obj), `return \`${temp}\`;`)(...Object.values(obj))
+}
+
+export const stringToFuncValue = (str: string, obj: Object): string => {
+    return new Function(...Object.keys(obj), "return " + str)(...Object.values(obj))
+}
+
+export const stringToObject = (str: string): Object => {
+    return (new Function("return " + str))();
+}
+
+export const stringToVarArr = (str: string): Array<CustomVariable> => {
+    return (new Function("return " + str))();
+}
+
+export const stringToStrArr = (str: string): Array<string> => {
+    return (new Function("return " + str))();
+}
+
+export function isEmptyObject(obj: Object) { return Object.keys(obj).length === 0 }

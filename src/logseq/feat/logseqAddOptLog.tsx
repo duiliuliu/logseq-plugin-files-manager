@@ -1,14 +1,15 @@
 import { format } from "date-fns";
-import { HOME_PAGE, LOG_PAGE } from "../data/constants";
-import { OperationType } from "../data/enums";
-import { AppConfig } from "../data/types";
+import { HOME_PAGE, LOG_PAGE } from "../../data/constants";
+import { OperationType } from "../../data/enums";
+import { AppConfig } from "../../data/types";
 
 
 export const initLogCfg = async (back?: boolean) => {
     let logPage = await logseq.Editor.getPage(LOG_PAGE)
     if (!logPage || !logPage?.properties?.source) {
         logPage = await logseq.Editor.createPage('files-manager-log', {
-            source: '[[files-manager]]'
+            source: '[[files-manager]]',
+            icon: '󰈙'
         })
         logseq.Editor.appendBlockInPage(LOG_PAGE, `query-table:: true
 #+BEGIN_QUERY

@@ -59,6 +59,11 @@ You can launch the file manager in any of the following ways:
    - Deletion and other operation logs: ![app-log](./images/app-log.png)
    - You can now personalize the deletion style template through the settings to meet your specific needs ![delete-page-setting](./images/delete-page-setting.png)
 
+8. **Dynamic Property Configuration for New Pages**
+    - Empower your pages with pre-configured default properties that initialize on creation.
+    - Enhance your workflow by setting default properties for newly created pages. With the support of dynamic variables like randomIcon, you can further tailor the pages to your preferences. This feature allows you to craft pages with a rich set of customizable attributes that adapt to your specific requirements.
+    - ![page-default-props](./images/page-default-props.png)
+
   
 > Discover and experience more features awaiting your exploration.
 

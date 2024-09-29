@@ -56,6 +56,11 @@
    - 操作日志记录：![app-log](./images/app-log.png)
    - 您也可以在设置中自定义删除样式模板，满足个性化需求 ![delete-page-setting](./images/delete-page-setting.png)
 
+8. **新建页面的动态属性配置**
+   - 赋予您的页面预配置的默认属性，这些属性将在创建时初始化。
+   - 通过为新创建的页面设置默认属性来增强您的工作流程。借助如 randomIcon 这样的动态变量支持，您可以进一步定制页面。此功能使您能够创建具有丰富、可自定义属性的页面，以适应您的需求。
+   - ![page-default-props](./images/page-default-props.png)
+
 > 更多功能,期待您的探索和体验.
 
 ### 开发计划

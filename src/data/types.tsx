@@ -68,14 +68,40 @@ interface Position {
 }
 
 
+/**
+ * 应用程序配置接口，继承自用户配置，包含特定的目录和文件名格式设置。
+ */
 interface AppConfig extends AppUserConfigs {
-    pagesDirectory?: string
-    journalsDirectory?: string
-    assetsDirectory?: string
-    journalFileNameFormat?: string
-    hiddenDir?: string[]
-}
+    /**
+     * 页面文件的存储目录。
+     */
+    pagesDirectory?: string;
 
+    /**
+     * 日志文件的存储目录。
+     */
+    journalsDirectory?: string;
+
+    /**
+     * 资源文件的存储目录。
+     */
+    assetsDirectory?: string;
+
+    /**
+     * 日志文件名的格式化字符串，可以使用模板变量。
+     */
+    journalFileNameFormat?: string;
+
+    /**
+     * 需要隐藏的目录数组。
+     */
+    hiddenDir?: string[];
+
+    /**
+     * 是否启用属性页面功能。
+     */
+    propertyPagesEnabled?: boolean;
+}
 
 
 // ===================================================================================
@@ -88,5 +114,5 @@ export type {
     RelatedItem,
     Tab,
     Size,
-    Position
+    Position,
 };

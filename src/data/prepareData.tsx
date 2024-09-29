@@ -1,5 +1,5 @@
 import { BlockEntity, BlockUUIDTuple, PageEntity } from '@logseq/libs/dist/LSPlugin.user';
-import { getLogseqFiles, getLogseqPageBlocksTree } from '../logseq/utils';
+import { getLogseqFiles, getLogseqPageBlocksTree } from '../logseq/logseqCommonProxy';
 import { getAllLogseqPages, getAllLogseqPagesAndFile } from '../logseq/logseqGetAllPage';
 import { DataType, DocFormat, RelatedType } from './enums';
 import { logger } from '../utils/logger';
