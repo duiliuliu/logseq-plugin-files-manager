@@ -16,7 +16,7 @@ export const enhanceLspPropsIcon = async (userConfigs: AppConfig) => {
     const visibleHeight = container?.clientHeight ?? window.innerHeight;
 
     // 定义滚动触发的间隔，这里假设每个元素的高度为 elementHeight
-    const scrollInterval = 2 * visibleHeight; // 两倍的可视高度
+    const scrollInterval = 1.5 * visibleHeight; // 两倍的可视高度
 
     const handleRoute = (e: { path: string; }) => {
         if (routes.includes(e.path)) {
@@ -30,6 +30,7 @@ export const enhanceLspPropsIcon = async (userConfigs: AppConfig) => {
             return
         }
         isInitialScroll = true
+        lastScrollTop = 0
         doEnhanceLspPropsIcon()
     }
     const handleScroll = () => {
@@ -66,11 +67,23 @@ const doEnhanceLspPropsIcon = async () => {
     logger.debug('doEnhanceLspPropsIcon start')
     const nodes = parent?.document?.querySelectorAll('span.page-property-key')
     nodes?.forEach(node => node.setAttribute('data-ref', (node as HTMLSpanElement).innerText))
+
+    if (parent?.document?.querySelector('span.awLi-icon')) {
+        const nodesA = parent?.document?.querySelectorAll('span.kef-ae-pageref-icon')
+        // @ts-ignore
+        nodesA?.forEach(node => node.style.display = "none")
+    }
 }
 
 const doEnhanceLspAllPageIcon = async () => {
     logger.debug('doEnhanceLspPropsIcon start')
-    const nodes = parent?.document?.querySelectorAll('span.pr-1')
-    // @ts-ignore
-    nodes?.forEach(node => node.style ? node.style.display = 'none' : (node.style = { display: 'none' }))
+    if (parent?.document?.querySelector('span.awLi-icon')) {
+        const nodes = parent?.document?.querySelectorAll('span.pr-1')
+        // @ts-ignore
+        nodes?.forEach(node => node.style.display = "none")
+
+        const nodesA = parent?.document?.querySelectorAll('span.kef-ae-pageref-icon')
+        // @ts-ignore
+        nodesA?.forEach(node => node.style.display = "none")
+    }
 }

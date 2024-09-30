@@ -3,7 +3,7 @@ import { logger } from '../utils/logger';
 import { BlockEntity, IDatom, } from '@logseq/libs/dist/LSPlugin.user';
 import { processPage } from './prepareData';
 import { decodeLogseqFileName, encodeLogseqFileName, formatFilePath, parseAndFormatJournal } from '../utils/fileUtil';
-import { USER_CONFIG_FILE } from './constants';
+import { HOME_PAGE, LOG_PAGE, SETTING_PAGE, USER_CONFIG_FILE } from './constants';
 import { DocFormat, OperationType } from './enums';
 import { getLogseqPageBlocksTree, getPageDetails } from '../logseq/logseqCommonProxy';
 import { removePageFromDB } from './db';
@@ -25,12 +25,17 @@ const handleFileChanged = async (changes: FileChanges, appConfig: AppConfig, dir
     const [operation, originalName, alias] = parseOperation(changes, appConfig);
     // logger.debug(`handleFileChanged,operation:${operation},changes:`, changes, 'file', originalName)
 
+    if (alias === SETTING_PAGE || alias === LOG_PAGE || alias === HOME_PAGE) {
+        operation === OperationType.PLUGIN_MODIFIED
+        return { fileMotified: false }
+    }
+
+
     if (operation === OperationType.CONFIG_MODIFIED) return { configUpdated: true };
     if (operation === OperationType.CREATE) {
         addLogseqDefaultPageProps(alias)
         return { fileMotified: false }
     };
-
     if (operation === OperationType.MODIFIED) {
         const blocks = await getLogseqPageBlocksTree(encodeLogseqFileName(alias)).catch(err => {
             logger.error(`Failed to get blocks: ${alias}`, err);
@@ -50,7 +55,6 @@ const handleFileChanged = async (changes: FileChanges, appConfig: AppConfig, dir
 
         processPage({ pageE, dirHandle: directoryHandle, appConfig, updated: true })
     }
-
     if (operation === OperationType.DELETE) {
         logger.debug(`Would remove page from DB: graph=${appConfig.currentGraph}, name=${originalName}`);
         removePageFromDB(appConfig.currentGraph, originalName);

@@ -147,3 +147,13 @@ const randomIcon = (page?: PageEntity): string => {
     tempElement.innerHTML = `&#x${selectedIcon.u};`;
     return tempElement.innerText;
 };
+
+// const propertiesToStr = (properties?: { [s: string]: any }): [string, string] => {
+//     if (!properties || Object.keys(properties).length === 0) {
+//         return ['', '']
+//     }
+//     // @ts-ignore
+//     const v1 = properties?.map(([k, v]) => `${k}:: ${v}`).reduce((prev, curr) => prev + "\n" + curr)
+//     return [v1, '---\n' + v1 + '\n---']
+
+// }
