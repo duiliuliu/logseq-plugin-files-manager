@@ -74,26 +74,24 @@ export const processPage = async ({ pageE, dirHandle, appConfig, updated }: proc
         ? formatJournalPageName(pageE.journalDay, pageE.originalName, journalFileTem, dateFormat)
         : encodeLogseqFileName(pageE.originalName))
         + DocFormat.toFileExt(docFormat);
-    if (summary.length > 0 && !(summary.length === 1 && summary[0] === '')) { // 过滤内容为空的页面
-        await DB.data.put({ // put 操作：新增或更新，等同于upsert
-            graph,
-            dataType: isJournal ? DataType.JOURNAL : DataType.PAGE,
-            alias: pageE.originalName,
-            name: originalName,
-            uuid: pageE.uuid,
-            updatedTime,
-            summary,
-            image,
-            size,
-            path: pageE.path ? `${graph.replace(GRAPH_PREFIX, '')}/${pageE.path}` : `${graph.replace(GRAPH_PREFIX, '')}/${isJournal ? journalsDir : pagesDir}/${originalName}`,
-            related: [{
-                relatedType: RelatedType.BLOCK,
-                relatedItemUuid: imageUuid
-            }],
-            createdTime: pageE.properties?.createdTime,
-            icon: pageE.properties?.icon
-        });
-    }
+    await DB.data.put({ // put 操作：新增或更新，等同于upsert
+        graph,
+        dataType: isJournal ? DataType.JOURNAL : DataType.PAGE,
+        alias: pageE.originalName,
+        name: originalName,
+        uuid: pageE.uuid,
+        updatedTime,
+        summary,
+        image,
+        size,
+        path: pageE.path ? `${graph.replace(GRAPH_PREFIX, '')}/${pageE.path}` : `${graph.replace(GRAPH_PREFIX, '')}/${isJournal ? journalsDir : pagesDir}/${originalName}`,
+        related: [{
+            relatedType: RelatedType.BLOCK,
+            relatedItemUuid: imageUuid
+        }],
+        createdTime: pageE.properties?.createdTime,
+        icon: pageE.properties?.icon
+    });
 
     // 提取页面块中的资产和标签
     const assetsAndTags = extractAssetsAndTagsFromPage(pageE, blocks);
