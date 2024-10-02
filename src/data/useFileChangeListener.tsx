@@ -21,7 +21,7 @@ type FileChanges = {
 }
 
 // 工具函数：处理文件变化
-const handleFileChanged = async (changes: FileChanges, appConfig: AppConfig, directoryHandle: any): Promise<{ configUpdated?: boolean, fileMotified?: boolean }> => {
+const handleFileChanged = async (appConfig: AppConfig, changes: FileChanges, directoryHandle: any): Promise<{ configUpdated?: boolean, fileMotified?: boolean }> => {
     const [operation, originalName, alias] = parseOperation(changes, appConfig);
     // logger.debug(`handleFileChanged,operation:${operation},changes:`, changes, 'file', originalName)
 
@@ -33,7 +33,7 @@ const handleFileChanged = async (changes: FileChanges, appConfig: AppConfig, dir
 
     if (operation === OperationType.CONFIG_MODIFIED) return { configUpdated: true };
     if (operation === OperationType.CREATE) {
-        addLogseqDefaultPageProps(alias)
+        addLogseqDefaultPageProps(appConfig, alias)
         return { fileMotified: false }
     };
     if (operation === OperationType.MODIFIED) {
@@ -110,7 +110,7 @@ export const useFileChangeListener = (appConfig: AppConfig, directoryHandle: any
     const [fileMotified, setFileMotified] = useState<number>(Date.now())
     useEffect(() => {
         const onFileChanged = async (changes: FileChanges) => {
-            const { configUpdated, fileMotified: fileMotifiedT } = await handleFileChanged(changes, appConfig, directoryHandle);
+            const { configUpdated, fileMotified: fileMotifiedT } = await handleFileChanged(appConfig, changes, directoryHandle);
             if (configUpdated) {
                 setUserConfigUpdated(Date.now())
             }

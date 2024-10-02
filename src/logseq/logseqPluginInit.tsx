@@ -64,6 +64,7 @@ export const setupStyles = () => {
 
     logseq.provideStyle(String.raw`
         /* Tooltip container */
+
         .tooltip {
         position: relative;
         display: inline-block;

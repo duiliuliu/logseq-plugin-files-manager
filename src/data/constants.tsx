@@ -18,7 +18,10 @@ import {
 export const PARENT_MAIN_CONTAINER_ID = 'main-content-container';
 export const PARENT_OPEN_BUTTON_ID = 'files-manager-open'
 export const PARENT_BACK_TOP = 'kef-tocgen-backtop'
-export const PARENT_BACK_BOTTOM = 'kef-tocgen-godown'
+export const PARENT_BACK_BOTTOM = 'kef-tocgen-godown' // Deprecate，该问题是为正确使用 logseq-another-embed 插件导致
+export const EXTERNAL_PLUGIN_AWESOME_PROPS = 'logseq-awesome-props'
+export const DATA_REF_SELECTOR = 'span.page-property-key:not([data-ref]):not(.page-ref)'
+export const ICON_PARENT_STYLE_KEY = 'icon-enhance-lsp-filesm'
 
 export const PLUGIN_ROUTE = '/page/files-manager'
 export const SETTING_ROUTE = '/page/files-manager-setting'
@@ -97,14 +100,20 @@ export const i8n_DELETE_FORMAT_VAR_DESC = 'Delete format var desc' // 支持以�
 export const i8n_PROPS_ICON_TITLE = 'Props icon enhance config'  // 属性图标强化配置
 export const i8n_PROPS_ICON_DESC = 'Props icon enhance config desc' // 对插件【Awesome-links】的优化，当logseq配置 :property-pages/enabled?=false 时，【Awesome-links】插件的属性图标不再显示，本功能对此优化，开启后会支持图标继续显示
 
+export const i8n_UI_TOOLBAR_DROPDOWN_TITLE = 'UI toolbar dropdown enhance'  // logseq UI toolbar优化
+export const i8n_UI_TOOLBAR_DROPDOWN_DESC = 'UI toolbar dropdown enhance desc' // 优化目前logseq UI toolbar下拉无法滚动到最底部问题
+
 export const i8n_PAGE_DEFAULT_PROPS_TITLE = 'Default page properties'  // 页面默认属性
 export const i8n_PAGE_DEFAULT_PROPS_VISIBLE_DESC = 'Default page properties visible desc' // 页面新建时，可配置默认属性,配置的默认属性是否可见
-export const i8n_PAGE_DEFAULT_PROPS_DESC = 'Default page properties desc' // 页面新建时，可配置默认属性，属性值为空则忽略，如需添加默认为空的属性，可配置值为空格; 请注意属性不要和系统属性冲突，如需设置属性createTime，请固定配置 "createdTime":"${getDatetime()}", 该属性本插件有计划使用
-export const i8n_PAGE_DEFAULT_PROPS_VAR_DESC = 'Default page properties var desc' // 支持以下变量
+export const i8n_PAGE_DEFAULT_PROPS_DESC = 'Default page properties desc' // 新建页面时，您可以设置默认属性。空值属性将被忽略。如需添加默认为空的属性，请将其值设置为空格。请确保不要与系统属性发生冲突。对于属性'createTime'，我们建议您将其固定设置为`'createdTime': '${getDatetime()}'`，因为本插件将使用此属性
+export const i8n_PAGE_DEFAULT_PROPS_VAR_DESC = 'Default page properties var desc' // 您可以参照示例进行配置。整个配置遵循JSON结构，其中JSON的值可以设置为常量，也可以按照以下方式使用变量进行配置
 
 export const i8n_CUSTOMS_VARIABLE_TITLE = 'Custom variable config'  // 自定义变量配置
-export const i8n_CUSTOMS_VARIABLE_DESC = 'Custom variable config desc' // 支持自定义变量，用于上方模板，变量类型为：type CustomVariable = (input?: any) => string
+export const i8n_CUSTOMS_VARIABLE_DESC = 'Custom variable config desc' // 支持自定义变量，用于上方模板，变量类型为：`type CustomVariable = (input?: any) => string`
 export const i8n_CUSTOMS_VARIABLE_VAR_DESC = 'Custom variable config var desc' // 已支持变量
+export const i8n_CUSTOMS_VARIABLE_RANDOMICON_DESC = 'Custom variable config ${randomIcon} desc' // randomIcon()变量说明：${randomIcon()}会返回一个随机的Tabler icon, ${randomIcon(page)}仅会在非journal页面返回Tabler icon
+export const i8n_CUSTOMS_VARIABLE_DATE_DESC = 'Custom variable config ${date} desc' // date变量说明：${date}会返回当前graph日期格式的日期
+export const i8n_CUSTOMS_VARIABLE_TIME_DESC = 'Custom variable config ${time} desc' // time变量说明：${date}会返回当前时间，格式固定为'HH:mm'
 
 
 // ===================================================================================

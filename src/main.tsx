@@ -10,9 +10,9 @@ import { registerCommands, setupStyles, setupFileManagerNav, openFileManager, op
 import { version as __VERSION } from '../package.json'
 import { PLUGIN_ROUTE, SETTING_ROUTE } from './data/constants';
 import { initLogCfg } from './logseq/feat/logseqAddOptLog';
-import { initLspSettingSchema } from './logseq/logseqSetting';
-import { initIconList } from './logseq/feat/logseqDefaultPageProps';
+import { initLspSettingsSchema } from './logseq/logseqSetting';
 import { logger } from './utils/logger';
+import { initIconList } from './logseq/feat/logseqCustomVariable';
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -25,6 +25,7 @@ export const renderApp = () => {
 
 // 主函数，初始化并注册必要的命令和样式
 const main = async (_e: any) => {
+
   logseq.App.onRouteChanged((e) => {
     logger.debug('onRouteChanged', e)
     if (e.path === PLUGIN_ROUTE) {
@@ -40,7 +41,7 @@ const main = async (_e: any) => {
   await registerCommands();
   await setupStyles();
   await setupFileManagerNav();
-  initLspSettingSchema();
+  initLspSettingsSchema();
   renderApp();
   openFileManagerListener();
   await showMainUIIfFilesManager();

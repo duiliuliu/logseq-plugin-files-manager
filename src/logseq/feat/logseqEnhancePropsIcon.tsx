@@ -1,89 +1,110 @@
-import { LOG_ROUTE, PARENT_MAIN_CONTAINER_ID, PLUGIN_ROUTE, SETTING_ROUTE } from "../../data/constants";
+import { useEffect } from "react";
+import { DATA_REF_SELECTOR, ICON_PARENT_STYLE_KEY, PARENT_MAIN_CONTAINER_ID } from "../../data/constants";
 import { AppConfig } from "../../data/types"
 import { logger } from "../../utils/logger"
-import { getLspPropsIconCfg } from "../logseqSetting"
 
-const routes = [SETTING_ROUTE, PLUGIN_ROUTE, LOG_ROUTE]
+// 定义全局的 MutationObserver 和其配置对象
+let propsIconObserver: MutationObserver;
+let propsIconObserverConfig: MutationObserverInit;
 
-export const enhanceLspPropsIcon = async (userConfigs: AppConfig) => {
-    let container = parent?.document?.getElementById(PARENT_MAIN_CONTAINER_ID);
+/**
+ * 增强LSP插件图标显示
+ * @param userConfigs 用户配置对象
+ */
+export const enhanceLsp = (userConfigs: AppConfig) => {
+    logger.debug('enhanceLspPropsIcon start', userConfigs)
+    const settings = userConfigs?.pluginSettings
 
-    // 定义变量来跟踪是否已经执行了首次滚动的逻辑
-    let isInitialScroll = true;
-    let lastScrollTop = 0;
-
-    // 获取元素的可视高度
-    const visibleHeight = container?.clientHeight ?? window.innerHeight;
-
-    // 定义滚动触发的间隔，这里假设每个元素的高度为 elementHeight
-    const scrollInterval = 1.5 * visibleHeight; // 两倍的可视高度
-
-    const handleRoute = (e: { path: string; }) => {
-        if (routes.includes(e.path)) {
-            return
+    useEffect(() => {
+        // 如果启用了propsIconConfig并且没有启用propertyPages，则初始化并运行观察者
+        if (settings?.propsIconConfig && !userConfigs.propertyPagesEnable) {
+            initPropsIconObserver()
+            runPropsIconObserver()
         }
-        if (e.path === '/all-pages') {
-            doEnhanceLspAllPageIcon()
-            return
+        return () => {
+            stopPropsIconObserver()
+            stopEnhanceLspPluginDropdown()
         }
-        if (e.path === '/page/calendar') {
-            return
+    }, [userConfigs.propertyPagesEnabled, settings?.propsIconConfig])
+
+    useEffect(() => {
+        if (settings?.enhanceUIToolbarDropdown) {
+            runEnhanceLspPluginDropdown()
         }
-        isInitialScroll = true
-        lastScrollTop = 0
-        doEnhanceLspPropsIcon()
+        return () => {
+            stopEnhanceLspPluginDropdown()
+        }
+    }, [settings?.enhanceUIToolbarDropdown])
+
+    return
+}
+
+/**
+ * 初始化属性图标观察者
+ */
+const initPropsIconObserver = () => {
+    propsIconObserverConfig = { childList: true, subtree: true };
+    propsIconObserver = new MutationObserver(PropsIconObserverCallback);
+}
+
+/**
+ * 运行属性图标观察者
+ */
+const runPropsIconObserver = () => {
+    logger.debug('runPropsIconObserver start')
+
+    const appContainer = parent?.document?.getElementById(PARENT_MAIN_CONTAINER_ID);
+    if (appContainer) {
+        propsIconObserver?.observe(appContainer, propsIconObserverConfig);
     }
-    const handleScroll = () => {
-        if (!container) return
-        let currentScrollTop = container.scrollTop;
-        // 检查是否是首次滚动
-        if (isInitialScroll) {
-            logger.debug('首次滚动触发');
-            isInitialScroll = false; // 更新标志
-            doEnhanceLspPropsIcon()
-        } else {
-            // 检查滚动距离是否至少是两个元素的可视高度
-            if (Math.abs(currentScrollTop - lastScrollTop) >= scrollInterval) {
-                logger.debug('滚动了至少两个元素的可视高度');
-                doEnhanceLspPropsIcon()
-                // 更新上次滚动的顶部位置
-                lastScrollTop = currentScrollTop;
+}
+
+/**
+ * 停止属性图标观察者
+ */
+const stopPropsIconObserver = () => {
+    propsIconObserver?.disconnect();
+}
+
+/**
+ * MutationObserver的回调函数，用于处理DOM变化
+ * @param mutationsList - 变化列表
+ */
+const PropsIconObserverCallback: MutationCallback = (mutationsList) => {
+    requestAnimationFrame(() => {
+        mutationsList.forEach((mutation) => {
+            const addedNode = mutation.addedNodes[0] as HTMLElement;
+            if (addedNode && addedNode.childNodes.length) {
+                const nodes = Array.from(addedNode.querySelectorAll(DATA_REF_SELECTOR));
+                // 为每个节点设置data-ref属性
+                nodes.forEach((node) => node.setAttribute('data-ref', (node as HTMLSpanElement).innerText));
             }
-        }
+        });
+    });
+};
+
+/**
+ * 优化插件下拉菜单滚动问题
+ */
+const runEnhanceLspPluginDropdown = () => {
+    logger.debug('runEnhanceLspPluginDropdown')
+    const style = `
+    div.relative.ui__dropdown-trigger.toolbar-plugins-manager-trigger > div.dropdown-wrapper {
+        overflow-y: auto;
+        min-height: 50px;
     }
-
-
-    if ((await getLspPropsIconCfg()) && !userConfigs.propertyPagesEnabled) {
-        logseq.App.onRouteChanged(handleRoute)
-        container?.addEventListener('scroll', handleScroll); // 监听滚动事件
-
-    } else {
-        logseq.App.offRouteChanged(handleRoute)
-        container?.removeEventListener('scroll', handleScroll); // 去除监听
-    }
-}
-
-const doEnhanceLspPropsIcon = async () => {
-    logger.debug('doEnhanceLspPropsIcon start')
-    const nodes = parent?.document?.querySelectorAll('span.page-property-key')
-    nodes?.forEach(node => node.setAttribute('data-ref', (node as HTMLSpanElement).innerText))
-
-    if (parent?.document?.querySelector('span.awLi-icon')) {
-        const nodesA = parent?.document?.querySelectorAll('span.kef-ae-pageref-icon')
-        // @ts-ignore
-        nodesA?.forEach(node => node.style.display = "none")
+    `;
+    if (!document.querySelector(`style[data-injected-style^=${ICON_PARENT_STYLE_KEY}]`)) {
+        logseq.provideStyle({ key: `${ICON_PARENT_STYLE_KEY}`, style: style });
     }
 }
 
-const doEnhanceLspAllPageIcon = async () => {
-    logger.debug('doEnhanceLspPropsIcon start')
-    if (parent?.document?.querySelector('span.awLi-icon')) {
-        const nodes = parent?.document?.querySelectorAll('span.pr-1')
-        // @ts-ignore
-        nodes?.forEach(node => node.style.display = "none")
-
-        const nodesA = parent?.document?.querySelectorAll('span.kef-ae-pageref-icon')
-        // @ts-ignore
-        nodesA?.forEach(node => node.style.display = "none")
+/**
+ * 关闭优化插件下拉菜单滚动问题
+ */
+const stopEnhanceLspPluginDropdown = () => {
+    const node = parent?.document?.head.querySelector(`style[data-injected-style^="${ICON_PARENT_STYLE_KEY}"]`)
+    if (node) {
+        node.remove()
     }
 }
