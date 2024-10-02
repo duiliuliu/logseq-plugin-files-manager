@@ -1,5 +1,5 @@
 import { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin';
-import { i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i8n_CUSTOMS_VARIABLE_DESC, i8n_CUSTOMS_VARIABLE_TITLE, i8n_CUSTOMS_VARIABLE_VAR_DESC, i8n_DELETE_FORMAT_DESC, i8n_DELETE_FORMAT_TITLE, i8n_DELETE_FORMAT_VAR_DESC, i8n_PAGE_DEFAULT_PROPS_DESC, i8n_PAGE_DEFAULT_PROPS_TITLE, i8n_PAGE_DEFAULT_PROPS_VAR_DESC, i8n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i8n_PROPS_ICON_DESC, i8n_PROPS_ICON_TITLE, SETTING_ROUTE } from '../data/constants';
+import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i8n_CUSTOMS_VARIABLE_DATE_DESC, i8n_CUSTOMS_VARIABLE_DESC, i8n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i8n_CUSTOMS_VARIABLE_TIME_DESC, i8n_CUSTOMS_VARIABLE_TITLE, i8n_CUSTOMS_VARIABLE_VAR_DESC, i8n_DELETE_FORMAT_DESC, i8n_DELETE_FORMAT_TITLE, i8n_DELETE_FORMAT_VAR_DESC, i8n_PAGE_DEFAULT_PROPS_DESC, i8n_PAGE_DEFAULT_PROPS_TITLE, i8n_PAGE_DEFAULT_PROPS_VAR_DESC, i8n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i8n_PROPS_ICON_DESC, i8n_PROPS_ICON_TITLE, i8n_UI_TOOLBAR_DROPDOWN_DESC, i8n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE } from '../data/constants';
 import getI18nConstant, { PRE_LANGUAGE } from '../i18n/utils';
 import { stringToVarArr, stringToObject } from '../utils/objectUtil';
 import { logger } from '../utils/logger';
@@ -9,21 +9,38 @@ interface Notification {
     previousNotifyTime: number;
 }
 
-export interface Settings {
+export interface PluginSettings {
     disabled: boolean;
     notifications: Notification;
-    deleteFormart: string
-    propsIconConfig: boolean
-    defaultPagePropsSwitch: boolean,
-    defaultPageProps: Object
-    customVariable: Array<CustomVariable>
+    deleteFormart: string;
+    defaultPagePropsSwitch: boolean;
+    defaultPagePropsVisible: boolean;
+    defaultPageProps: { properties?: { [K: string]: any }, visible?: boolean };
+    customVariable: Array<CustomVariable>;
+    propsIconConfig: boolean;
+    enhanceUIToolbarDropdown: boolean;
+}
+
+const DEFAULT_SETTINGS = {
+    disabled: false,
+    notifications: {
+        previousPluginVersion: '0',
+        previousNotifyTime: 0
+    },
+    deleteFormart: getI18nConstant('en', i18n_DEFAULT_DELETE_FORMAT),
+    defaultPagePropsSwitch: false,
+    defaultPagePropsVisible: false,
+    defaultPageProps: {},
+    customVariable: [] as Array<CustomVariable>,
+    propsIconConfig: false,
+    enhanceUIToolbarDropdown: false
 }
 
 
-export const initLspSettingSchema = async (lang?: string,) => {
+export const initLspSettingsSchema = async (lang?: string,) => {
 
     !lang && ({ preferredLanguage: lang } = await logseq.App.getUserConfigs())
- 
+
     const schemas: SettingSchemaDesc[] = [
         {
             key: 'deleteFormartHeading',
@@ -37,7 +54,8 @@ export const initLspSettingSchema = async (lang?: string,) => {
             title: '',
             type: 'string',
             default: getI18nConstant(lang, i18n_DEFAULT_DELETE_FORMAT),
-            description: getI18nConstant(lang, i8n_DELETE_FORMAT_DESC) + ',' + getI18nConstant(lang, i8n_DELETE_FORMAT_VAR_DESC) + ':`${name},${date},${time}`',
+            description: `${getI18nConstant(lang, i8n_DELETE_FORMAT_DESC)}
+                          ${getI18nConstant(lang, i8n_DELETE_FORMAT_VAR_DESC)} ':\`\${name},\${date},\${time}\`'`,
             inputAs: 'textarea',
         },
         {
@@ -52,7 +70,7 @@ export const initLspSettingSchema = async (lang?: string,) => {
             title: '',
             type: 'boolean',
             default: false,
-            description: getI18nConstant(lang, i8n_PAGE_DEFAULT_PROPS_DESC) + ', ' + getI18nConstant(lang, i8n_PAGE_DEFAULT_PROPS_VAR_DESC) + '',
+            description: getI18nConstant(lang, i8n_PAGE_DEFAULT_PROPS_DESC),
             enumPicker: 'checkbox',
         },
         {
@@ -67,7 +85,7 @@ export const initLspSettingSchema = async (lang?: string,) => {
             title: '',
             type: 'string',
             default: '{}',
-            description: ' e.g.: `{"createdTime":"${getDatetime()}","icon":"${randomIcon(page)}"}` ',
+            description: getI18nConstant(lang, i8n_PAGE_DEFAULT_PROPS_VAR_DESC) + ', e.g.</br>`{"createdTime":"${getDatetime()}","icon":"${randomIcon(page)}"}` ',
             inputAs: 'textarea',
         },
         {
@@ -82,12 +100,15 @@ export const initLspSettingSchema = async (lang?: string,) => {
             title: '',
             type: 'string',
             default: '[function test() { return "test" },function getDatetime() { return Date.now() }]',
-            description: `${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_DESC)},  e.g.\` 
+            description: `${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_DESC)},  e.g.</br>\` 
             [
                 function test() { return 'test' },
                 function getDatetime() { return Date.now() }
-            ] \` 
-            , ${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_VAR_DESC)}, e.g.\` \${randomIcon(page)} \`
+            ] \` , </br>
+            ${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_VAR_DESC)}, e.g.</br>
+            \` \${randomIcon(page)} \`,\` \${randomIcon()} \`:${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_RANDOMICON_DESC)},</br>
+            \` \${date} \`:${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_DATE_DESC)},</br>
+            \` \${time} \`:${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_TIME_DESC)}.
             `,
             inputAs: 'textarea',
         },
@@ -106,32 +127,78 @@ export const initLspSettingSchema = async (lang?: string,) => {
             description: getI18nConstant(lang, i8n_PROPS_ICON_DESC),
             enumPicker: 'checkbox',
         },
+        {
+            key: 'enhanceUIToolbarDropdownHeading',
+            title: getI18nConstant(lang, i8n_UI_TOOLBAR_DROPDOWN_TITLE),
+            description: '',
+            type: 'heading',
+            default: null,
+        },
+        {
+            key: 'enhanceUIToolbarDropdown',
+            title: '',
+            type: 'boolean',
+            default: false,
+            description: getI18nConstant(lang, i8n_UI_TOOLBAR_DROPDOWN_DESC),
+            enumPicker: 'checkbox',
+        },
     ]
 
     logseq.useSettingsSchema(schemas)
 }
 
+export const getPluginSettings = async (): Promise<PluginSettings> => {
+    const lspSettings = await logseq.settings
+
+    if (!lspSettings) {
+        return DEFAULT_SETTINGS
+    }
+
+    return {
+        disabled: lspSettings.disabled,
+        notifications: lspSettings.notifications,
+        deleteFormart: lspSettings.deleteFormart,
+        defaultPagePropsSwitch: lspSettings.defaultPagePropsSwitch,
+        defaultPagePropsVisible: lspSettings.defaultPagePropsVisible,
+        defaultPageProps: await getLspDefaultPageProps(lspSettings),
+        customVariable: await getLspCustomVariable(lspSettings),
+        propsIconConfig: await getPropsIconConfig(lspSettings),
+        enhanceUIToolbarDropdown: lspSettings.enhanceUIToolbarDropdown,
+    }
+}
 
 export const getLspDeleteFormat = async (lang?: string): Promise<string> => {
-    const setting = await logseq.settings
-    return setting?.deleteFormart ?? getI18nConstant(lang || 'en', i18n_DEFAULT_DELETE_FORMAT)
+    const settings = await logseq.settings
+    return settings?.deleteFormart ?? getI18nConstant(lang || 'en', i18n_DEFAULT_DELETE_FORMAT)
 }
 
-export const getLspPropsIconCfg = async (): Promise<boolean> => {
-    const setting = await logseq.settings
-    return setting?.propsIconConfig
+const getPropsIconConfig = async (lspSettings?: any) => {
+    const settings = lspSettings || await logseq.settings
+    const awesomePropsActive = await isAwesomePropsActive()
+    const propsIconConfig = settings.propsIconConfig
+    if (!awesomePropsActive && propsIconConfig) {
+        // todo msg notify user
+        return false
+    }
+    return propsIconConfig
 }
 
-export const getLspDefaultPageProps = async (): Promise<{ properties?: { [K: string]: any }, visible?: boolean }> => {
-    const setting = await logseq.settings
-    logger.debug('getLspDefaultPageProps start', 'setting', setting)
-    if (setting?.defaultPagePropsSwitch) {
+const isAwesomePropsActive = async (): Promise<boolean> => {
+    const awesomePropsPlugin = await logseq.App.getExternalPlugin(EXTERNAL_PLUGIN_AWESOME_PROPS)
+    // @ts-ignore
+    return !awesomePropsPlugin?.settings?.disabled || false
+}
+
+const getLspDefaultPageProps = async (lspSettings?: any): Promise<{ properties?: { [K: string]: any }, visible?: boolean }> => {
+    const settings = lspSettings || await logseq.settings
+    logger.debug('getLspDefaultPageProps start', 'settings', settings)
+    if (settings?.defaultPagePropsSwitch) {
         try {
-            const defaultPageProps = setting?.defaultPageProps?.trim()
+            const defaultPageProps = settings?.defaultPageProps?.trim()
             if (!defaultPageProps || defaultPageProps === '' || defaultPageProps === '{}') {
                 return {}
             }
-            return { properties: stringToObject(setting?.defaultPageProps), visible: setting?.defaultPagePropsVisible }
+            return { properties: stringToObject(settings?.defaultPageProps), visible: settings?.defaultPagePropsVisible }
         } catch (error) {
             showGetConfigError(i8n_PAGE_DEFAULT_PROPS_TITLE, error)
             return {}
@@ -151,10 +218,10 @@ export const getLspDefaultPageProps = async (): Promise<{ properties?: { [K: str
  */
 export type CustomVariable = (input?: any) => string;
 
-export const getLspCustomVariable = async (): Promise<Array<CustomVariable>> => {
-    const setting = await logseq.settings
+const getLspCustomVariable = async (lspSettings?: any): Promise<Array<CustomVariable>> => {
+    const settings = lspSettings || await logseq.settings
     try {
-        return stringToVarArr(setting?.customVariable)
+        return stringToVarArr(settings?.customVariable)
     } catch (error) {
         showGetConfigError(i8n_CUSTOMS_VARIABLE_TITLE, error)
         return []

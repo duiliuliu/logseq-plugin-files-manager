@@ -1,5 +1,6 @@
 import { AppUserConfigs } from '@logseq/libs/dist/LSPlugin.user';
 import { DataType, RelatedType } from './enums';
+import { PluginSettings } from '../logseq/logseqSetting';
 
 // ===================================================================================
 // 接口定义
@@ -102,6 +103,16 @@ interface AppConfig extends AppUserConfigs {
      * 是否启用属性页面功能。
      */
     propertyPagesEnabled?: boolean;
+
+    /**
+     * journal 默认模板
+     */
+    defaultJournalTemplateName?: string;
+
+    /**
+     * 插件配置
+     */
+    pluginSettings?: PluginSettings;
 }
 
 
