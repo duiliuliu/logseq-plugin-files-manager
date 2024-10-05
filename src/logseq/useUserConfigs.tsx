@@ -11,25 +11,28 @@ import { enhanceLsp } from './feat/logseqEnhancePropsIcon';
 import { logseq as lsp } from '../../package.json';
 
 
-const fetchUserConfigs = async (setUserConfigs: (arg0: AppConfig) => void) => {
+export const fetchUserConfigs = async (setUserConfigs?: (arg0: AppConfig) => void): Promise<AppConfig> => {
     logger.debug(`useUserConfigs update`)
     try {
         // 在开发环境中使用 mock 数据
         if (import.meta.env.DEV) {
-            setUserConfigs(mockUserConfigs);
+            setUserConfigs && setUserConfigs(mockUserConfigs);
             i18n.changeLanguage(mockUserConfigs.preferredLanguage);
+            return mockUserConfigs
         } else {
             const userCfg = await logseq.App.getUserConfigs();
 
             await fetchAppConfig(userCfg)
-            setUserConfigs(userCfg);
+            setUserConfigs && setUserConfigs(userCfg);
             i18n.changeLanguage(userCfg.preferredLanguage);
             document.querySelector('html')?.setAttribute('lang', userCfg.preferredLanguage);
             // logger.debug(`useUserConfigs update,userConfigs:`, userCfg)
+            return userCfg
         }
     } catch (error) {
         logger.error('Failed to fetch user configs:', error);
     }
+    return {} as AppConfig
 };
 
 const fetchAppConfig = async (appConfig: AppConfig) => {
@@ -69,6 +72,7 @@ const fetchPluginSettings = async (setUserConfigs: any) => {
 export const useUserConfigs = (userConfigUpdated: number) => {
     const [userConfigs, setUserConfigs] = useState<AppConfig>({} as AppConfig);
 
+
     // 用户APP配置
     useEffect(() => {
         fetchUserConfigs(setUserConfigs);
@@ -76,16 +80,19 @@ export const useUserConfigs = (userConfigUpdated: number) => {
         initLspSettingsSchema(userConfigs.preferredLanguage)
         const graphChangeListen = (_e: any) => { fetchUserConfigs(setUserConfigs); };
         logseq.App.onCurrentGraphChanged(graphChangeListen);
+
         return () => {
             logseq.App.offCurrentGraphChanged(graphChangeListen);
         }
     }, [userConfigUpdated]);
+
 
     // 用户PLUGIN配置
     useEffect(() => {
         fetchPluginSettings(setUserConfigs)
         const settingListen = () => { fetchPluginSettings(setUserConfigs) }
         logseq.on('settings:changed', settingListen)
+
         return () => {
             logseq.off('settings:changed', settingListen)
         }

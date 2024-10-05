@@ -13,6 +13,8 @@ import { initLogCfg } from './logseq/feat/logseqAddOptLog';
 import { initLspSettingsSchema } from './logseq/logseqSetting';
 import { logger } from './utils/logger';
 import { initIconList } from './logseq/feat/logseqCustomVariable';
+import { deleteLogseqPage } from './logseq/feat/logseqDeletePage';
+import { fetchUserConfigs } from './logseq/useUserConfigs';
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -28,6 +30,7 @@ const main = async (_e: any) => {
 
   logseq.App.onRouteChanged((e) => {
     logger.debug('onRouteChanged', e)
+
     if (e.path === PLUGIN_ROUTE) {
       logseq.showMainUI()
     } else if (e.path === SETTING_ROUTE) {
@@ -37,6 +40,8 @@ const main = async (_e: any) => {
       logseq.hideMainUI()
     }
   })
+  logseq.App.registerPageMenuItem('Delete page with files-manager', async ({ page: pageName }) => { deleteLogseqPage(pageName, await fetchUserConfigs()) })
+
   initIconList()
   await registerCommands();
   await setupStyles();

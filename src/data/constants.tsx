@@ -14,6 +14,10 @@ import {
 // 普通字符串常量
 // ===================================================================================
 
+export const DELETE_ASSET_VERSION = '2'
+export const DELETE_ASSET_VERSION_NEED_DIR_HANDLER_FN = () => DELETE_ASSET_VERSION != '2'
+
+
 // 定义主内容容器的 ID，用于在 DOM 中定位主内容区域
 export const PARENT_MAIN_CONTAINER_ID = 'main-content-container';
 export const PARENT_OPEN_BUTTON_ID = 'files-manager-open'
@@ -26,12 +30,16 @@ export const ICON_PARENT_STYLE_KEY = 'icon-enhance-lsp-filesm'
 export const PLUGIN_ROUTE = '/page/files-manager'
 export const SETTING_ROUTE = '/page/files-manager-setting'
 export const LOG_ROUTE = '/page/files-manager-log'
+export const CALENDAR_ROUTE = '/page/calendar'
+
 export const LOG_PAGE = 'files-manager-log';
 export const HOME_PAGE = 'files-manager';
 export const SETTING_PAGE = 'files-manager-setting';
 
 export const OPERATE_SUCCESS = 'success'
 export const OPERATE_FAILED = 'failed'
+
+export const DEFAULT_DELETE_FORMAT = '<div class="tooltip"><s>${name}</s><span class="tooltiptext">${name} has deledted in time ${date} ${time}</span> </div>'
 
 // 图表前缀
 export const GRAPH_PREFIX = 'logseq_local_';
@@ -87,10 +95,14 @@ export const i18n_OPEN_WITH_OS = 'Open the folder with the Logseq';
 export const i18n_AUTHORIZE_TOOLTIP = 'Authorize Tip' //请点击选择logseq文档目录进行授权,授权后文件会进行索引操作,请耐心等待片刻
 export const i18n_AUTHORIZE_TOOLTIP_PATH = 'Authorize Tip PATH' //您的Logseq路劲
 export const i18n_HERE = 'Here'; // 点击这儿
+export const i18n_PAGE_MENU_DELETE_PAGE = 'Delete page with files-manager'
 
 
 // 配置
 export const i18n_GET_PLUGIN_CONFIG_ERROR = 'Get plugin config error' // 获取插件配置失败，请检查您的插件配置格式
+
+// export const i18n_FILES_MANAGER_SETTINGS_TITLE = '' // 文件管理基础功能
+// export const i18n_FILES_MANAGER_SETTINGS_DESC = '' // 文件管理基本功能
 
 export const i18n_DEFAULT_DELETE_FORMAT = 'Delete format' // '<div class="tooltip"><s>${name}</s><span class="tooltiptext">${name} has deledted in time ${date} ${time}</span> </div>'
 export const i8n_DELETE_FORMAT_TITLE = 'Delete format title'  // 删除操作配置

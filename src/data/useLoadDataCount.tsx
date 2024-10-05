@@ -9,7 +9,7 @@ export type DataTypeCounts = {
 };
 
 // useDataTypeCount 钩子函数
-export const useLoadDataCount = ({ graph, preparing, fileMotified }: { graph: string, preparing: boolean, fileMotified: number }) => {
+export const useLoadDataCount = ({ graph, preparing, fileModified: fileModified }: { graph: string, preparing: boolean, fileModified: number }) => {
     const [typeCount, setTypeCount] = useState<DataTypeCounts>({} as DataTypeCounts);
     const [countLoading, setCountLoading] = useState(true);
 
@@ -27,7 +27,7 @@ export const useLoadDataCount = ({ graph, preparing, fileMotified }: { graph: st
         };
 
         fetchTypeCount();
-    }, [graph, preparing, fileMotified]);
+    }, [graph, preparing, fileModified]);
 
     return { typeCount, countLoading };
 };

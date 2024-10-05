@@ -39,3 +39,7 @@ export const stringToStrArr = (str: string): Array<string> => {
 }
 
 export function isEmptyObject(obj: Object) { return Object.keys(obj).length === 0 }
+
+export function escapeRegExp(string: string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $&表示整个被匹配的字符串
+}

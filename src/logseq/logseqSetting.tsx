@@ -43,6 +43,22 @@ export const initLspSettingsSchema = async (lang?: string,) => {
 
     const schemas: SettingSchemaDesc[] = [
         {
+            key: 'filesManagerSettingsHeading',
+            title: getI18nConstant(lang, i8n_DELETE_FORMAT_TITLE),
+            description: '',
+            type: 'heading',
+            default: null,
+        },
+        {
+            key: 'filesManagerSettings',
+            title: '',
+            type: 'string',
+            default: getI18nConstant(lang, i18n_DEFAULT_DELETE_FORMAT),
+            description: `${getI18nConstant(lang, i8n_DELETE_FORMAT_DESC)}
+                          ${getI18nConstant(lang, i8n_DELETE_FORMAT_VAR_DESC)} ':\`\${name},\${date},\${time}\`'`,
+            inputAs: undefined,
+        },
+        {
             key: 'deleteFormartHeading',
             title: getI18nConstant(lang, i8n_DELETE_FORMAT_TITLE),
             description: '',
@@ -101,9 +117,15 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             type: 'string',
             default: '[function test() { return "test" },function getDatetime() { return Date.now() }]',
             description: `${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_DESC)},  e.g.</br>\` 
-            [
-                function test() { return 'test' },
-                function getDatetime() { return Date.now() }
+            [ </br>
+                function test() { return 'test' },</br>
+                function getDatetime() { return Date.now() },</br>
+                function getDatetimeSkipDaily(page) {
+                    if (page?.["journal?"]) {
+                        return ""
+                    }
+                    return Date.now()
+                } </br>
             ] \` , </br>
             ${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_VAR_DESC)}, e.g.</br>
             \` \${randomIcon(page)} \`,\` \${randomIcon()} \`:${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_RANDOMICON_DESC)},</br>
@@ -191,7 +213,7 @@ const isAwesomePropsActive = async (): Promise<boolean> => {
 
 const getLspDefaultPageProps = async (lspSettings?: any): Promise<{ properties?: { [K: string]: any }, visible?: boolean }> => {
     const settings = lspSettings || await logseq.settings
-    logger.debug('getLspDefaultPageProps start', 'settings', settings)
+    logger.debug('getLspDefaultPageProps start')
     if (settings?.defaultPagePropsSwitch) {
         try {
             const defaultPageProps = settings?.defaultPageProps?.trim()
