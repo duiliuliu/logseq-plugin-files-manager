@@ -29,9 +29,9 @@ const App: React.FC = () => {
     const [userConfigUpdated, setUserConfigUpdated] = useState<number>(Date.now())
     const userConfig = useUserConfigs(userConfigUpdated);
     const { directoryHandle, getDirectoryHandle } = useDirectoryHandle({ graph: userConfig.currentGraph })
-    const fileMotified = useFileChangeListener(userConfig, directoryHandle, setUserConfigUpdated)   // 使用 useFileChangeListener Hook 来监听文件变化
+    const fileModified = useFileChangeListener(userConfig, directoryHandle, setUserConfigUpdated)   // 使用 useFileChangeListener Hook 来监听文件变化
     const { rebuildData, preparing, needAuth } = useRebuildData(userConfig, directoryHandle,)
-    const { typeCount } = useLoadDataCount({ graph: userConfig.currentGraph, preparing, fileMotified });
+    const { typeCount } = useLoadDataCount({ graph: userConfig.currentGraph, preparing, fileModified: Math.round(fileModified / 1 * 60 * 60 * 1000) }); // 每小时尝试刷新一次
 
     const tabData = useTabData(userConfig.preferredLanguage)
     const [currentTab, setCurrentTab] = useState(tabData[0].key);
@@ -47,7 +47,8 @@ const App: React.FC = () => {
         dataType: TabEnum.toDataType((currentTab as TabEnum)),
         searchValue, //检索词
         loadMore,
-        preparing
+        preparing,
+        fileModified
     });
     const [theme] = useTheme(userConfig.preferredThemeMode)
     const { width, height, left, top } = useComponentSizeAndPosition()

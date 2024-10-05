@@ -11,10 +11,11 @@ interface UseDataProps {
     searchValue?: string; //检索词
     loadMore?: boolean;
     preparing: boolean;
+    fileModified: number;
 }
 
 // useLoadData 钩子函数
-export const useLoadData = ({ graph, maxNumber, dataType, searchValue, loadMore, preparing }: UseDataProps) => {
+export const useLoadData = ({ graph, maxNumber, dataType, searchValue, loadMore, preparing, fileModified }: UseDataProps) => {
     const [data, setData] = useState<DataItem[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -45,7 +46,7 @@ export const useLoadData = ({ graph, maxNumber, dataType, searchValue, loadMore,
         };
 
         fetchData();
-    }, [graph, maxNumber, dataType, searchValue, preparing]); // 依赖项列表
+    }, [graph, maxNumber, dataType, searchValue, preparing, fileModified]); // 依赖项列表
 
     return { data, loading };
 };

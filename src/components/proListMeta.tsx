@@ -8,12 +8,11 @@ import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, GearSix, Swap
 import { isDebug, logger } from '../utils/logger';
 import { isBook, isImage, verifyPermission } from '../utils/fileUtil';
 import { buildGraphPath, copyToClipboard } from '../logseq/logseqCommonProxy';
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP, OPERATE_FAILED, OPERATE_SUCCESS, i18n_DEV_DATA_INFO, i18n_OPEN_PLUGN_SETTING_TOOLTIP } from '../data/constants';
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP, OPERATE_FAILED, OPERATE_SUCCESS, i18n_DEV_DATA_INFO, i18n_OPEN_PLUGN_SETTING_TOOLTIP, DELETE_ASSET_VERSION_NEED_DIR_HANDLER_FN } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
 import ActionItem, { ActionItemProps, TooltipActionItem } from './actionItem';
 import { ItemType } from 'antd/es/menu/interface';
 import PreviewFrame from './previewItem';
-import { removePageFromDB } from '../data/db';
 import { trace } from '../logseq/feat/logseqAddOptLog';
 import { deleteLogseqAsset, deleteLogseqPage } from '../logseq/feat/logseqDeletePage';
 
@@ -125,9 +124,7 @@ const copyFileNodeAction = ({ record, userConfig, setRightMenuDisplay }: MetaRen
             } else {
                 // 否则，构建文件路径
                 const filePath = record.path?.replace(ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH);
-                copyValue = DataType.IMG_ASSET === record.dataType
-                    ? `![${record.alias}](${filePath})` // 图片资产使用Markdown图片语法
-                    : `[${record.alias}](${filePath})`; // 其他资产使用Markdown链接语法
+                copyValue = `![${record.alias}](${filePath})`;
             }
         } else {
             // 如果不是资产文件，使用Logseq的页面链接语法
@@ -208,18 +205,25 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
 
         try {
             if (DataType.isAssetFile(record.dataType)) {
-                const dirHandler = (await getDirectoryHandle()) as FileSystemDirectoryHandle
-                const assetdirHandler = await dirHandler?.getDirectoryHandle(userConfig.assetsDirectory!)
-                const permiss = await verifyPermission(assetdirHandler, true)
-                if (!permiss) {
-                    logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY), 'warn')
-                    result = OPERATE_FAILED
-                    content = getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY)
+                if (DELETE_ASSET_VERSION_NEED_DIR_HANDLER_FN()) {
+                    const dirHandler = (await getDirectoryHandle()) as FileSystemDirectoryHandle
+                    const assetdirHandler = await dirHandler?.getDirectoryHandle(userConfig.assetsDirectory!)
+                    const permiss = await verifyPermission(assetdirHandler, true)
+                    if (!permiss) {
+                        logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY), 'warn')
+                        result = OPERATE_FAILED
+                        content = getI18nConstant(userConfig.preferredLanguage, i18n_FILE_DENY)
+                    } else {
+                        // 删除日志或页面的其他相关数据
+                        refBlocks = (await deleteLogseqAsset(record, userConfig, assetdirHandler)).join(', ');
+
+                        logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
+                        result = OPERATE_SUCCESS
+                        content = getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS)
+                    }
                 } else {
-                    await assetdirHandler.removeEntry(record.name)
-                    removePageFromDB(userConfig.currentGraph, record.name)
                     // 删除日志或页面的其他相关数据
-                    refBlocks = (await deleteLogseqAsset(record.alias, record, userConfig)).join(', ');
+                    refBlocks = (await deleteLogseqAsset(record, userConfig, null)).join(', ');
 
                     logseq.UI.showMsg(getI18nConstant(userConfig.preferredLanguage, i18n_DELETE_SUCCESS), 'info')
                     result = OPERATE_SUCCESS
@@ -230,8 +234,6 @@ const deleteFileAction = ({ record, userConfig, dirhandler: getDirectoryHandle, 
             if (record.dataType === DataType.JOURNAL || record.dataType === DataType.PAGE) {
                 // 删除日志或页面的其他相关数据
                 refBlocks = (await deleteLogseqPage(record.alias, userConfig)).join(', ');
-                // 删除页面
-                await logseq.Editor.deletePage(record.alias);
 
                 // 成功提示
                 result = OPERATE_SUCCESS;

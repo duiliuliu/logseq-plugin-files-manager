@@ -21,20 +21,20 @@ type FileChanges = {
 }
 
 // 工具函数：处理文件变化
-const handleFileChanged = async (appConfig: AppConfig, changes: FileChanges, directoryHandle: any): Promise<{ configUpdated?: boolean, fileMotified?: boolean }> => {
+const handleFileChanged = async (appConfig: AppConfig, changes: FileChanges, directoryHandle: any): Promise<{ configUpdated?: boolean, fileModified?: boolean }> => {
     const [operation, originalName, alias] = parseOperation(changes, appConfig);
     // logger.debug(`handleFileChanged,operation:${operation},changes:`, changes, 'file', originalName)
 
     if (alias === SETTING_PAGE || alias === LOG_PAGE || alias === HOME_PAGE) {
         operation === OperationType.PLUGIN_MODIFIED
-        return { fileMotified: false }
+        return { fileModified: false }
     }
 
 
     if (operation === OperationType.CONFIG_MODIFIED) return { configUpdated: true };
     if (operation === OperationType.CREATE) {
         addLogseqDefaultPageProps(appConfig, alias)
-        return { fileMotified: false }
+        return { fileModified: true }
     };
     if (operation === OperationType.MODIFIED) {
         const blocks = await getLogseqPageBlocksTree(encodeLogseqFileName(alias)).catch(err => {
@@ -44,13 +44,13 @@ const handleFileChanged = async (appConfig: AppConfig, changes: FileChanges, dir
 
         if (!blocks) {
             logger.warn(`handleFileChanged file[${alias}], query blocks no data`)
-            return { fileMotified: false };
+            return { fileModified: false };
         }
 
         const pageE = await getPageDetails(encodeLogseqFileName(alias))
         if (!pageE) {
             logger.warn(`handleFileChanged file[${alias}], query page no data`)
-            return { fileMotified: false };
+            return { fileModified: false };
         }
 
         processPage({ pageE, dirHandle: directoryHandle, appConfig, updated: true })
@@ -58,8 +58,9 @@ const handleFileChanged = async (appConfig: AppConfig, changes: FileChanges, dir
     if (operation === OperationType.DELETE) {
         logger.debug(`Would remove page from DB: graph=${appConfig.currentGraph}, name=${originalName}`);
         removePageFromDB(appConfig.currentGraph, originalName);
+        return { fileModified: true };
     }
-    return { configUpdated: true };
+    return {};
 };
 
 // 工具函数：解析操作类型
@@ -107,15 +108,16 @@ const parseOperation = (changes: FileChanges, { pagesDirectory, journalsDirector
 
 // 使用Effect监听文件变化
 export const useFileChangeListener = (appConfig: AppConfig, directoryHandle: any, setUserConfigUpdated: (arg0: number) => void) => {
-    const [fileMotified, setFileMotified] = useState<number>(Date.now())
+    const [fileModified, setFileModified] = useState<number>(Date.now())
+
     useEffect(() => {
         const onFileChanged = async (changes: FileChanges) => {
-            const { configUpdated, fileMotified: fileMotifiedT } = await handleFileChanged(appConfig, changes, directoryHandle);
+            const { configUpdated, fileModified: fileModifiedT } = await handleFileChanged(appConfig, changes, directoryHandle);
             if (configUpdated) {
                 setUserConfigUpdated(Date.now())
             }
-            if (fileMotifiedT) {
-                setFileMotified(prev => Math.round((Date.now() - prev) / 24 * 60 * 60 * 1000)) // 每天一刷新
+            if (fileModifiedT) {
+                setFileModified(Date.now()) // 每天一刷新
             }
         };
 
@@ -131,5 +133,5 @@ export const useFileChangeListener = (appConfig: AppConfig, directoryHandle: any
         , appConfig.preferredFormat
         , directoryHandle]);
 
-    return fileMotified;
+    return fileModified;
 };
