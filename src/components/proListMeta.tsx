@@ -8,13 +8,14 @@ import { Copy, CopySimple, DotsThree, Eye, FolderOpen, FolderPlus, GearSix, Swap
 import { isDebug, logger } from '../utils/logger';
 import { isBook, isImage, verifyPermission } from '../utils/fileUtil';
 import { buildGraphPath, copyToClipboard } from '../logseq/logseqCommonProxy';
-import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP, OPERATE_FAILED, OPERATE_SUCCESS, i18n_DEV_DATA_INFO, i18n_OPEN_PLUGN_SETTING_TOOLTIP, DELETE_ASSET_VERSION_NEED_DIR_HANDLER_FN } from '../data/constants';
+import { ASSETS_PATH_REGEX, ASSETS_REPLACE_PATH, i18n_COPY_SUCCESS, i18n_COPY_PATH_TOOLTIP, i18n_DELETE_ERROR, i18n_DELETE_SUCCESS, i18n_DELETE_TOOLTIP, i18n_FILE_DENY, i18n_OPEN_FILE_TOOLTIP, i18n_PREVIEW_TOOLTIP, i18n_COPY_TITLE_TOOLTIP, i18n_OPEN_FOLDER_ERROR, i18n_OPEN_FOLDER_TOOLTIP, i18n_RENAME_TOOLTIP, OPERATE_FAILED, OPERATE_SUCCESS, i18n_DEV_DATA_INFO, i18n_OPEN_PLUGN_SETTING_TOOLTIP, DELETE_ASSET_VERSION_NEED_DIR_HANDLER_FN, i18n_OPEN_FILE_WITH_DEFAULT_TOOLTIP, i18n_OPEN_IN_SIDEBAR_TOOLTIP } from '../data/constants';
 import getI18nConstant from '../i18n/utils';
 import ActionItem, { ActionItemProps, TooltipActionItem } from './actionItem';
 import { ItemType } from 'antd/es/menu/interface';
 import PreviewFrame from './previewItem';
 import { trace } from '../logseq/feat/logseqAddOptLog';
 import { deleteLogseqAsset, deleteLogseqPage } from '../logseq/feat/logseqDeletePage';
+import { openItemInFolder2 } from '../logseq/feat/logseqFile';
 
 
 // 定义 MetaRenderProps 接口，用于传递给渲染函数的属性
@@ -144,7 +145,64 @@ const copyFileNodeAction = ({ record, userConfig, setRightMenuDisplay }: MetaRen
  * 打开文件的 Action 函数
  * @param {MetaRenderProps} props - 包含 record, userConfig, setRightMenuDisplay 的属性
  */
-const openFileAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
+const openFileWithDefaultAppAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
+    icon: FolderPlus,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FILE_WITH_DEFAULT_TOOLTIP),
+    onClick: (e) => {
+        setRightMenuDisplay && setRightMenuDisplay(false)
+
+        if (!DataType.isAssetFile(record.dataType)) {
+            if (e.nativeEvent.shiftKey) {
+                logseq.Editor.openInRightSidebar(record.uuid!);
+            }
+            else {
+                logger.debug(`logseq.App.pushState, page:${record.name}`)
+                logseq.App.pushState('page', { name: record.alias, });
+            }
+        } else {
+            logger.debug(`logseq.App.openPath, path:${record.path}`)
+            logseq.App.openPath(record.path)
+        }
+        e.stopPropagation();
+    }
+})
+
+
+/**
+ * 打开文件的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, setRightMenuDisplay 的属性
+ */
+const openInSidebarAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
+    icon: FolderPlus,
+    text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_IN_SIDEBAR_TOOLTIP),
+    onClick: (e) => {
+        setRightMenuDisplay && setRightMenuDisplay(false)
+
+        if (DataType.isAssetFile(record.dataType)) {
+            if (e.nativeEvent.shiftKey) {
+                logseq.Editor.openInRightSidebar(record.uuid!);
+            }
+            else {
+                logger.debug(`logseq.App.pushState, page:${record.name}`)
+                for (const relatedItem of record.related || []) {
+                    relatedItem.relatedItemUuid && logseq.Editor.openInRightSidebar(relatedItem.relatedItemUuid)
+                }
+            }
+        } else {
+            logger.debug(`logseq.App.openPath, path:${record.path}`)
+            record.uuid && logseq.Editor.openInRightSidebar(record.uuid)
+        }
+        e.stopPropagation();
+    }
+})
+
+
+
+/**
+ * 打开文件的 Action 函数
+ * @param {MetaRenderProps} props - 包含 record, userConfig, setRightMenuDisplay 的属性
+ */
+const openFileWithLspAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
     icon: FolderPlus,
     text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FILE_TOOLTIP),
     onClick: (e) => {
@@ -164,10 +222,9 @@ const openFileAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderP
             }
         } else {
             logger.debug(`logseq.App.openPath, path:${record.path}`)
-            logseq.App.openPath(record.path)
+            logseq.App.pushState('file', { path: record.path })
         }
         e.stopPropagation();
-        logseq.hideMainUI({ restoreEditingCursor: true });
     }
 })
 
@@ -178,12 +235,10 @@ const openFileAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderP
 const openFolderAction = ({ record, userConfig, setRightMenuDisplay }: MetaRenderProps): ActionItemProps => ({
     icon: FolderOpen,
     text: getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FOLDER_TOOLTIP),
-    onClick: async (e) => {
+    onClick: async (_e) => {
         setRightMenuDisplay && setRightMenuDisplay(false)
         try {
-            await logseq.App.showItemInFolder(record.path)
-            e.stopPropagation();
-            logseq.hideMainUI({ restoreEditingCursor: true });
+            record.path && await openItemInFolder2(record.path)
         } catch (error) {
             logseq.UI.showMsg(`[:p "${getI18nConstant(userConfig.preferredLanguage, i18n_OPEN_FOLDER_ERROR)}" [:br][:br] "${error}"]`, 'error')
         }
@@ -439,7 +494,9 @@ const renderCardContent = ({ record, userConfig, bodyWidth, bodyHeight }: MetaRe
  */
 const renderContextMenuActions = ({ record, userConfig, dirhandler }: MetaRenderProps, setRightMenuDisplay: React.Dispatch<React.SetStateAction<boolean>>) => {
     const actions = [
-        openFileAction({ record, userConfig, setRightMenuDisplay }),
+        openFileWithLspAction({ record, userConfig, setRightMenuDisplay }),
+        openFileWithDefaultAppAction({ record, userConfig, setRightMenuDisplay }),
+        openInSidebarAction({ record, userConfig, setRightMenuDisplay }),
         copyFileNodeAction({ record, userConfig, setRightMenuDisplay }),
         deleteFileAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         renameFileAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
@@ -472,7 +529,7 @@ const renderContextMenuActions = ({ record, userConfig, dirhandler }: MetaRender
  */
 const renderListActions = ({ record, userConfig, dirhandler }: MetaRenderProps) => {
     const actions = [
-        openFileAction({ record, userConfig }),
+        openFileWithDefaultAppAction({ record, userConfig }),
         copyFileNodeAction({ record, userConfig }),
         deleteFileAction({ record, userConfig, dirhandler })
     ]
@@ -498,7 +555,7 @@ const renderListActions = ({ record, userConfig, dirhandler }: MetaRenderProps) 
  */
 const renderCardActions2 = ({ record, userConfig, dirhandler }: MetaRenderProps) => {
     const actions = [
-        openFileAction({ record, userConfig }),
+        openFileWithDefaultAppAction({ record, userConfig }),
         copyFileNodeAction({ record, userConfig }),
         deleteFileAction({ record, userConfig, dirhandler })
     ]
@@ -526,7 +583,7 @@ const renderCardActions2 = ({ record, userConfig, dirhandler }: MetaRenderProps)
 const renderCardActions = ({ record, userConfig, dirhandler }: MetaRenderProps) => {
 
     const actions = [
-        openFileAction({ record, userConfig }),
+        openFileWithDefaultAppAction({ record, userConfig }),
         copyFileNodeAction({ record, userConfig }),
         deleteFileAction({ record, userConfig, dirhandler })
     ]

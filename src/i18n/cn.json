@@ -28,6 +28,8 @@
     "Preview file": "预览文件",
     "Dev show data info": "(Dev)显示数据信息",
     "Open the file": "打开文件",
+    "Open in sidebar": "在侧边栏中打开",
+    "Open the file with default app": "用默认应用程序打开文件",
     "Open the folder": "打开文件夹",
     "Open the folder failed": "打开文件夹失败",
     "Delete the file": "删除文件",

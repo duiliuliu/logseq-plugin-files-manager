@@ -28,6 +28,8 @@
     "Preview file": "ファイルをプレビュー",
     "Dev show data info": "開発者向けデータ情報表示",
     "Open the file": "ファイルを開く",
+    "Open in sidebar": "サイドバーで開く",
+    "Open the file with default app": "既定のアプリでファイルを開く",
     "Open the folder": "フォルダーを開く",
     "Open the folder failed": "フォルダーを開くに失敗",
     "Delete the file": "ファイルを削除",

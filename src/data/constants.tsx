@@ -82,6 +82,8 @@ export const i18n_COPY_TITLE_TOOLTIP = 'Copy title';
 export const i18n_PREVIEW_TOOLTIP = 'Preview file';
 export const i18n_DEV_DATA_INFO = 'Dev show data info';
 export const i18n_OPEN_FILE_TOOLTIP = 'Open the file';
+export const i18n_OPEN_FILE_WITH_DEFAULT_TOOLTIP = 'Open the file with default app';
+export const i18n_OPEN_IN_SIDEBAR_TOOLTIP = 'Open in sidebar';
 export const i18n_OPEN_FOLDER_TOOLTIP = 'Open the folder';
 export const i18n_OPEN_FOLDER_ERROR = 'Open the folder failed';
 export const i18n_DELETE_TOOLTIP = 'Delete the file';
@@ -105,27 +107,27 @@ export const i18n_GET_PLUGIN_CONFIG_ERROR = 'Get plugin config error' // 获取�
 // export const i18n_FILES_MANAGER_SETTINGS_DESC = '' // 文件管理基本功能
 
 export const i18n_DEFAULT_DELETE_FORMAT = 'Delete format' // '<div class="tooltip"><s>${name}</s><span class="tooltiptext">${name} has deledted in time ${date} ${time}</span> </div>'
-export const i8n_DELETE_FORMAT_TITLE = 'Delete format title'  // 删除操作配置
-export const i8n_DELETE_FORMAT_DESC = 'Delete format desc' // 配置指定模板，可替换被删除的文章名称
-export const i8n_DELETE_FORMAT_VAR_DESC = 'Delete format var desc' // 支持以下变量
+export const i18n_DELETE_FORMAT_TITLE = 'Delete format title'  // 删除操作配置
+export const i18n_DELETE_FORMAT_DESC = 'Delete format desc' // 配置指定模板，可替换被删除的文章名称
+export const i18n_DELETE_FORMAT_VAR_DESC = 'Delete format var desc' // 支持以下变量
 
-export const i8n_PROPS_ICON_TITLE = 'Props icon enhance config'  // 属性图标强化配置
-export const i8n_PROPS_ICON_DESC = 'Props icon enhance config desc' // 对插件【Awesome-links】的优化，当logseq配置 :property-pages/enabled?=false 时，【Awesome-links】插件的属性图标不再显示，本功能对此优化，开启后会支持图标继续显示
+export const i18n_PROPS_ICON_TITLE = 'Props icon enhance config'  // 属性图标强化配置
+export const i18n_PROPS_ICON_DESC = 'Props icon enhance config desc' // 对插件【Awesome-links】的优化，当logseq配置 :property-pages/enabled?=false 时，【Awesome-links】插件的属性图标不再显示，本功能对此优化，开启后会支持图标继续显示
 
-export const i8n_UI_TOOLBAR_DROPDOWN_TITLE = 'UI toolbar dropdown enhance'  // logseq UI toolbar优化
-export const i8n_UI_TOOLBAR_DROPDOWN_DESC = 'UI toolbar dropdown enhance desc' // 优化目前logseq UI toolbar下拉无法滚动到最底部问题
+export const i18n_UI_TOOLBAR_DROPDOWN_TITLE = 'UI toolbar dropdown enhance'  // logseq UI toolbar优化
+export const i18n_UI_TOOLBAR_DROPDOWN_DESC = 'UI toolbar dropdown enhance desc' // 优化目前logseq UI toolbar下拉无法滚动到最底部问题
 
-export const i8n_PAGE_DEFAULT_PROPS_TITLE = 'Default page properties'  // 页面默认属性
-export const i8n_PAGE_DEFAULT_PROPS_VISIBLE_DESC = 'Default page properties visible desc' // 页面新建时，可配置默认属性,配置的默认属性是否可见
-export const i8n_PAGE_DEFAULT_PROPS_DESC = 'Default page properties desc' // 新建页面时，您可以设置默认属性。空值属性将被忽略。如需添加默认为空的属性，请将其值设置为空格。请确保不要与系统属性发生冲突。对于属性'createTime'，我们建议您将其固定设置为`'createdTime': '${getDatetime()}'`，因为本插件将使用此属性
-export const i8n_PAGE_DEFAULT_PROPS_VAR_DESC = 'Default page properties var desc' // 您可以参照示例进行配置。整个配置遵循JSON结构，其中JSON的值可以设置为常量，也可以按照以下方式使用变量进行配置
+export const i18n_PAGE_DEFAULT_PROPS_TITLE = 'Default page properties'  // 页面默认属性
+export const i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC = 'Default page properties visible desc' // 页面新建时，可配置默认属性,配置的默认属性是否可见
+export const i18n_PAGE_DEFAULT_PROPS_DESC = 'Default page properties desc' // 新建页面时，您可以设置默认属性。空值属性将被忽略。如需添加默认为空的属性，请将其值设置为空格。请确保不要与系统属性发生冲突。对于属性'createTime'，我们建议您将其固定设置为`'createdTime': '${getDatetime()}'`，因为本插件将使用此属性
+export const i18n_PAGE_DEFAULT_PROPS_VAR_DESC = 'Default page properties var desc' // 您可以参照示例进行配置。整个配置遵循JSON结构，其中JSON的值可以设置为常量，也可以按照以下方式使用变量进行配置
 
-export const i8n_CUSTOMS_VARIABLE_TITLE = 'Custom variable config'  // 自定义变量配置
-export const i8n_CUSTOMS_VARIABLE_DESC = 'Custom variable config desc' // 支持自定义变量，用于上方模板，变量类型为：`type CustomVariable = (input?: any) => string`
-export const i8n_CUSTOMS_VARIABLE_VAR_DESC = 'Custom variable config var desc' // 已支持变量
-export const i8n_CUSTOMS_VARIABLE_RANDOMICON_DESC = 'Custom variable config ${randomIcon} desc' // randomIcon()变量说明：${randomIcon()}会返回一个随机的Tabler icon, ${randomIcon(page)}仅会在非journal页面返回Tabler icon
-export const i8n_CUSTOMS_VARIABLE_DATE_DESC = 'Custom variable config ${date} desc' // date变量说明：${date}会返回当前graph日期格式的日期
-export const i8n_CUSTOMS_VARIABLE_TIME_DESC = 'Custom variable config ${time} desc' // time变量说明：${date}会返回当前时间，格式固定为'HH:mm'
+export const i18n_CUSTOMS_VARIABLE_TITLE = 'Custom variable config'  // 自定义变量配置
+export const i18n_CUSTOMS_VARIABLE_DESC = 'Custom variable config desc' // 支持自定义变量，用于上方模板，变量类型为：`type CustomVariable = (input?: any) => string`
+export const i18n_CUSTOMS_VARIABLE_VAR_DESC = 'Custom variable config var desc' // 已支持变量
+export const i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC = 'Custom variable config ${randomIcon} desc' // randomIcon()变量说明：${randomIcon()}会返回一个随机的Tabler icon, ${randomIcon(page)}仅会在非journal页面返回Tabler icon
+export const i18n_CUSTOMS_VARIABLE_DATE_DESC = 'Custom variable config ${date} desc' // date变量说明：${date}会返回当前graph日期格式的日期
+export const i18n_CUSTOMS_VARIABLE_TIME_DESC = 'Custom variable config ${time} desc' // time变量说明：${date}会返回当前时间，格式固定为'HH:mm'
 
 
 // ===================================================================================

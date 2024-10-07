@@ -3,6 +3,7 @@ import { logger } from "../../utils/logger";
 import { objectTemplateFromat } from "../../utils/objectUtil";
 import { AppConfig } from "../../data/types";
 import { getCustomVariables } from "./logseqCustomVariable";
+import { kebab } from "name-styles";
 
 /**
  * 为指定页面添加 Logseq 默认页面属性。
@@ -24,7 +25,6 @@ export const addLogseqDefaultPageProps = async (appConfig: AppConfig, page: stri
             logger.debug('No default properties to apply');
             return;
         }
-
         logger.debug('Adding default properties to the first block', defaultProps, visible);
 
         // 获取页面的区块树，并检查是否存在第一个区块
@@ -36,6 +36,8 @@ export const addLogseqDefaultPageProps = async (appConfig: AppConfig, page: stri
         const newBlock = visible && await logseq.Editor.appendBlockInPage(name, '', { properties: { ...pageE.properties, ...defaultProps } });
         // 检查是否存在第一个区块
         firstBlock && newBlock && await logseq.Editor.moveBlock(newBlock.uuid, firstBlock.uuid, { before: true, children: true })
+        // 删除重复的快
+        propertiesToStr(firstBlock?.properties).includes(firstBlock?.content || '') && firstBlock?.uuid && logseq.Editor.removeBlock(firstBlock?.uuid)
         logseq.Editor.exitEditingMode()
     } catch (error) {
         // 捕获并显示错误消息
@@ -95,12 +97,14 @@ const getLogseqDefaultPageProps = async (appConfig: AppConfig, page: PageEntity)
     return {};
 };
 
-// const propertiesToStr = (properties?: { [s: string]: any }): [string, string] => {
-//     if (!properties || Object.keys(properties).length === 0) {
-//         return ['', '']
-//     }
-//     // @ts-ignore
-//     const v1 = properties?.map(([k, v]) => `${k}:: ${v}`).reduce((prev, curr) => prev + "\n" + curr)
-//     return [v1, '---\n' + v1 + '\n---']
+const propertiesToStr = (properties?: { [s: string]: any }): [string, string, string] => {
+    if (!properties || Object.keys(properties).length === 0) {
+        return ['', '', '']
+    }
+    // @ts-ignore
+    const v1 = Object.entries(properties).map(([k, v]) => `${k}:: ${v}`).reduce((prev, curr) => prev + "\n" + curr)
+    const v3 = Object.entries(properties).map(([k, v]) => `${kebab(k)}:: ${v}`).reduce((prev, curr) => prev + "\n" + curr)
 
-// }
+    return [v1, '---\n' + v1 + '\n---', v3]
+
+}
