@@ -13,20 +13,25 @@ export const initLogCfg = async (back?: boolean) => {
             source: '[[files-manager]]',
             icon: tempElement.innerText,
         })
-        logseq.Editor.appendBlockInPage(LOG_PAGE, `query-table:: true
-#+BEGIN_QUERY
-{:title "All files operate log"
- :query [:find (pull ?b [*])
-         :in $ ?current-page
-         :where
-         [?p :block/name ?current-page]
-         [?b :block/page ?p]
-         [?b :block/content ?content]
-         [(!= ?content "")]
-        ]
- :inputs ["${HOME_PAGE}"]}
-#+END_QUERY
-`)
+        logseq.Editor.appendBlockInPage(LOG_PAGE, ` query-sort-by:: date
+                                                    query-sort-desc:: true
+                                                    #+BEGIN_QUERY
+                                                    {:title "All files operate log"
+                                                    :query [:find (pull ?b [*])
+                                                            :in $ ?current-page
+                                                            :where
+                                                            [?p :block/name ?current-page]
+                                                            [?b :block/page ?p]
+                                                            [?b :block/content ?content]
+                                                            [(!= ?content "")]
+                                                            ]
+                                                    :inputs ["${HOME_PAGE}"]
+                                                    :limit 10 ; 每页限制返回10条记录
+                                                    :offset 0 ; 从第一条记录开始    
+                                                    :table-view? false
+                                                    }
+                                                    #+END_QUERY
+                                                    `)
         if (back) {
             logseq.App.pushState('page', { name: HOME_PAGE })
         }

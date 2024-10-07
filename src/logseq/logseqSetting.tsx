@@ -1,5 +1,5 @@
 import { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin';
-import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i8n_CUSTOMS_VARIABLE_DATE_DESC, i8n_CUSTOMS_VARIABLE_DESC, i8n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i8n_CUSTOMS_VARIABLE_TIME_DESC, i8n_CUSTOMS_VARIABLE_TITLE, i8n_CUSTOMS_VARIABLE_VAR_DESC, i8n_DELETE_FORMAT_DESC, i8n_DELETE_FORMAT_TITLE, i8n_DELETE_FORMAT_VAR_DESC, i8n_PAGE_DEFAULT_PROPS_DESC, i8n_PAGE_DEFAULT_PROPS_TITLE, i8n_PAGE_DEFAULT_PROPS_VAR_DESC, i8n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i8n_PROPS_ICON_DESC, i8n_PROPS_ICON_TITLE, i8n_UI_TOOLBAR_DROPDOWN_DESC, i8n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE } from '../data/constants';
+import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i18n_CUSTOMS_VARIABLE_DATE_DESC, i18n_CUSTOMS_VARIABLE_DESC, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i18n_CUSTOMS_VARIABLE_TIME_DESC, i18n_CUSTOMS_VARIABLE_TITLE, i18n_CUSTOMS_VARIABLE_VAR_DESC, i18n_DELETE_FORMAT_DESC, i18n_DELETE_FORMAT_TITLE, i18n_DELETE_FORMAT_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_DESC, i18n_PAGE_DEFAULT_PROPS_TITLE, i18n_PAGE_DEFAULT_PROPS_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i18n_PROPS_ICON_DESC, i18n_PROPS_ICON_TITLE, i18n_UI_TOOLBAR_DROPDOWN_DESC, i18n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE } from '../data/constants';
 import getI18nConstant, { PRE_LANGUAGE } from '../i18n/utils';
 import { stringToVarArr, stringToObject } from '../utils/objectUtil';
 import { logger } from '../utils/logger';
@@ -44,7 +44,7 @@ export const initLspSettingsSchema = async (lang?: string,) => {
     const schemas: SettingSchemaDesc[] = [
         {
             key: 'filesManagerSettingsHeading',
-            title: getI18nConstant(lang, i8n_DELETE_FORMAT_TITLE),
+            title: getI18nConstant(lang, i18n_DELETE_FORMAT_TITLE),
             description: '',
             type: 'heading',
             default: null,
@@ -54,13 +54,13 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'string',
             default: getI18nConstant(lang, i18n_DEFAULT_DELETE_FORMAT),
-            description: `${getI18nConstant(lang, i8n_DELETE_FORMAT_DESC)}
-                          ${getI18nConstant(lang, i8n_DELETE_FORMAT_VAR_DESC)} ':\`\${name},\${date},\${time}\`'`,
+            description: `${getI18nConstant(lang, i18n_DELETE_FORMAT_DESC)}
+                          ${getI18nConstant(lang, i18n_DELETE_FORMAT_VAR_DESC)} ':\`\${name},\${date},\${time}\`'`,
             inputAs: undefined,
         },
         {
             key: 'deleteFormartHeading',
-            title: getI18nConstant(lang, i8n_DELETE_FORMAT_TITLE),
+            title: getI18nConstant(lang, i18n_DELETE_FORMAT_TITLE),
             description: '',
             type: 'heading',
             default: null,
@@ -70,13 +70,13 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'string',
             default: getI18nConstant(lang, i18n_DEFAULT_DELETE_FORMAT),
-            description: `${getI18nConstant(lang, i8n_DELETE_FORMAT_DESC)}
-                          ${getI18nConstant(lang, i8n_DELETE_FORMAT_VAR_DESC)} ':\`\${name},\${date},\${time}\`'`,
+            description: `${getI18nConstant(lang, i18n_DELETE_FORMAT_DESC)}
+                          ${getI18nConstant(lang, i18n_DELETE_FORMAT_VAR_DESC)} ':\`\${name},\${date},\${time}\`'`,
             inputAs: 'textarea',
         },
         {
             key: 'defaultPagePropsHeading',
-            title: getI18nConstant(lang, i8n_PAGE_DEFAULT_PROPS_TITLE),
+            title: getI18nConstant(lang, i18n_PAGE_DEFAULT_PROPS_TITLE),
             description: '',
             type: 'heading',
             default: null,
@@ -86,7 +86,7 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'boolean',
             default: false,
-            description: getI18nConstant(lang, i8n_PAGE_DEFAULT_PROPS_DESC),
+            description: getI18nConstant(lang, i18n_PAGE_DEFAULT_PROPS_DESC),
             enumPicker: 'checkbox',
         },
         {
@@ -94,19 +94,19 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'boolean',
             default: false,
-            description: getI18nConstant(lang, i8n_PAGE_DEFAULT_PROPS_VISIBLE_DESC),
+            description: getI18nConstant(lang, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC),
         },
         {
             key: 'defaultPageProps',
             title: '',
             type: 'string',
             default: '{}',
-            description: getI18nConstant(lang, i8n_PAGE_DEFAULT_PROPS_VAR_DESC) + ', e.g.</br>`{"createdTime":"${getDatetime()}","icon":"${randomIcon(page)}"}` ',
+            description: getI18nConstant(lang, i18n_PAGE_DEFAULT_PROPS_VAR_DESC) + ', e.g.</br>`{"createdTime":"${getDatetime()}","icon":"${randomIcon(page)}"}` ',
             inputAs: 'textarea',
         },
         {
             key: 'customVariableHeading',
-            title: getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_TITLE),
+            title: getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_TITLE),
             description: '',
             type: 'heading',
             default: null,
@@ -116,7 +116,7 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'string',
             default: '[function test() { return "test" },function getDatetime() { return Date.now() }]',
-            description: `${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_DESC)},  e.g.</br>\` 
+            description: `${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_DESC)},  e.g.</br>\` 
             [ </br>
                 function test() { return 'test' },</br>
                 function getDatetime() { return Date.now() },</br>
@@ -127,16 +127,16 @@ export const initLspSettingsSchema = async (lang?: string,) => {
                     return Date.now()
                 } </br>
             ] \` , </br>
-            ${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_VAR_DESC)}, e.g.</br>
-            \` \${randomIcon(page)} \`,\` \${randomIcon()} \`:${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_RANDOMICON_DESC)},</br>
-            \` \${date} \`:${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_DATE_DESC)},</br>
-            \` \${time} \`:${getI18nConstant(lang, i8n_CUSTOMS_VARIABLE_TIME_DESC)}.
+            ${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_VAR_DESC)}, e.g.</br>
+            \` \${randomIcon(page)} \`,\` \${randomIcon()} \`:${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC)},</br>
+            \` \${date} \`:${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_DATE_DESC)},</br>
+            \` \${time} \`:${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_TIME_DESC)}.
             `,
             inputAs: 'textarea',
         },
         {
             key: 'propsIconHeading',
-            title: getI18nConstant(lang, i8n_PROPS_ICON_TITLE),
+            title: getI18nConstant(lang, i18n_PROPS_ICON_TITLE),
             description: '',
             type: 'heading',
             default: null,
@@ -146,12 +146,12 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'boolean',
             default: false,
-            description: getI18nConstant(lang, i8n_PROPS_ICON_DESC),
+            description: getI18nConstant(lang, i18n_PROPS_ICON_DESC),
             enumPicker: 'checkbox',
         },
         {
             key: 'enhanceUIToolbarDropdownHeading',
-            title: getI18nConstant(lang, i8n_UI_TOOLBAR_DROPDOWN_TITLE),
+            title: getI18nConstant(lang, i18n_UI_TOOLBAR_DROPDOWN_TITLE),
             description: '',
             type: 'heading',
             default: null,
@@ -161,7 +161,7 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'boolean',
             default: false,
-            description: getI18nConstant(lang, i8n_UI_TOOLBAR_DROPDOWN_DESC),
+            description: getI18nConstant(lang, i18n_UI_TOOLBAR_DROPDOWN_DESC),
             enumPicker: 'checkbox',
         },
     ]
@@ -222,7 +222,7 @@ const getLspDefaultPageProps = async (lspSettings?: any): Promise<{ properties?:
             }
             return { properties: stringToObject(settings?.defaultPageProps), visible: settings?.defaultPagePropsVisible }
         } catch (error) {
-            showGetConfigError(i8n_PAGE_DEFAULT_PROPS_TITLE, error)
+            showGetConfigError(i18n_PAGE_DEFAULT_PROPS_TITLE, error)
             return {}
         }
     }
@@ -245,7 +245,7 @@ const getLspCustomVariable = async (lspSettings?: any): Promise<Array<CustomVari
     try {
         return stringToVarArr(settings?.customVariable)
     } catch (error) {
-        showGetConfigError(i8n_CUSTOMS_VARIABLE_TITLE, error)
+        showGetConfigError(i18n_CUSTOMS_VARIABLE_TITLE, error)
         return []
     }
     return []

@@ -6,15 +6,13 @@ import './main.css';
 import '@logseq/libs';
 import './i18n/configs';
 import App from './App';
-import { registerCommands, setupStyles, setupFileManagerNav, openFileManager, openFileManagerListener, showMainUIIfFilesManager } from './logseq/logseqPluginInit';
+import { registerCommands, setupStyles, setupFileManagerNav, openFileManager, openFileManagerListener, showMainUIIfFilesManager, setupPageMenuIten } from './logseq/logseqPluginInit';
 import { version as __VERSION } from '../package.json'
 import { PLUGIN_ROUTE, SETTING_ROUTE } from './data/constants';
 import { initLogCfg } from './logseq/feat/logseqAddOptLog';
 import { initLspSettingsSchema } from './logseq/logseqSetting';
 import { logger } from './utils/logger';
 import { initIconList } from './logseq/feat/logseqCustomVariable';
-import { deleteLogseqPage } from './logseq/feat/logseqDeletePage';
-import { fetchUserConfigs } from './logseq/useUserConfigs';
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -40,12 +38,12 @@ const main = async (_e: any) => {
       logseq.hideMainUI()
     }
   })
-  logseq.App.registerPageMenuItem('Delete page with files-manager', async ({ page: pageName }) => { deleteLogseqPage(pageName, await fetchUserConfigs()) })
 
   initIconList()
   await registerCommands();
   await setupStyles();
   await setupFileManagerNav();
+  setupPageMenuIten();
   initLspSettingsSchema();
   renderApp();
   openFileManagerListener();
@@ -61,3 +59,4 @@ if (import.meta.env.DEV) {
 }
 
 export default main;
+

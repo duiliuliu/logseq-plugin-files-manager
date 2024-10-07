@@ -1,8 +1,10 @@
 
 import { SimpleCommandKeybinding } from "@logseq/libs/dist/LSPlugin";
-import { HOME_PAGE, i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, PARENT_OPEN_BUTTON_ID, PLUGIN_ROUTE, SETTING_PAGE } from "../data/constants";
+import { HOME_PAGE, i18n_FILE_MANAGER_LABEL, i18n_OPEN_FILE_MANAGER_LABEL, i18n_PAGE_MENU_DELETE_PAGE, PARENT_OPEN_BUTTON_ID, PLUGIN_ROUTE, SETTING_PAGE } from "../data/constants";
 import getI18nConstant from "../i18n/utils";
 import { logger } from "../utils/logger";
+import { deleteLogseqPage } from "./feat/logseqDeletePage";
+import { fetchUserConfigs } from "./useUserConfigs";
 
 
 // 打开文件管理器的函数
@@ -104,6 +106,12 @@ export const setupStyles = () => {
         }
      `)
 };
+
+export const setupPageMenuIten = async (lang?: string) => {
+    !lang && ({ preferredLanguage: lang } = await logseq.App.getUserConfigs())
+    logseq.App.registerPageMenuItem(i18n_PAGE_MENU_DELETE_PAGE, async ({ page: pageName }) => { deleteLogseqPage(pageName, await fetchUserConfigs()) })
+}
+
 
 // 设置文件管理器导航
 export const setupFileManagerNav = async (lang?: string) => {
