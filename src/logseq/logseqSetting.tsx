@@ -42,22 +42,22 @@ export const initLspSettingsSchema = async (lang?: string,) => {
     !lang && ({ preferredLanguage: lang } = await logseq.App.getUserConfigs())
 
     const schemas: SettingSchemaDesc[] = [
-        {
-            key: 'filesManagerSettingsHeading',
-            title: getI18nConstant(lang, i18n_DELETE_FORMAT_TITLE),
-            description: '',
-            type: 'heading',
-            default: null,
-        },
-        {
-            key: 'filesManagerSettings',
-            title: '',
-            type: 'string',
-            default: getI18nConstant(lang, i18n_DEFAULT_DELETE_FORMAT),
-            description: `${getI18nConstant(lang, i18n_DELETE_FORMAT_DESC)}
-                          ${getI18nConstant(lang, i18n_DELETE_FORMAT_VAR_DESC)} ':\`\${name},\${date},\${time}\`'`,
-            inputAs: undefined,
-        },
+        // {
+        //     key: 'filesManagerSettingsHeading',
+        //     title: getI18nConstant(lang, i18n_DELETE_FORMAT_TITLE),
+        //     description: '',
+        //     type: 'heading',
+        //     default: null,
+        // },
+        // {
+        //     key: 'filesManagerSettings',
+        //     title: '',
+        //     type: 'string',
+        //     default: getI18nConstant(lang, i18n_DEFAULT_DELETE_FORMAT),
+        //     description: `${getI18nConstant(lang, i18n_DELETE_FORMAT_DESC)}
+        //                   ${getI18nConstant(lang, i18n_DELETE_FORMAT_VAR_DESC)} ':\`\${name},\${date},\${time}\`'`,
+        //     inputAs: undefined,
+        // },
         {
             key: 'deleteFormartHeading',
             title: getI18nConstant(lang, i18n_DELETE_FORMAT_TITLE),
@@ -101,7 +101,7 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'string',
             default: '{}',
-            description: getI18nConstant(lang, i18n_PAGE_DEFAULT_PROPS_VAR_DESC) + ', e.g.</br>`{"createdTime":"${getDatetime()}","icon":"${randomIcon(page)}"}` ',
+            description: getI18nConstant(lang, i18n_PAGE_DEFAULT_PROPS_VAR_DESC) + ', e.g.</br>`{"createdTime":"${getDatetime()}","icon":"${randomIcon(page)}","test1":"${await testAsync()}","temperature":"${await getTemperature()}"}` ',
             inputAs: 'textarea',
         },
         {
@@ -116,17 +116,26 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'string',
             default: '[function test() { return "test" },function getDatetime() { return Date.now() }]',
-            description: `${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_DESC)},  e.g.</br>\` 
+            description: `${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_DESC)},  e.g.</br><code> 
             [ </br>
-                function test() { return 'test' },</br>
-                function getDatetime() { return Date.now() },</br>
-                function getDatetimeSkipDaily(page) {
-                    if (page?.["journal?"]) {
-                        return ""
-                    }
-                    return Date.now()
-                } </br>
-            ] \` , </br>
+            &nbsp; &nbsp; function test() { return 'test' },</br>
+            &nbsp; &nbsp; async function testAsync() { return 'test' },</br>
+            &nbsp; &nbsp; async function getTemperature() { </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; try { </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; const result = await timeoutPromise(fetch('https://example.com/data'), 500); </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return await response.text(); </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; } catch (error) { </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return "" </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; } </br>
+            &nbsp; &nbsp; }, </br>
+            &nbsp; &nbsp; function getDatetime() { return Date.now() },</br>
+            &nbsp; &nbsp; function getDatetimeSkipDaily(page) { </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; if (page?.["journal?"]) { </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; return "" </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; } </br>
+            &nbsp; &nbsp; &nbsp; &nbsp; return Date.now() </br>
+            &nbsp; &nbsp; } </br>
+            ] </code> , </br>
             ${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_VAR_DESC)}, e.g.</br>
             \` \${randomIcon(page)} \`,\` \${randomIcon()} \`:${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC)},</br>
             \` \${date} \`:${getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_DATE_DESC)},</br>

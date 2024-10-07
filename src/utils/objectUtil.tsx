@@ -22,6 +22,30 @@ export const objectTemplateFromat = (temp: string, obj: Object): string => {
     return new Function(...Object.keys(obj), `return \`${temp}\`;`)(...Object.values(obj))
 }
 
+export async function asyncFuncTmpl(strings: any[], asyncExpr: any) {
+    return `${strings[0]}${await asyncExpr}${strings[1]}`;
+}
+
+export function timeoutPromise(promise: any, ms: number | undefined) {
+    return Promise.race([
+        promise,
+        new Promise((_resolve, reject) => {
+            setTimeout(() => reject(new Error('Timeout')), ms);
+        })
+    ]);
+}
+
+export const objectTemplateFromatAsync = async (temp: string, obj: Object): Promise<string> => {
+    if (temp.includes('await')) {
+        temp = temp.replace('await', '')
+        temp = `asyncFuncTmpl\`${temp}\``
+        logger.debug('objectTemplateFromatAsync,', temp)
+        return await new Function(...Object.keys(obj), `return ` + temp)(...Object.values(obj))
+    }
+    logger.debug('objectTemplateFromatAsync,', temp)
+    return await new Function(...Object.keys(obj), `return \`${temp}\`;`)(...Object.values(obj))
+}
+
 export const stringToFuncValue = (str: string, obj: Object): string => {
     return new Function(...Object.keys(obj), "return " + str)(...Object.values(obj))
 }

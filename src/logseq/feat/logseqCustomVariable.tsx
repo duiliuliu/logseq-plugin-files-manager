@@ -5,6 +5,7 @@ import logseqIconsListJSON from './iconsLogseq.json';
 import { AppConfig } from '../../data/types';
 import { CustomVariable } from '../logseqSetting';
 import { format } from 'date-fns';
+import { asyncFuncTmpl, timeoutPromise } from '../../utils/objectUtil';
 
 type iconItem = {
     n: string;
@@ -50,7 +51,8 @@ export const getCustomVariables = ({ appConfig, page }: { appConfig: AppConfig, 
         ...data,
         page,
         date: format(Date.now(), appConfig.preferredDateFormat),
-        time: format(Date.now(), 'HH:mm')
+        time: format(Date.now(), 'HH:mm'),
+        asyncFuncTmpl, timeoutPromise
     }
 }
 
