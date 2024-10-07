@@ -1,6 +1,6 @@
 import { PageEntity } from "@logseq/libs/dist/LSPlugin";
 import { logger } from "../../utils/logger";
-import { objectTemplateFromat } from "../../utils/objectUtil";
+import { objectTemplateFromatAsync } from "../../utils/objectUtil";
 import { AppConfig } from "../../data/types";
 import { getCustomVariables } from "./logseqCustomVariable";
 import { kebab } from "name-styles";
@@ -10,9 +10,10 @@ import { kebab } from "name-styles";
  * @param name 页面名称。
  */
 export const addLogseqDefaultPageProps = async (appConfig: AppConfig, page: string | PageEntity) => {
+    const name = typeof page === 'string' ? page : page.originalName;
+
     try {
         // 获取页面对象，如果不存在则返回
-        const name = typeof page === 'string' ? page : page.originalName;
         const pageE = typeof page === 'string' ? await logseq.Editor.getPage(name) : page;
         if (!pageE) {
             logger.warn(`Page ${name} not found`);
@@ -82,14 +83,12 @@ const getLogseqDefaultPageProps = async (appConfig: AppConfig, page: PageEntity)
 
     // 如果存在属性，应用对象模板格式化函数。
     if (properties) {
-        Object.keys(properties).forEach(item => {
-            // 使用对象模板格式化函数处理每个属性。 
-            logger.debug('getLspDefaultPageProps', 'data', varsData);
-            const itemValue = objectTemplateFromat(properties[item], varsData);
-            // 属性值为空则忽略
-            logger.debug('getLspDefaultPageProps', 'itemValue', itemValue,);
-            itemValue && (objDest[item] = itemValue);
-        });
+        await Promise.all(Object.keys(properties).map(async item => {
+            const itemValue = await objectTemplateFromatAsync(properties[item], varsData);             // 使用对象模板格式化函数处理每个属性。 
+            itemValue && (objDest[item] = itemValue)            // 属性值为空则忽略
+        }))
+
+        logger.debug('getLspDefaultPageProps', 'properties', objDest,);
         return { properties: objDest, visible };
     }
 
