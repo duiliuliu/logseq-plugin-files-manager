@@ -1,5 +1,5 @@
 import { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin';
-import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i18n_CUSTOMS_VARIABLE_DATE_DESC, i18n_CUSTOMS_VARIABLE_DESC, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i18n_CUSTOMS_VARIABLE_TIME_DESC, i18n_CUSTOMS_VARIABLE_TITLE, i18n_CUSTOMS_VARIABLE_VAR_DESC, i18n_DELETE_FORMAT_DESC, i18n_DELETE_FORMAT_TITLE, i18n_DELETE_FORMAT_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_DESC, i18n_PAGE_DEFAULT_PROPS_TITLE, i18n_PAGE_DEFAULT_PROPS_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i18n_PROPS_ICON_DESC, i18n_PROPS_ICON_TITLE, i18n_UI_TOOLBAR_DROPDOWN_DESC, i18n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE } from '../data/constants';
+import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i18n_CUSTOMS_VARIABLE_DATE_DESC, i18n_CUSTOMS_VARIABLE_DESC, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i18n_CUSTOMS_VARIABLE_TIME_DESC, i18n_CUSTOMS_VARIABLE_TITLE, i18n_CUSTOMS_VARIABLE_VAR_DESC, i18n_DELETE_FORMAT_DESC, i18n_DELETE_FORMAT_TITLE, i18n_DELETE_FORMAT_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_DESC, i18n_PAGE_DEFAULT_PROPS_TITLE, i18n_PAGE_DEFAULT_PROPS_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i18n_PROPS_ICON_DESC, i18n_PROPS_ICON_TITLE, i18n_UI_TOOLBAR_DROPDOWN_DESC, i18n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE, i18n_CUSTOMS_VARIABLE_TIMEOUT_DESC, i18n_CUSTOMS_VARIABLE_ERROR_HANDLER_DESC } from '../data/constants';
 import getI18nConstant, { PRE_LANGUAGE } from '../i18n/utils';
 import { stringToVarArr, stringToObject } from '../utils/objectUtil';
 import { logger } from '../utils/logger';
@@ -17,6 +17,8 @@ export interface PluginSettings {
     defaultPagePropsVisible: boolean;
     defaultPageProps: { properties?: { [K: string]: any }, visible?: boolean };
     customVariable: Array<CustomVariable>;
+    customVariableTimeout: number;
+    customVariableErrorHandler: string;
     propsIconConfig: boolean;
     enhanceUIToolbarDropdown: boolean;
 }
@@ -32,6 +34,8 @@ const DEFAULT_SETTINGS = {
     defaultPagePropsVisible: false,
     defaultPageProps: {},
     customVariable: [] as Array<CustomVariable>,
+    customVariableTimeout: 1000,
+    customVariableErrorHandler: '',
     propsIconConfig: false,
     enhanceUIToolbarDropdown: false
 }
@@ -144,6 +148,22 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             inputAs: 'textarea',
         },
         {
+            key: 'customVariableTimeout',
+            title: '',
+            type: 'number',
+            default: 1000,
+            description: getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_TIMEOUT_DESC),
+        },
+        {
+            key: 'customVariableErrorHandler',
+            title: '',
+            type: 'enum',
+            default: '',
+            description: getI18nConstant(lang, i18n_CUSTOMS_VARIABLE_ERROR_HANDLER_DESC),
+            enumChoices: ['EmptyString', 'Blank space', 'eror', 'error=${error}'],
+            enumPicker: 'select'
+        },
+        {
             key: 'propsIconHeading',
             title: getI18nConstant(lang, i18n_PROPS_ICON_TITLE),
             description: '',
@@ -193,6 +213,8 @@ export const getPluginSettings = async (): Promise<PluginSettings> => {
         defaultPagePropsVisible: lspSettings.defaultPagePropsVisible,
         defaultPageProps: await getLspDefaultPageProps(lspSettings),
         customVariable: await getLspCustomVariable(lspSettings),
+        customVariableTimeout: lspSettings.customVariableTimeout,
+        customVariableErrorHandler: lspSettings.customVariableErrorHandler,
         propsIconConfig: await getPropsIconConfig(lspSettings),
         enhanceUIToolbarDropdown: lspSettings.enhanceUIToolbarDropdown,
     }

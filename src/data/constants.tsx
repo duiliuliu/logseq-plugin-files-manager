@@ -123,6 +123,8 @@ export const i18n_PAGE_DEFAULT_PROPS_DESC = 'Default page properties desc' // �
 export const i18n_PAGE_DEFAULT_PROPS_VAR_DESC = 'Default page properties var desc' // 您可以参照示例进行配置。整个配置遵循JSON结构，其中JSON的值可以设置为常量，也可以按照以下方式使用变量进行配置
 
 export const i18n_CUSTOMS_VARIABLE_TITLE = 'Custom variable config'  // 自定义变量配置
+export const i18n_CUSTOMS_VARIABLE_TIMEOUT_DESC = 'Custom variable timeout config'  // 变量加载的超时配置，单位毫秒
+export const i18n_CUSTOMS_VARIABLE_ERROR_HANDLER_DESC = 'Custom variable error handler config'  // 变量加载的异常处理
 export const i18n_CUSTOMS_VARIABLE_DESC = 'Custom variable config desc' // 支持自定义变量，用于上方模板，变量类型为：`type CustomVariable = (input?: any) => string`
 export const i18n_CUSTOMS_VARIABLE_VAR_DESC = 'Custom variable config var desc' // 已支持变量
 export const i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC = 'Custom variable config ${randomIcon} desc' // randomIcon()变量说明：${randomIcon()}会返回一个随机的Tabler icon, ${randomIcon(page)}仅会在非journal页面返回Tabler icon
