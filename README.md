@@ -24,6 +24,7 @@
   
   ![Building Data](./images/app-building-en.png)
 - ## Feature Introduction
+  >  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
   
   1. **Card View and List View**
 	- You can switch the display method in settings, displaying files in card or list form, providing a more intuitive file preview and operation interface.
@@ -61,9 +62,9 @@
 		- Enhance your workflow by setting default properties for newly created pages. With the support of dynamic variables like randomIcon, you can further tailor the pages to your preferences. This feature allows you to craft pages with a rich set of customizable attributes that adapt to your specific requirements.
 		- ![page-default-props](./images/page-default-props-en.png)
 		  
-		  > Discover and experience more features awaiting your exploration.
-		  
-		  ![app-log](./images/app-log.png)
+	  > Discover and experience more features awaiting your exploration.  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
+	  
+	  ![app-log](./images/app-log.png)
 - ### Development Plan
   
   
