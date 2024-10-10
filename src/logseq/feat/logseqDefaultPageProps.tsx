@@ -1,6 +1,6 @@
 import { PageEntity } from "@logseq/libs/dist/LSPlugin";
 import { logger } from "../../utils/logger";
-import { objectTemplateFromatAsync } from "../../utils/objectUtil";
+import { objectTemplateFromatAsync, timeoutPromise } from "../../utils/objectUtil";
 import { AppConfig } from "../../data/types";
 import { getCustomVariables } from "./logseqCustomVariable";
 import { kebab } from "name-styles";
@@ -84,7 +84,18 @@ const getLogseqDefaultPageProps = async (appConfig: AppConfig, page: PageEntity)
     // 如果存在属性，应用对象模板格式化函数。
     if (properties) {
         await Promise.all(Object.keys(properties).map(async item => {
-            const itemValue = await objectTemplateFromatAsync(properties[item], varsData);             // 使用对象模板格式化函数处理每个属性。 
+            let itemValue = ''
+            try {
+                itemValue = await timeoutPromise(objectTemplateFromatAsync(properties[item], varsData), appConfig.pluginSettings?.customVariableTimeout);             // 使用对象模板格式化函数处理每个属性。 
+            } catch (error) {
+                switch (appConfig.pluginSettings?.customVariableErrorHandler) {
+                    case 'EmptyString': itemValue = ''; break;
+                    case 'Blank space': itemValue = ' '; break;
+                    case 'eror': itemValue = 'eror'; break;
+                    case 'error=${error}': itemValue = `${error}`; break;
+                    default: itemValue = ''; break;
+                }
+            }
             itemValue && (objDest[item] = itemValue)            // 属性值为空则忽略
         }))
 

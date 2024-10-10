@@ -55,6 +55,8 @@
     "Default page properties desc": "新しいページを作成する際、デフォルトのプロパティを設定することができます。空の値を持つプロパティは無視されます。空であってほしいプロパティを追加する場合は、その値をスペースに設定してください。システムプロパティとの競合を避けてください。プロパティ'createTime'については、このプラグインで使用されるため、`'createdTime': '${getDatetime()}'`に設定することをお勧めします",
     "Default page properties var desc": "ご提供のサンプルを参考に設定ができます。設定全体はJSON構造に従っており、値は定数として設定することも、以下の変数方法を使用して設定することもできます",
     "Custom variable config": "カスタム変数設定",
+    "Custom variable timeout config": "カスタム変数のロードタイムアウト設定、ミリ秒単位です",
+    "Custom variable error handler config": "カスタム変数のロードエラーハンドリング設定",
     "Custom variable config desc": "上記のテンプレートで使用するためのカスタム変数をサポートしています。変数タイプ:`type CustomVariable = (input?: any) => string`",
     "Custom variable config var desc": "現在、このプラグインではページを作成する際に柔軟に使用できる以下の変数を内蔵しています",
     "Custom variable config ${randomIcon} desc": "カスタム変数設定 ${randomIcon} 説明：${randomIcon()} はランダムなTablerアイコンを返します。${randomIcon(page)} は日記ページ以外でのみTablerアイコンを返します",

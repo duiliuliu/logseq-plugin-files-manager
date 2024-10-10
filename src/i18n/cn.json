@@ -56,6 +56,8 @@
     "Default page properties var desc": "您可以参照示例进行配置。整个配置遵循JSON结构，其中JSON的值可以设置为常量，也可以按照以下方式使用变量进行配置",
     "Custom variable config": "自定义变量配置",
     "Custom variable config desc": "支持自定义变量，用于上方模板，变量类型为：`type CustomVariable = (input?: any) => string`",
+    "Custom variable timeout config": "自定义变量加载的超时设置，单位为毫秒",
+    "Custom variable error handler config": "自定义变量加载的异常处理配置",
     "Custom variable config var desc": "目前，本插件内置支持以下变量，方便您在创建页面时灵活使用",
     "Custom variable config ${randomIcon} desc": "自定义变量配置 ${randomIcon} 描述：${randomIcon()} 会返回一个随机的Tabler图标，${randomIcon(page)} 仅在非日记页面返回Tabler图标",
     "Custom variable config ${date} desc": "自定义变量配置 ${date} 描述：${date} 会返回当前图表日期格式的日期",
