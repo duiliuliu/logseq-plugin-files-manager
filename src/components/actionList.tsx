@@ -9,9 +9,10 @@ interface ActionListProps {
     actions?: ActionItemProps[];
     open: boolean;
     tabItem: React.ReactNode
+    theme?: 'light' | 'dark'
 }
 
-const ActionList: React.FC<ActionListProps> = ({ actions, open, tabItem }) => {
+const ActionList: React.FC<ActionListProps> = ({ actions, open, tabItem, }) => {
     const [visible, setVisible] = useState<boolean>(false);
 
     useEffect(() => {
@@ -68,7 +69,7 @@ const ActionList: React.FC<ActionListProps> = ({ actions, open, tabItem }) => {
 };
 
 
-export const ActionList2: React.FC<ActionListProps> = ({ actions, open, tabItem }) => {
+export const ActionList2: React.FC<ActionListProps> = ({ actions, open, tabItem, theme }) => {
     if (!actions) {
         return <div></div>
     }
@@ -89,12 +90,13 @@ export const ActionList2: React.FC<ActionListProps> = ({ actions, open, tabItem 
                 icon: <item.icon size={15} />,
                 onClick: (e) => { item.onClick(e.domEvent) }
             } as ItemType)),
+            theme: theme
         }}
         onOpenChange={() => setVisible(prev => !prev)}
         trigger={['hover', 'click',]}
     >
         {tabItem}
-    </Dropdown>
+    </Dropdown >
 }
 
 export default ActionList;

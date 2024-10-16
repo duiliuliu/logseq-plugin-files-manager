@@ -15,9 +15,10 @@ interface TabsProps {
   appWidth?: number;
   actions?: ActionItemProps[];
   searchAction?: React.ReactNode;
+  theme?: 'light' | 'dark';
 }
 
-const Tabs: React.FC<TabsProps> = ({ tabData, onTabClick, tabCounts, appWidth, actions, searchAction: searchAction }) => {
+const Tabs: React.FC<TabsProps> = ({ tabData, onTabClick, tabCounts, appWidth, actions, searchAction: searchAction, theme }) => {
   const [activeKey, setActiveKey] = useState<string>(tabData[0].key);
   const iconOnly = (appWidth && appWidth < 768) as boolean
   const [settingOpen, setSettingOpen] = useState<boolean>(false);
@@ -45,6 +46,7 @@ const Tabs: React.FC<TabsProps> = ({ tabData, onTabClick, tabCounts, appWidth, a
               <ActionList2
                 actions={actions}
                 open={settingOpen}
+                theme={theme}
                 tabItem={<TabItem item={item} iconOnly={iconOnly} activeKey={activeKey} tabCounts={tabCounts} />}
               />
             )

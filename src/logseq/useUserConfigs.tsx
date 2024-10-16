@@ -7,7 +7,7 @@ import { AppConfig } from '../data/types';
 import { parseEDNString } from 'edn-data';
 import { USER_CONFIG_FILE } from '../data/constants';
 import { getPluginSettings, initLspSettingsSchema } from './logseqSetting';
-import { enhanceLsp } from './feat/logseqEnhancePropsIcon';
+import { initPropsIconObserver, runEnhanceLspPluginDropdown, runPropsIconObserver, stopEnhanceLspPluginDropdown, stopPropsIconObserver } from './feat/logseqEnhancePropsIcon';
 import { logseq as lsp } from '../../package.json';
 
 
@@ -121,7 +121,26 @@ export const useUserConfigs = (userConfigUpdated: number) => {
     }, [])
 
     // 优化awesome props
-    enhanceLsp(userConfigs)
+    useEffect(() => {
+        const settings = userConfigs?.pluginSettings
+
+        // 如果启用了propsIconConfig并且没有启用propertyPages，则初始化并运行观察者
+        if (settings?.propsIconConfig && !userConfigs.propertyPagesEnable) {
+            initPropsIconObserver()
+            runPropsIconObserver()
+        }
+        return () => { stopPropsIconObserver() }
+    }, [userConfigs.propertyPagesEnabled, userConfigs?.pluginSettings?.propsIconConfig])
+
+    // 优化工具栏下拉框
+    useEffect(() => {
+        const settings = userConfigs?.pluginSettings
+
+        if (settings?.enhanceUIToolbarDropdown) {
+            runEnhanceLspPluginDropdown()
+        }
+        return () => { stopEnhanceLspPluginDropdown() }
+    }, [userConfigs?.pluginSettings?.enhanceUIToolbarDropdown])
 
     return userConfigs
 };
