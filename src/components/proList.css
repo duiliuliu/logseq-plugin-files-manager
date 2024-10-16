@@ -1,6 +1,6 @@
 .list {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    background-color: #ffffff;
+    background-color: var(--ls-primary-background-color);
     transition: transform 0.3s, box-shadow 0.3s;
     width: 160px;
     height: 220px;
@@ -20,7 +20,6 @@
 
 .list-content {
     width: 100%;
-    /* height: 110px; */
     overflow: hidden;
 }
 
@@ -35,7 +34,7 @@
     width: 100%;
     overflow: hidden;
     font-size: 12px;
-    color: #606060;
+    color: var(--ls-secondary-text-color);
     text-align: left;
     white-space: pre-wrap;
     flex-grow: 1;
@@ -56,7 +55,7 @@
 
 .list-description {
     font-size: 10px;
-    color: #888;
+    color: var(--ls-secondary-text-color);
     text-align: left;
 }
 
@@ -67,75 +66,55 @@
     align-items: center;
     justify-content: center;
     font-size: 1.4em;
-    color: #333;
+    color: var(--ls-primary-text-color);
     margin-right: 10px;
-    background-color: aliceblue;
+    background-color: var(--ls-secondary-background-color);
     border-radius: 100%;
 }
 
 .list-tag {
-    /* 添加一些文本阴影可以更好地突出文字 */
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    /* 可以添加一些鼠标悬停的效果 */
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .list-tag:hover {
     transform: scale(1.1);
-    /* 鼠标悬停时放大标签 */
     text-shadow: 1px 1px 1.5px rgba(0, 0, 0, 0.3);
-    /* 鼠标悬停时增加文本阴影 */
 }
 
 .list-actions {
     display: flex;
-    /* 使用flex布局 */
     flex-direction: column;
-    /* 子元素竖直排列 */
     gap: 4px;
-    /* 子元素之间的间距 */
 }
 
 .list-actions a {
     display: inline-flex;
-    /* 确保图标和文字可以在同一行显示 */
     align-items: center;
-    /* 垂直居中 */
     justify-content: center;
-    /* 水平居中 */
     cursor: pointer;
-    /* 鼠标指针变为手型 */
 }
 
 .list-actions a:focus {
     outline: none;
-    /* 移除聚焦时的默认轮廓 */
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
-    /* 聚焦时的阴影效果，模拟tooltip的高亮效果 */
 }
 
-/* 可以为tooltip添加一个隐藏的元素，在聚焦时显示 */
 .list-actions a:focus::after {
     content: attr(title);
     position: absolute;
-    background-color: black;
-    color: white;
+    background-color: var(--ls-primary-text-color);
+    color: var(--ls-primary-background-color);
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 12px;
     white-space: nowrap;
     z-index: 1000;
-}
-
-/* 根据需要调整tooltip的位置 */
-.list-actions a:focus::after {
     top: calc(100% + 5px);
-    /* 在链接下方显示 */
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* 当屏幕宽度较小时，tooltip可能需要倒置 */
 @media (max-width: 768px) {
     .list-actions a:focus::after {
         top: auto;
@@ -150,26 +129,15 @@
     align-items: center;
     justify-content: center;
     font-size: 1.4em;
-    color: #333;
-    background-color: aliceblue;
+    color: var(--ls-primary-text-color);
+    background-color: var(--ls-secondary-background-color);
     border-radius: 100%;
-}
-
-.card-title-container {
-    /* display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    justify-content: center;
-    align-content: stretch;
-    align-items: flex-end; */
 }
 
 .card-description {
     font-size: 12px;
-    /* 调整字体大小以提高可读性 */
     width: fit-content;
-    color: #333;
-    /* 调整颜色 */
+    color: var(--ls-secondary-text-color);
     word-wrap: break-word;
 }
 
@@ -208,9 +176,9 @@
     align-items: center;
     justify-content: center;
     font-size: 1.4em;
-    color: #333;
+    color: var(--ls-primary-text-color);
     margin-right: 10px;
-    background-color: aliceblue;
+    background-color: var(--ls-secondary-background-color);
     border-radius: 100%;
 }
 
@@ -238,7 +206,7 @@
 
 .asset-action {
     cursor: pointer;
-    color: var(--ls-active-secondary-color);
+    color: var(--ls-secondary-text-color);
     font-size: 14px;
 }
 

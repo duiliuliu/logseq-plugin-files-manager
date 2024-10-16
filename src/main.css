@@ -8,19 +8,28 @@
   --primary-text-color-light: #333333;
   --secondary-text-color-light: #666666;
   --secondary-background-color-light: #f0f0f0;
+  --border-color-light: #cccccc;
+  /* Light mode border color */
+
 
   /* Dark theme variables */
-  --background-color-dark: #1f1f1f;
+  --background-color-dark: #143642;
   --text-color-dark: #ffffff;
   --primary-text-color-dark: #e0e0e0;
   --secondary-text-color-dark: #aaaaaa;
-  --secondary-background-color-dark: #2a2a2a;
+  --secondary-background-color-dark: #3B5E69;
+  --border-color-dark: #444444;
+  /* Dark mode border color */
+
 
   /* Default theme variables */
   --ls-primary-background-color: var(--background-color-light);
   --ls-secondary-background-color: var(--secondary-background-color-light);
   --ls-primary-text-color: var(--primary-text-color-light);
   --ls-secondary-text-color: var(--secondary-text-color-light);
+  --ls-border-color: var(--border-color-light);
+  /* Default border color for light mode */
+
 }
 
 /* Media query for dark mode */
@@ -30,9 +39,12 @@
     --ls-secondary-background-color: var(--secondary-background-color-dark);
     --ls-primary-text-color: var(--primary-text-color-dark);
     --ls-secondary-text-color: var(--secondary-text-color-dark);
+    --ls-border-color: var(--border-color-dark);
+    /* Border color for dark mode */
   }
-} */
+}
 
+*/
 
 /* Theme classes */
 .light-mode {
@@ -40,6 +52,8 @@
   --ls-secondary-background-color: var(--secondary-background-color-light);
   --ls-primary-text-color: var(--primary-text-color-light);
   --ls-secondary-text-color: var(--secondary-text-color-light);
+  --ls-border-color: var(--border-color-light);
+  /* Border color for light mode */
 }
 
 .dark-mode {
@@ -47,6 +61,8 @@
   --ls-secondary-background-color: var(--secondary-background-color-dark);
   --ls-primary-text-color: var(--primary-text-color-dark);
   --ls-secondary-text-color: var(--secondary-text-color-dark);
+  --ls-border-color: var(--border-color-dark);
+  /* Border color for dark mode */
 }
 
 

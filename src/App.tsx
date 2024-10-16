@@ -1,7 +1,7 @@
 // src/App.tsx
 import React, { useRef, useState } from 'react';
 import Tabs from './components/tabs';
-import { Button, Empty, GetProps, Input, Result, Spin } from 'antd';
+import { Button, ConfigProvider, Empty, GetProps, Input, Result, Spin } from 'antd';
 import { ActionItemProps } from './components/actionItem';
 import { ArrowsClockwise, FolderSimplePlus, List, Newspaper, SquaresFour } from '@phosphor-icons/react';
 import Search from 'antd/es/input/Search';
@@ -85,55 +85,71 @@ const App: React.FC = () => {
 
     return (
         <div className={theme === 'dark' ? 'dark-mode' : 'light-mode'}>
-            <div
-                className='fm-container'
-                style={{
-                    width: width,
-                    height: height,
-                    left: left,
-                    top: top,
-                    position: 'relative',
-                    backgroundColor: `var(--ls-primary-background-color)`,
-                    color: `var(--ls-primary-text-color)`,
-                    transition: 'background-color 0.3s, color 0.3s',
-                }}>
-                <div style={{ padding: 20, paddingBottom: 40 }}>
-                    <Tabs
-                        searchAction={<Search placeholder={getI18nConstant(userConfig.preferredLanguage, i18n_SEARCH_PLACEHOLDER)} onSearch={onSearch} allowClear />}
-                        tabData={tabData}
-                        onTabClick={handleTabClick}
-                        tabCounts={typeCount}
-                        actions={actions}
-                        appWidth={width} />
-
-                    <div className='tab-content' ref={tabContentRef} style={{
-                        maxHeight: listHeight, // 设置最大高度
-                        minHeight: height - 100,
-                        overflow: 'auto', // 启用滚动
-                    }} >
-                        {
-                            needAuth ?
-                                <Result
-                                    title={`${getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE_TOOLTIP)} ${getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE_TOOLTIP_PATH)}:${buildGraphPath(userConfig.currentGraph)}`}
-                                    extra={<Button icon={<FolderSimplePlus />} onClick={() => getDirectoryHandle()} type="default">{getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE)}</Button>}
-                                />
-                                : <Spin spinning={preparing} tip={getI18nConstant(userConfig.preferredLanguage, i18n_BUILDING)} percent='auto' delay={100}>
-                                    <ProList
-                                        data={data}
-                                        mode={mode}
-                                        userConfig={userConfig}
-                                        size={{ width, height }}
-                                        emptyNode={<Empty />}
-                                        loading={loading}
-                                        dirhandler={getDirectoryHandle}
-                                        scrollPosition={scrollPosition}
-                                    />
-                                </Spin>
+            <ConfigProvider
+                theme={{
+                    components: {
+                        Tabs: {
+                            cardBg: `var(--lx-gray-02, var(--ls-primary-background-color, var(--ls-secondary-background-color)))`,
+                            itemColor: `var(--ls-primary-text-color)`,
+                        },
+                        Menu: {
+                            darkItemBg: `var(--ls-secondary-background-color)`
                         }
+                    }
+                }}
+            >
+                <div
+                    className='fm-container'
+                    style={{
+                        width: width,
+                        height: height,
+                        left: left,
+                        top: top,
+                        position: 'relative',
+                        backgroundColor: `var(--lx-gray-02, var(--ls-primary-background-color, var(--ls-secondary-background-color)))
+`,
+                        color: `var(--ls-primary-text-color)`,
+                        transition: 'background-color 0.3s, color 0.3s',
+                    }}>
+                    <div style={{ padding: 20, paddingBottom: 40 }}>
+                        <Tabs
+                            searchAction={<Search placeholder={getI18nConstant(userConfig.preferredLanguage, i18n_SEARCH_PLACEHOLDER)} onSearch={onSearch} allowClear />}
+                            tabData={tabData}
+                            onTabClick={handleTabClick}
+                            tabCounts={typeCount}
+                            actions={actions}
+                            appWidth={width}
+                            theme={theme} />
 
+                        <div className='tab-content' ref={tabContentRef} style={{
+                            maxHeight: listHeight, // 设置最大高度
+                            minHeight: height - 100,
+                            overflow: 'auto', // 启用滚动
+                        }} >
+                            {
+                                needAuth ?
+                                    <Result
+                                        title={`${getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE_TOOLTIP)} ${getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE_TOOLTIP_PATH)}:${buildGraphPath(userConfig.currentGraph)}`}
+                                        extra={<Button icon={<FolderSimplePlus />} onClick={() => getDirectoryHandle()} type="default">{getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE)}</Button>}
+                                    />
+                                    : <Spin spinning={preparing} tip={getI18nConstant(userConfig.preferredLanguage, i18n_BUILDING)} percent='auto' delay={100}>
+                                        <ProList
+                                            data={data}
+                                            mode={mode}
+                                            userConfig={userConfig}
+                                            size={{ width, height }}
+                                            emptyNode={<Empty />}
+                                            loading={loading}
+                                            dirhandler={getDirectoryHandle}
+                                            scrollPosition={scrollPosition}
+                                        />
+                                    </Spin>
+                            }
+
+                        </div>
                     </div>
                 </div>
-            </div>
+            </ConfigProvider>
         </div>
     );
 };

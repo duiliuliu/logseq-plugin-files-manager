@@ -77,7 +77,20 @@ const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNo
         <div>
             <AntdProList<DataItem>
                 ghost={true}
-                itemCardProps={{ ghost: true, className: 'list', bodyStyle: { padding: 0, paddingLeft: 18 }, }}
+                itemCardProps={{
+                    ghost: true,
+                    className: 'list',
+                    bodyStyle: {
+                        padding: 0,
+                        paddingLeft: 18,
+                    },
+                    style: {
+                        backgroundColor: `var(--lx-gray-02, var(--ls-primary-background-color, var(--ls-secondary-background-color)))
+`,
+                        color: `var(--ls-primary-text-color)`,
+                        borderColor: `var(--ls-border-color)`
+                    }
+                }}
                 rowKey='name'
                 dataSource={data}
                 showActions='hover'
@@ -91,7 +104,8 @@ const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNo
             />
             <div className='right-menu' style={{
                 display: rightMenuDisplay ? 'block' : 'none',
-                backgroundColor: `var(--ls-primary-background-color)`,
+                backgroundColor: `var(--lx-gray-02, var(--ls-primary-background-color, var(--ls-secondary-background-color)))
+`,
                 color: `var(--ls-primary-text-color)`,
                 position: 'absolute',
                 left: rightMenuPosition.left,
