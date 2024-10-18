@@ -69,7 +69,7 @@ const ActionList: React.FC<ActionListProps> = ({ actions, open, tabItem, }) => {
 };
 
 
-export const ActionList2: React.FC<ActionListProps> = ({ actions, open, tabItem, theme }) => {
+export const ActionList2: React.FC<ActionListProps> = ({ actions, open, tabItem, }) => {
     if (!actions) {
         return <div></div>
     }
@@ -90,7 +90,6 @@ export const ActionList2: React.FC<ActionListProps> = ({ actions, open, tabItem,
                 icon: <item.icon size={15} />,
                 onClick: (e) => { item.onClick(e.domEvent) }
             } as ItemType)),
-            theme: theme
         }}
         onOpenChange={() => setVisible(prev => !prev)}
         trigger={['hover', 'click',]}

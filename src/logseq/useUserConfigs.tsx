@@ -72,7 +72,6 @@ const fetchPluginSettings = async (setUserConfigs: any) => {
 export const useUserConfigs = (userConfigUpdated: number) => {
     const [userConfigs, setUserConfigs] = useState<AppConfig>({} as AppConfig);
 
-
     // 用户APP配置
     useEffect(() => {
         fetchUserConfigs(setUserConfigs);

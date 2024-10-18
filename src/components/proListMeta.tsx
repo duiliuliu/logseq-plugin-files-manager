@@ -545,7 +545,7 @@ const renderListActions = ({ record, userConfig, dirhandler }: MetaRenderProps) 
             } as ItemType)),
         }}
     >
-        <DotsThree size={24} />
+        <DotsThree size={24} style={{ color: `var(--ls-primary-text-color, var(--ls-primary-text-color-plugin))` }} />
     </Dropdown>
 };
 

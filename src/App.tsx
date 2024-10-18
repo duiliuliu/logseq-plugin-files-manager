@@ -1,7 +1,7 @@
 // src/App.tsx
 import React, { useRef, useState } from 'react';
 import Tabs from './components/tabs';
-import { Button, ConfigProvider, Empty, GetProps, Input, Result, Spin } from 'antd';
+import { Button, ConfigProvider, Empty, GetProps, Input, Result, Spin, } from 'antd';
 import { ActionItemProps } from './components/actionItem';
 import { ArrowsClockwise, FolderSimplePlus, List, Newspaper, SquaresFour } from '@phosphor-icons/react';
 import Search from 'antd/es/input/Search';
@@ -87,14 +87,23 @@ const App: React.FC = () => {
         <div className={theme === 'dark' ? 'dark-mode' : 'light-mode'}>
             <ConfigProvider
                 theme={{
+                    // algorithm: AntdTheme.defaultAlgorithm,
+                    token: {
+                        colorFill: `var(--ls-primary-background-color, var(--ls-primary-background-color-plugin))`,
+                        colorFillSecondary: `var(--ls-secondary-background-color, var(--ls-secondary-background-color-plugin))`,
+                        colorBgBase: theme === 'dark' ? `var(--ls-secondary-background-color, var(--ls-secondary-background-color-plugin))` : "",
+                        colorTextBase: `var(--ls-primary-text-color, var(--ls-primary-text-color-plugin))`,
+                        colorTextSecondary: `var(--ls-secondary-text-color, var(--ls-secondary-text-color-plugin))`,
+                    },
                     components: {
                         Tabs: {
-                            cardBg: `var(--lx-gray-02, var(--ls-primary-background-color, var(--ls-secondary-background-color)))`,
-                            itemColor: `var(--ls-primary-text-color)`,
+                            cardBg: `var(--ls-primary-background-color, var(--ls-primary-background-color-plugin))`,
+                            itemColor: `var(--ls-primary-text-color, var(--ls-primary-text-color-plugin))`,
                         },
-                        Menu: {
-                            darkItemBg: `var(--ls-secondary-background-color)`
-                        }
+                        Dropdown: {
+                            colorText: `var(--ls-secondary-text-color, var(--ls-secondary-text-color-plugin))`,
+                            controlItemBgHover: `var(--ls-secondary-background-color, var(--ls-secondary-background-color-plugin))`,
+                        },
                     }
                 }}
             >
@@ -106,9 +115,8 @@ const App: React.FC = () => {
                         left: left,
                         top: top,
                         position: 'relative',
-                        backgroundColor: `var(--lx-gray-02, var(--ls-primary-background-color, var(--ls-secondary-background-color)))
-`,
-                        color: `var(--ls-primary-text-color)`,
+                        backgroundColor: `var(--ls-primary-background-color, var(--ls-primary-background-color-plugin))`,
+                        color: `var(--ls-primary-text-color, var(--ls-primary-text-color-plugin))`,
                         transition: 'background-color 0.3s, color 0.3s',
                     }}>
                     <div style={{ padding: 20, paddingBottom: 40 }}>
