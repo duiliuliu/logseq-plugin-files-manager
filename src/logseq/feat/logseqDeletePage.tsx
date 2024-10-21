@@ -6,7 +6,7 @@ import { escapeRegExp, objectTemplateFromat } from "../../utils/objectUtil";
 import { getI18nConstantByPreLang } from "../../i18n/utils";
 import { removePageFromDB } from "../../data/db";
 import { DocFormat } from "../../data/enums";
-import { dirhandlerRemoveFile, dirhandlerRemoveFile2 } from "./logseqFile";
+import { dirhandlerRemoveFile, dirhandlerRemoveFile2, dirhandlerRemoveFile3 } from "./logseqFile";
 
 
 // 删除 Logseq 资产的函数，接受一个数据项、用户配置和一个文件系统目录处理器。
@@ -20,6 +20,7 @@ export const deleteLogseqAsset = async (record: DataItem, userConfig: AppConfig,
         await dirhandlerRemoveFile(record.name, assetdirHandler);
     } else {
         await dirhandlerRemoveFile2(record.name);
+        await dirhandlerRemoveFile3(record.name);
     }
 
     // 从数据库中移除页面信息。

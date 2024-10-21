@@ -49,6 +49,10 @@ const main = async (_e: any) => {
   openFileManagerListener();
   await showMainUIIfFilesManager();
   await initLogCfg(true)
+
+ 
+
+
 };
 
 if (import.meta.env.DEV) {
@@ -59,4 +63,3 @@ if (import.meta.env.DEV) {
 }
 
 export default main;
-

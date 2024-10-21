@@ -9,6 +9,7 @@ import { USER_CONFIG_FILE } from '../data/constants';
 import { getPluginSettings, initLspSettingsSchema } from './logseqSetting';
 import { initPropsIconObserver, runEnhanceLspPluginDropdown, runPropsIconObserver, stopEnhanceLspPluginDropdown, stopPropsIconObserver } from './feat/logseqEnhancePropsIcon';
 import { logseq as lsp } from '../../package.json';
+import { initMetaBlock } from './feat/logseqMetaBlock';
 
 
 export const fetchUserConfigs = async (setUserConfigs?: (arg0: AppConfig) => void): Promise<AppConfig> => {
@@ -63,11 +64,6 @@ const fetchAppConfig = async (appConfig: AppConfig) => {
     }
 }
 
-const fetchPluginSettings = async (setUserConfigs: any) => {
-    const settings = await getPluginSettings()
-    setUserConfigs((prev: AppConfig) => ({ ...prev, pluginSettings: settings }))
-}
-
 // 工具函数：获取用户配置
 export const useUserConfigs = (userConfigUpdated: number) => {
     const [userConfigs, setUserConfigs] = useState<AppConfig>({} as AppConfig);
@@ -88,14 +84,34 @@ export const useUserConfigs = (userConfigUpdated: number) => {
 
     // 用户PLUGIN配置
     useEffect(() => {
-        fetchPluginSettings(setUserConfigs)
-        const settingListen = () => { fetchPluginSettings(setUserConfigs) }
+        const settingListen = async () => {
+            const settings = await getPluginSettings()
+            setUserConfigs((prev: AppConfig) => ({ ...prev, pluginSettings: settings }))
+        }
+
+        settingListen()
         logseq.on('settings:changed', settingListen)
 
         return () => {
             logseq.off('settings:changed', settingListen)
         }
     }, [])
+
+
+    // 用户自定义命令
+    useEffect(() => {
+        if (userConfigs.preferredDateFormat) {
+            const commands = initMetaBlock(userConfigs)
+            logseq.updateSettings({ metaBlockCustomsCommands: commands })
+        }
+    }, [
+        userConfigs.preferredDateFormat,
+        userConfigs?.pluginSettings?.customVariable.length,
+        userConfigs?.pluginSettings?.customVariableErrorHandler,
+        userConfigs?.pluginSettings?.customVariableTimeout,
+        userConfigs?.pluginSettings?.metaBlockCustomsCommandConfig?.length
+    ])
+
 
     // 用户语言配置
     useEffect(() => {

@@ -1,8 +1,9 @@
 import { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin';
-import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i18n_CUSTOMS_VARIABLE_DATE_DESC, i18n_CUSTOMS_VARIABLE_DESC, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i18n_CUSTOMS_VARIABLE_TIME_DESC, i18n_CUSTOMS_VARIABLE_TITLE, i18n_CUSTOMS_VARIABLE_VAR_DESC, i18n_DELETE_FORMAT_DESC, i18n_DELETE_FORMAT_TITLE, i18n_DELETE_FORMAT_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_DESC, i18n_PAGE_DEFAULT_PROPS_TITLE, i18n_PAGE_DEFAULT_PROPS_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i18n_PROPS_ICON_DESC, i18n_PROPS_ICON_TITLE, i18n_UI_TOOLBAR_DROPDOWN_DESC, i18n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE, i18n_CUSTOMS_VARIABLE_TIMEOUT_DESC, i18n_CUSTOMS_VARIABLE_ERROR_HANDLER_DESC } from '../data/constants';
+import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i18n_CUSTOMS_VARIABLE_DATE_DESC, i18n_CUSTOMS_VARIABLE_DESC, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i18n_CUSTOMS_VARIABLE_TIME_DESC, i18n_CUSTOMS_VARIABLE_TITLE, i18n_CUSTOMS_VARIABLE_VAR_DESC, i18n_DELETE_FORMAT_DESC, i18n_DELETE_FORMAT_TITLE, i18n_DELETE_FORMAT_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_DESC, i18n_PAGE_DEFAULT_PROPS_TITLE, i18n_PAGE_DEFAULT_PROPS_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i18n_PROPS_ICON_DESC, i18n_PROPS_ICON_TITLE, i18n_UI_TOOLBAR_DROPDOWN_DESC, i18n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE, i18n_CUSTOMS_VARIABLE_TIMEOUT_DESC, i18n_CUSTOMS_VARIABLE_ERROR_HANDLER_DESC, i18n_META_BLOCK_CUSTOMS_COMMAND_CONFIG, i18n_META_BLOCK_CUSTOMS_COMMANDS, i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING } from '../data/constants';
 import getI18nConstant, { PRE_LANGUAGE } from '../i18n/utils';
 import { stringToVarArr, stringToObject } from '../utils/objectUtil';
 import { logger } from '../utils/logger';
+import { createMetaBlockProps } from '../data/types';
 
 interface Notification {
     previousPluginVersion: string;
@@ -21,6 +22,8 @@ export interface PluginSettings {
     customVariableErrorHandler: string;
     propsIconConfig: boolean;
     enhanceUIToolbarDropdown: boolean;
+    metaBlockCustomsCommandConfig: { [K: string]: createMetaBlockProps }
+    metaBlockCustomsCommands: string[]
 }
 
 const DEFAULT_SETTINGS = {
@@ -37,7 +40,44 @@ const DEFAULT_SETTINGS = {
     customVariableTimeout: 1000,
     customVariableErrorHandler: '',
     propsIconConfig: false,
-    enhanceUIToolbarDropdown: false
+    enhanceUIToolbarDropdown: false,
+    metaBlockCustomsCommandConfig: {
+        'test': {
+            parentBlock: 'test parent block',
+            parentBlockProperties: {
+                'test-parent-block-property-1': 'value'
+            },
+            metaBlockPrefix: 'test-block',
+            metaBlockProperties: {
+                'test-parent-property-1': 'value'
+            }
+        },
+        'footnote': {
+            parentBlock: '## Footnote',
+            parentBlockProperties: {},
+            metaBlockPrefix: '',
+            metaBlockProperties: {},
+        },
+        'wordcard': {
+            parentBlock: '## Footnote',
+            parentBlockProperties: {},
+            metaBlockPrefix: '[^${selectedText()}]: #wordcard',
+            metaBlockProperties: {
+                'date': '${date}',
+                'time': '${time}'
+            }
+        },
+        'comments': {
+            parentBlock: '[[Comments]]',
+            parentBlockProperties: {},
+            metaBlockPrefix: '',
+            metaBlockProperties: {
+                'date': '${date}',
+                'time': '${time}'
+            }
+        }
+    },
+    metaBlockCustomsCommands: []
 }
 
 
@@ -46,22 +86,6 @@ export const initLspSettingsSchema = async (lang?: string,) => {
     !lang && ({ preferredLanguage: lang } = await logseq.App.getUserConfigs())
 
     const schemas: SettingSchemaDesc[] = [
-        // {
-        //     key: 'filesManagerSettingsHeading',
-        //     title: getI18nConstant(lang, i18n_DELETE_FORMAT_TITLE),
-        //     description: '',
-        //     type: 'heading',
-        //     default: null,
-        // },
-        // {
-        //     key: 'filesManagerSettings',
-        //     title: '',
-        //     type: 'string',
-        //     default: getI18nConstant(lang, i18n_DEFAULT_DELETE_FORMAT),
-        //     description: `${getI18nConstant(lang, i18n_DELETE_FORMAT_DESC)}
-        //                   ${getI18nConstant(lang, i18n_DELETE_FORMAT_VAR_DESC)} ':\`\${name},\${date},\${time}\`'`,
-        //     inputAs: undefined,
-        // },
         {
             key: 'deleteFormartHeading',
             title: getI18nConstant(lang, i18n_DELETE_FORMAT_TITLE),
@@ -193,6 +217,75 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             description: getI18nConstant(lang, i18n_UI_TOOLBAR_DROPDOWN_DESC),
             enumPicker: 'checkbox',
         },
+        {
+            key: 'metaBlockCustomsCommandsHeading',
+            title: getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING),
+            description: '',
+            type: 'heading',
+            default: null,
+        },
+        {
+            key: 'metaBlockCustomsCommandConfig',
+            title: '',
+            description: getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMAND_CONFIG) + ` e.g.</br>
+            { </br>
+                &nbsp; &nbsp; 'test': { </br>
+                &nbsp; &nbsp; &nbsp; &nbsp;     parentBlock: 'test parent block', </br>
+                &nbsp; &nbsp; &nbsp; &nbsp;     parentBlockProperties: { </br>
+                &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;          'test-parent-block-property-1': 'value' </br>
+                &nbsp; &nbsp; &nbsp; &nbsp;     }, </br>
+                &nbsp; &nbsp; &nbsp; &nbsp;     metaBlockPrefix: 'test-block', </br>
+                &nbsp; &nbsp; &nbsp; &nbsp;     metaBlockProperties: { </br>
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;         'test-parent-property-1': 'value' </br>
+                &nbsp; &nbsp; &nbsp; &nbsp;     } </br>
+                &nbsp; &nbsp; } </br>
+            } </br>
+            `,
+            type: 'object',
+            default: {
+                'test': {
+                    parentBlock: 'test parent block',
+                    parentBlockProperties: {
+                        'test-parent-block-property-1': 'value'
+                    },
+                    metaBlockPrefix: 'test-block',
+                    metaBlockProperties: {
+                        'test-parent-property-1': 'value'
+                    }
+                },
+                'footnote': {
+                    parentBlock: '## Footnote',
+                    parentBlockProperties: {},
+                    metaBlockPrefix: "[^${parentBlockChildNum}]:",
+                    metaBlockProperties: {},
+                },
+                'wordcard': {
+                    parentBlock: '## Footnote',
+                    parentBlockProperties: {},
+                    metaBlockPrefix: '[^${selectedText()}]: #wordcard',
+                    metaBlockProperties: {
+                        'date': '${date}',
+                        'time': '${time}'
+                    }
+                },
+                'comments': {
+                    parentBlock: '[[Comments]]',
+                    parentBlockProperties: {},
+                    metaBlockPrefix: '',
+                    metaBlockProperties: {
+                        'date': '${date}',
+                        'time': '${time}'
+                    }
+                }
+            },
+        },
+        {
+            key: 'metaBlockCustomsCommands',
+            title: getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMANDS),
+            description: '',
+            type: 'string',
+            default: '',
+        },
     ]
 
     logseq.useSettingsSchema(schemas)
@@ -217,6 +310,8 @@ export const getPluginSettings = async (): Promise<PluginSettings> => {
         customVariableErrorHandler: lspSettings.customVariableErrorHandler,
         propsIconConfig: await getPropsIconConfig(lspSettings),
         enhanceUIToolbarDropdown: lspSettings.enhanceUIToolbarDropdown,
+        metaBlockCustomsCommandConfig: lspSettings.metaBlockCustomsCommandConfig,
+        metaBlockCustomsCommands: lspSettings.metaBlockCustomsCommands
     }
 }
 

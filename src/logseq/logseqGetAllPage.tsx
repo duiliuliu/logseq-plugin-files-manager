@@ -45,5 +45,3 @@ export const getAllLogseqPagesAndFile = async (): Promise<Array<[FileEntity, Pag
         return [];
     }
 };
-
-
