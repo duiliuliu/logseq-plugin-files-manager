@@ -1,25 +1,27 @@
 /* src/components/ActionList.css */
 .action-list {
-    padding: 8px 0;
-  }
-  
-  .action-list .action-item {
-    padding: 4px 16px;
-    margin: 4px 0;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-  }
-  
-  .action-list .action-item:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .action-list .action-item:focus {
-    outline: none;
-    background-color: #e0e0e0;
-  }
-  
-  .action-list .action-item:active {
-    background-color: #d0d0d0;
-  }
+  padding: 8px 0;
+  background-color: var(--ls-secondary-background-color, var(--ls-secondary-background-color-plugin));
+  color: var(--ls-secondary-text-color, var(--ls-secondary-text-color-plugin));
+}
+
+.action-list .action-item {
+  padding: 4px 16px;
+  margin: 4px 0;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.action-list .action-item:hover {
+  background-color: #f0f0f0;
+}
+
+.action-list .action-item:focus {
+  outline: none;
+  background-color: #e0e0e0;
+}
+
+.action-list .action-item:active {
+  background-color: #d0d0d0;
+}

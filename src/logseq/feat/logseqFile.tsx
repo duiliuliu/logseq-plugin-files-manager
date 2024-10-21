@@ -21,3 +21,10 @@ export const dirhandlerRemoveFile2 = async (fileName: string) => {
         args: ["../../", fileName, true]
     })
 }
+
+export const dirhandlerRemoveFile3 = async (fileName: string) => {
+    await logseq.caller.callAsync(`api:call`, {
+        method: 'unlink_plugin_storage_file',
+        args: ["../../", fileName, true]
+    })
+}

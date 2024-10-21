@@ -85,10 +85,9 @@ const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNo
                         paddingLeft: 18,
                     },
                     style: {
-                        backgroundColor: `var(--lx-gray-02, var(--ls-primary-background-color, var(--ls-secondary-background-color)))
-`,
-                        color: `var(--ls-primary-text-color)`,
-                        borderColor: `var(--ls-border-color)`
+                        backgroundColor: `var(--ls-primary-background-color, var(--ls-primary-background-color-plugin))`,
+                        color: `var(--ls-primary-text-color, var(--ls-primary-text-color-plugin))`,
+                        borderColor: `var(--ls-border-color, var(--ls-border-color-plugin))`
                     }
                 }}
                 rowKey='name'
@@ -104,9 +103,8 @@ const ProList: React.FC<ProListProps> = ({ data, mode, userConfig, size, emptyNo
             />
             <div className='right-menu' style={{
                 display: rightMenuDisplay ? 'block' : 'none',
-                backgroundColor: `var(--lx-gray-02, var(--ls-primary-background-color, var(--ls-secondary-background-color)))
-`,
-                color: `var(--ls-primary-text-color)`,
+                backgroundColor: `var(--ls-primary-background-color, var(--ls-primary-background-color-plugin))`,
+                color: `var(--ls-primary-text-color, var(--ls-primary-text-color-plugin))`,
                 position: 'absolute',
                 left: rightMenuPosition.left,
                 top: rightMenuPosition.top,

@@ -1,6 +1,6 @@
 .list {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    background-color: var(--ls-primary-background-color);
+    background-color: var(--ls-primary-background-color, var(--ls-primary-background-color-plugin));
     transition: transform 0.3s, box-shadow 0.3s;
     width: 160px;
     height: 220px;
@@ -25,7 +25,7 @@
 
 .list-title {
     font-size: 16px;
-    color: var(--ls-primary-text-color);
+    color: var(--ls-primary-text-color, var(--ls-primary-text-color-plugin));
     font-weight: bold;
     margin-bottom: 5px;
 }
@@ -34,7 +34,7 @@
     width: 100%;
     overflow: hidden;
     font-size: 12px;
-    color: var(--ls-secondary-text-color);
+    color: var(--ls-secondary-text-color, var(--ls-secondary-text-color-plugin));
     text-align: left;
     white-space: pre-wrap;
     flex-grow: 1;
@@ -55,7 +55,7 @@
 
 .list-description {
     font-size: 10px;
-    color: var(--ls-secondary-text-color);
+    color: var(--ls-secondary-text-color, var(--ls-secondary-text-color-plugin));
     text-align: left;
 }
 
@@ -66,9 +66,9 @@
     align-items: center;
     justify-content: center;
     font-size: 1.4em;
-    color: var(--ls-primary-text-color);
+    color: var(--ls-primary-text-color, var(--ls-primary-text-color-plugin));
     margin-right: 10px;
-    background-color: var(--ls-secondary-background-color);
+    background-color: var(--ls-secondary-background-color, var(--ls-secondary-background-color-plugin));
     border-radius: 100%;
 }
 
@@ -103,8 +103,8 @@
 .list-actions a:focus::after {
     content: attr(title);
     position: absolute;
-    background-color: var(--ls-primary-text-color);
-    color: var(--ls-primary-background-color);
+    background-color: var(--ls-primary-text-color, var(--ls-primary-text-color-plugin));
+    color: var(--ls-primary-background-color, var(--ls-primary-background-color-plugin));
     padding: 4px 8px;
     border-radius: 4px;
     font-size: 12px;
@@ -129,22 +129,22 @@
     align-items: center;
     justify-content: center;
     font-size: 1.4em;
-    color: var(--ls-primary-text-color);
-    background-color: var(--ls-secondary-background-color);
+    color: var(--ls-primary-text-color, var(--ls-primary-text-color-plugin));
+    background-color: var(--ls-secondary-background-color, var(--ls-secondary-background-color-plugin));
     border-radius: 100%;
 }
 
 .card-description {
     font-size: 12px;
     width: fit-content;
-    color: var(--ls-secondary-text-color);
+    color: var(--ls-secondary-text-color, var(--ls-secondary-text-color-plugin));
     word-wrap: break-word;
 }
 
 .asset-list {
     margin: 20px auto;
     padding: 0;
-    background-color: var(--ls-primary-background-color);
+    background-color: var(--ls-secondary-background-color, var(--ls-secondary-background-color-plugin));
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -165,7 +165,7 @@
 
 .asset-item:hover,
 .asset-item.is-active {
-    background-color: var(--ls-secondary-background-color);
+    background-color: var(--ls-secondary-background-color, var(--ls-secondary-background-color-plugin));
     box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
 }
 
@@ -176,9 +176,9 @@
     align-items: center;
     justify-content: center;
     font-size: 1.4em;
-    color: var(--ls-primary-text-color);
+    color: var(--ls-primary-text-color, var(--ls-primary-text-color-plugin));
     margin-right: 10px;
-    background-color: var(--ls-secondary-background-color);
+    background-color: var(--ls-secondary-background-color, var(--ls-secondary-background-color-plugin));
     border-radius: 100%;
 }
 
@@ -188,14 +188,14 @@
 
 .asset-name {
     font-size: 16px;
-    color: var(--ls-primary-text-color);
+    color: var(--ls-primary-text-color, var(--ls-primary-text-color-plugin));
     font-weight: bold;
     margin-bottom: 5px;
 }
 
 .asset-meta {
     font-size: 14px;
-    color: var(--ls-secondary-text-color);
+    color: var(--ls-secondary-text-color, var(--ls-secondary-text-color-plugin));
 }
 
 .asset-actions {
@@ -206,7 +206,7 @@
 
 .asset-action {
     cursor: pointer;
-    color: var(--ls-secondary-text-color);
+    color: var(--ls-secondary-text-color, var(--ls-secondary-text-color-plugin));
     font-size: 14px;
 }
 

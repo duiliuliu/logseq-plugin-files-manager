@@ -115,6 +115,17 @@ interface AppConfig extends AppUserConfigs {
     pluginSettings?: PluginSettings;
 }
 
+type createMetaBlockProps = {
+    parentBlock: string;
+    parentBlockProperties: {
+        [K: string]: any
+    }
+    metaBlockPrefix: string;
+    metaBlockProperties: {
+        [K: string]: any
+    }
+}
+
 
 // ===================================================================================
 // 导出
@@ -127,4 +138,5 @@ export type {
     Tab,
     Size,
     Position,
+    createMetaBlockProps,
 };

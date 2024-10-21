@@ -63,5 +63,8 @@
     "Custom variable config ${date} desc": "カスタム変数設定 ${date} 説明：${date} は現在のグラフの日付形式の日付を返します",
     "Custom variable config ${time} desc": "カスタム変数設定 ${time} 説明：${time} は現在の時刻を返します。形式は固定で'HH:mm'です",
     "UI toolbar dropdown enhance": "UIツールバードロップダウンの強化",
-    "UI toolbar dropdown enhance desc": "Logseq UIツールバードロップダウンが最下部までスクロールできない問題を解決し、すべてのオプションにシームレスにアクセスできるようにします"
+    "UI toolbar dropdown enhance desc": "Logseq UIツールバードロップダウンが最下部までスクロールできない問題を解決し、すべてのオプションにシームレスにアクセスできるようにします",
+    "Custom Commands Heading": "他のプラグインで使用できるカスタムコマンドを定義します。例えば、Text Wrapperプラグインで、`logseq-files-manager.models.test` コマンドを呼び出して実行できます。",
+    "Custom Command Configuration": "カスタムコマンドの設定",
+    "Custom Commands": "設定に基づいて生成されたカスタムコマンド"
 }
