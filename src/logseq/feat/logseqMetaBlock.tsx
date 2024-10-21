@@ -67,7 +67,9 @@ export const initMetaBlock = (appConfig: AppConfig) => {
         pageE && currentBlock && logseq.Editor.scrollToBlockInPage(pageE.originalName, currentBlock?.uuid)
         resBlock && logseq.Editor.openInRightSidebar(resBlock?.uuid)
 
-        if (props.metaBlockPrefix.startsWith('[^') && currentBlock) {
+        const annotateReg = new RegExp(`\\\[\\\^(.*?)\\\]`)
+        const annotateMatch = props.metaBlockPrefix.match(annotateReg)
+        if (annotateMatch && currentBlock) {
             const selector = selectedText()
             const selectorOffset = selectedOffset()
             if (selector) {
@@ -79,7 +81,7 @@ export const initMetaBlock = (appConfig: AppConfig) => {
                     // 替换逻辑 
                     const newContent = updateBlock?.content.replace(selectorLinkReg, (match, offset) => {
                         // @ts-ignore
-                        return offset === selectorOffset ? `${match}[^${varsData.parentBlockChildNum}]` : match
+                        return offset === selectorOffset ? `${match}[^${annotateMatch[1]}]` : match
                     });
                     updateBlock && newContent && logseq.Editor.updateBlock(currentBlock?.uuid, newContent)
                     logger.debug('updateBlock', updateBlock, newContent)
