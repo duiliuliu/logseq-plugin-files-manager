@@ -64,8 +64,10 @@ export const initMetaBlock = (appConfig: AppConfig) => {
             sibling: false,
             before: false,
         })
-        pageE && currentBlock && logseq.Editor.scrollToBlockInPage(pageE.originalName, currentBlock?.uuid)
+        // pageE && currentBlock && logseq.Editor.scrollToBlockInPage(pageE.originalName, currentBlock?.uuid)
+        currentBlock && logseq.Editor.editBlock(currentBlock.uuid, { pos: currentBlock.content.length })
         resBlock && logseq.Editor.openInRightSidebar(resBlock?.uuid)
+        logger.debug('createMetaBlock end', resBlock?.uuid)
 
         const annotateReg = new RegExp(`\\\[\\\^(.*?)\\\]`)
         const annotateMatch = props.metaBlockPrefix.match(annotateReg)
@@ -74,7 +76,7 @@ export const initMetaBlock = (appConfig: AppConfig) => {
             const selectorOffset = selectedOffset()
             if (selector) {
                 setTimeout(async () => {
-                    const selectorLinkReg = new RegExp(`\\\[${selector}\\\]\\\(.*?\\\)\\\)\\\)|${selector}`);
+                    const selectorLinkReg = new RegExp(`\\\[${selector}\\\]\\\(.*?\\\)[\\\)'"=]*|${selector}`);
                     // const selectorReg = new RegExp(`(${selector}`, 'g');
                     const updateBlock = await logseq.Editor.getBlock(currentBlock?.uuid)              // @ts-ignore
                     if (!updateBlock) return
@@ -89,7 +91,6 @@ export const initMetaBlock = (appConfig: AppConfig) => {
             }
         }
 
-        logger.debug('createMetaBlock end', resBlock?.uuid)
         return resBlock?.uuid
     }
 
