@@ -20,7 +20,7 @@ const documentFormats = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'md', 'txt
     'epub', // 电子出版标准
 ]
 const videoFormats = ['mp4', 'avi', 'mov', 'wmv', 'flv', '3gp', 'mpeg', 'mpg', 'ts', 'm4v']
-const audioFormats = ['mp3', 'wav', 'ogg', 'flac', 'wma', 'acc']
+const audioFormats = ['mp3', 'wav', 'ogg', 'flac', 'wma', 'aac']
 
 
 export const isImage = (ext: string): boolean => {
