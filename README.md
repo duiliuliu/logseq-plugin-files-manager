@@ -24,51 +24,51 @@
   
   ![Building Data](./images/app-building-en.png)
 - ## Feature Introduction
-  >  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
+>  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
   
-	1. **Card View and List View**
-	- You can switch the display method in settings, displaying files in card or list form, providing a more intuitive file preview and operation interface.
-	- ![卡片视图](./images/app-card-en.png)
-	- 卡片与列表切换：![卡片与列表切换](./images/app-card-switch-en.png)
-	  
-	2. **Right-Click Menu**
-	- While viewing the list, users can trigger a comprehensive menu of functions by right-clicking on any file entry. This menu offers quick access to common file operations, making file management more efficient and convenient.
-	- ![rightMouseMenu](./images/right-mouse-menu.png)
-	  
-	3. **Open Files**
-	- Directly open Logseq files within Logseq.
-	- Attachment files will be opened based on their file type: PDF files will open within Logseq, while other file types will open using the default system program.
-	  
-	4. **Copy File Path**
-	- One-click copy of the complete file path for quick access in other applications.
-	  
-	5. **Search Files**
-	- A quick search function to help you locate the required files among a large number of files.
-	  
-	6. **File Preview**
-	- You can click on the file name to preview the file content. Please note: Due to browser limitations, some files may not support preview.
-	- ![文件预览](./images/app-preview.jpg)
-	- Double-click the filename to copy the filename for previewed files.
-	  
-	7. **File Deletion**
-	- By clicking the "Delete" button, the file will be permanently removed, and the names of all associated files will be automatically replaced. The deletion process will be meticulously documented.
-	- Style of document reference after deletion: ![delete-page](./images/delete-page.png)
-	- Aggregated style of document reference after deletion: ![delete-page-hour](./images/delete-page-hour.png)
-	- Deletion and other operation logs: ![app-log](./images/app-log.png)
-	- You can now personalize the deletion style template through the settings to meet your specific needs ![delete-page-setting](./images/delete-page-setting.png)
-	  
-	8. **Dynamic Property Configuration for New Pages**
-	- Empower your pages with pre-configured default properties that initialize on creation.
-	- Enhance your workflow by setting default properties for newly created pages. With the support of dynamic variables like randomIcon, you can further tailor the pages to your preferences. This feature allows you to craft pages with a rich set of customizable attributes that adapt to your specific requirements.
-	- ![page-default-props](./images/page-default-props-en.png)
+1. **Card View and List View**
+- You can switch the display method in settings, displaying files in card or list form, providing a more intuitive file preview and operation interface.
+- ![卡片视图](./images/app-card-en.png)
+- 卡片与列表切换：![卡片与列表切换](./images/app-card-switch-en.png)
+  
+2. **Right-Click Menu**
+- While viewing the list, users can trigger a comprehensive menu of functions by right-clicking on any file entry. This menu offers quick access to common file operations, making file management more efficient and convenient.
+- ![rightMouseMenu](./images/right-mouse-menu.png)
+  
+3. **Open Files**
+- Directly open Logseq files within Logseq.
+- Attachment files will be opened based on their file type: PDF files will open within Logseq, while other file types will open using the default system program.
+  
+4. **Copy File Path**
+- One-click copy of the complete file path for quick access in other applications.
+  
+5. **Search Files**
+- A quick search function to help you locate the required files among a large number of files.
+  
+6. **File Preview**
+- You can click on the file name to preview the file content. Please note: Due to browser limitations, some files may not support preview.
+- ![文件预览](./images/app-preview.jpg)
+- Double-click the filename to copy the filename for previewed files.
+  
+7. **File Deletion**
+- By clicking the "Delete" button, the file will be permanently removed, and the names of all associated files will be automatically replaced. The deletion process will be meticulously documented.
+- Style of document reference after deletion: ![delete-page](./images/delete-page.png)
+- Aggregated style of document reference after deletion: ![delete-page-hour](./images/delete-page-hour.png)
+- Deletion and other operation logs: ![app-log](./images/app-log.png)
+- You can now personalize the deletion style template through the settings to meet your specific needs ![delete-page-setting](./images/delete-page-setting.png)
+  
+8. **Dynamic Property Configuration for New Pages**
+- Empower your pages with pre-configured default properties that initialize on creation.
+- Enhance your workflow by setting default properties for newly created pages. With the support of dynamic variables like randomIcon, you can further tailor the pages to your preferences. This feature allows you to craft pages with a rich set of customizable attributes that adapt to your specific requirements.
+- ![page-default-props](./images/page-default-props-en.png)
 
-	9. Hidden empty journal
-
-		  
-	> Discover and experience more features awaiting your exploration.  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
+9. Hidden empty journal
 
 	  
-	![app-log](./images/app-log.png)
+> Discover and experience more features awaiting your exploration.  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
+
+  
+![app-log](./images/app-log.png)
 - ### Development Plan
   
   
