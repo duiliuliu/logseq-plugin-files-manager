@@ -66,5 +66,8 @@
     "UI toolbar dropdown enhance desc": "Address the issue of Logseq UI toolbar dropdown not being able to scroll to the bottom, ensuring you have seamless access to all options",
     "Custom Commands Heading": "Define custom commands that can be used by other plugins, such as the `Text Wrapper`\\`Full House Templates` plugin, and can be executed by calling commands like `logseq-files-manager.models.test`",
     "Custom Command Configuration": "Custom command configuration",
-    "Custom Commands": "Custom commands are generated based on your configuration settings. Once created, you can easily copy these commands and utilize them with other plugins"
+    "Custom Commands": "Custom commands are generated based on your configuration settings. Once created, you can easily copy these commands and utilize them with other plugins",
+    "Hidden empty journals": "Hide empty journals",
+    "Hidden empty journals switch": "Toggle to hide empty journals. When enabled, empty journals will be hidden on the diary page. You can manually create diary entries and navigate to them, or use the Day.js or calendar plugins to access empty journals",
+    "Hidden empty journal days": "Hide emty journals for the past X days"
 }

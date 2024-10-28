@@ -10,6 +10,7 @@ import { getPluginSettings, initLspSettingsSchema } from './logseqSetting';
 import { initPropsIconObserver, runEnhanceLspPluginDropdown, runPropsIconObserver, stopEnhanceLspPluginDropdown, stopPropsIconObserver } from './feat/logseqEnhancePropsIcon';
 import { logseq as lsp } from '../../package.json';
 import { initMetaBlock } from './feat/logseqMetaBlock';
+import { openHiddenEmptyJournal, stopHiddenEmptyJournal } from './feat/logseqHiddenEmptyJournal';
 
 
 export const fetchUserConfigs = async (setUserConfigs?: (arg0: AppConfig) => void): Promise<AppConfig> => {
@@ -143,9 +144,20 @@ export const useUserConfigs = (userConfigUpdated: number) => {
         if (settings?.propsIconConfig && !userConfigs.propertyPagesEnable) {
             initPropsIconObserver()
             runPropsIconObserver()
+        } else {
+            stopPropsIconObserver()
         }
-        return () => { stopPropsIconObserver() }
     }, [userConfigs.propertyPagesEnabled, userConfigs?.pluginSettings?.propsIconConfig])
+
+    // 隐藏空白journals
+    useEffect(() => {
+        const settings = userConfigs?.pluginSettings
+        if (settings?.hiddenEmptyJournalsSwith && userConfigs.preferredDateFormat) {
+            openHiddenEmptyJournal(userConfigs)
+        } else {
+            stopHiddenEmptyJournal()
+        }
+    }, [userConfigs.preferredDateFormat, userConfigs?.pluginSettings?.hiddenEmptyJournalsSwith, userConfigs?.pluginSettings?.hiddenEmptyJournalDays])
 
     // 优化工具栏下拉框
     useEffect(() => {

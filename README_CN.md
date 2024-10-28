@@ -22,46 +22,49 @@
 - ## 功能介绍
   >  **更多功能&使用分享 [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
   
-  1. **卡片视图和列表视图**
+  	1. **卡片视图和列表视图**
 	- 可在设置中切换展示方式，以卡片或列表形式展示文件，提供更直观的文件预览和操作界面。
 	- ![卡片视图](./images/app-card.jpg)
 	- 卡片与列表切换：![卡片与列表切换](./images/app-card-switch.jpg)
 	  
-	  2. **右键菜单**
+	2. **右键菜单**
 	- 用户在浏览列表视图时，可以通过右键点击任何文件条目来触发一个全面的功能菜单。这个菜单提供了快速访问常用文件操作的途径，使得管理文件变得更加高效和便捷。
 	- ![rightMouseMenu](./images/right-mouse-menu.png)
 	  
-	  3. **打开文件**
+	3. **打开文件**
 	- 直接在Logseq中打开Logseq文件。
 	- 附件文件将根据文件类型打开：PDF文件将在Logseq内部打开，其他类型的文件将通过系统默认程序打开。
 	  
-	  4. **复制文件路径**
+	4. **复制文件路径**
 	- 一键复制文件的完整路径，方便在其他应用中快速访问。
 	  
-	  5. **检索文件**
+	5. **检索文件**
 	- 快速搜索功能，帮助您在大量文件中迅速定位所需文件。
 	  
-	  6. **文件预览**
+	6. **文件预览**
 	- 可点击文件名称预览文件内容, 点击空白地方可退出预览。请注意：由于浏览器限制，部分文件可能无法预览。
 	- ![文件预览](./images/app-preview.jpg)
 	- 对于预览的文件，双击文件名可复制文件名
 	  
-	  7. **文件删除**
+	7. **文件删除**
 	- 点击“删除”按钮，文件将被永久移除，所有关联的文件名将自动替换。操作过程会被详细记录。
 	- 删除后的文档引用样式：![delete-page](./images/delete-page.png)
 	- 删除后的文档集中引用样式：![delete-page-hour](./images/delete-page-hour.png)
 	- 操作日志记录：![app-log](./images/app-log.png)
 	- 您也可以在设置中自定义删除样式模板，满足个性化需求 ![delete-page-setting](./images/delete-page-setting.png)
 	  
-	  8. **新建页面的动态属性配置**
+	8. **新建页面的动态属性配置**
 	- 赋予您的页面预配置的默认属性，这些属性将在创建时初始化。
 	- 通过为新创建的页面设置默认属性来增强您的工作流程。借助如 randomIcon 这样的动态变量支持，您可以进一步定制页面。此功能使您能够创建具有丰富、可自定义属性的页面，以适应您的需求。
 	- ![page-default-props](./images/page-default-props.png)
 	  
-	  > 更多功能,期待您的探索和体验.**更多功能&使用分享 [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
+
+	9. 隐藏空白日记页
+
+	> 更多功能,期待您的探索和体验.**更多功能&使用分享 [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
 - ### 开发计划
 - [ ] 实现文件重命名功能
-- [ ] 添加删除无用附件的功能
+- [x] 添加删除无用附件的功能
   
   以下是针对待办事项（TODO）的中文润色版本，增加了详细的描述和使用场景：
 - ### TODO 列表
