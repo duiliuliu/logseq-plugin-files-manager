@@ -37,14 +37,14 @@ export const stopPropsIconObserver = () => {
     propsIconObserver?.disconnect();
 }
 
-export const inValidRoutes = new Set([PLUGIN_ROUTE, SETTING_ROUTE, LOG_ROUTE, CALENDAR_ROUTE]);
-export const validRoutes = new Set(['#/', '#/homepage', '#/home_page', '#/all-journals']);
+const inValidRoutes = new Set([PLUGIN_ROUTE, SETTING_ROUTE, LOG_ROUTE, CALENDAR_ROUTE]);
+const validRoutes = new Set(['#/', '#/homepage', '#/home_page', '#/all-journals']);
 
 /**
  * MutationObserver的回调函数，用于处理DOM变化
  * @param mutationsList - 变化列表
  */
-export const PropsIconObserverCallback: MutationCallback = (mutationsList) => {
+const PropsIconObserverCallback: MutationCallback = (mutationsList) => {
     logger.debug('PropsIconObserverCallback start')
     const route = parent?.document?.location.hash;
     logger.debug(`PropsIconObserverCallback route:${route}`)
@@ -83,7 +83,7 @@ export const stopEnhanceLspPluginDropdown = () => {
     try {
         logger.debug('stopEnhanceLspPluginDropdown')
         const node = parent?.document?.head.querySelector(`style[data-injected-style^="${ICON_PARENT_STYLE_KEY}"]`)
-        node && node.remove()
+        node?.remove()
     } catch (error) {
 
     }

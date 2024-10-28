@@ -132,9 +132,13 @@ export const i18n_CUSTOMS_VARIABLE_DATE_DESC = 'Custom variable config ${date} d
 export const i18n_CUSTOMS_VARIABLE_TIME_DESC = 'Custom variable config ${time} desc' // time变量说明：${date}会返回当前时间，格式固定为'HH:mm'
 
 
-export const i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING = 'Custom Commands Heading' // '定义自定义命令，支持其他插件调用使用，比如Text Wrapper插件, 可by`logseq-files-manager.models.test`调用命令并执行'
+export const i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING = 'Custom Commands Heading' // 定义自定义命令，支持其他插件调用使用，比如Text Wrapper插件, 可by`logseq-files-manager.models.test`调用命令并执行
 export const i18n_META_BLOCK_CUSTOMS_COMMAND_CONFIG = 'Custom Command Configuration'  // 自定义命令配置
 export const i18n_META_BLOCK_CUSTOMS_COMMANDS = 'Custom Commands' // 根据配置生成的自定义命令
+
+export const i18n_HIDDEN_EMPTY_JOURNALS = 'Hidden empty journals' // 主页\日记页隐藏空白journals
+export const i18n_HIDDEN_EMPTY_JOURNALS_SWITCH = 'Hidden empty journals switch'  // 隐藏空白journals开关，开启后，在日记页面会隐藏掉空白journals，您可通过手动创建日记页并跳转，或者by dayjs插件、calendar插件跳转空白的journals
+export const i18n_HIDDEN_EMPTY_JOURNALS_DAYS = 'Hidden empty journal days' // 隐藏最近x天的日期
 
 
 // ===================================================================================

@@ -8,6 +8,7 @@ import { DB } from './db';
 import { AppConfig, DataItem } from './types';
 import { GRAPH_PREFIX, REG_ASSETS, REG_SPLIT, REG_TAG } from './constants';
 import { objUnderlineToSmallCamel } from '../utils/objectUtil';
+import { parse } from 'date-fns';
 
 // 准备页面数据的函数
 const preparePagesData = async ({ appConfig, dirHandle }: { appConfig: AppConfig; dirHandle: FileSystemDirectoryHandle | undefined; }) => {
@@ -89,7 +90,7 @@ export const processPage = async ({ pageE, dirHandle, appConfig, updated }: proc
             relatedType: RelatedType.BLOCK,
             relatedItemUuid: imageUuid
         }],
-        createdTime: pageE.properties?.createdTime,
+        createdTime: isJournal ? parse(pageE.journalDay! + '', 'yyyyMMdd', new Date()).getTime() : new Date(pageE.properties?.createdTime).getTime(),
         icon: pageE.properties?.icon
     });
 
