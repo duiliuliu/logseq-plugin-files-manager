@@ -64,7 +64,7 @@
     "Custom variable config ${time} desc": "Custom variable config ${time} desc: ${time} will return the current time, with a fixed format of 'HH:mm'",
     "UI toolbar dropdown enhance": "UI Toolbar Dropdown Enhancement",
     "UI toolbar dropdown enhance desc": "Address the issue of Logseq UI toolbar dropdown not being able to scroll to the bottom, ensuring you have seamless access to all options",
-    "Custom Commands Heading": "Define custom commands that can be used by other plugins, such as the Text Wrapper plugin, and can be executed by calling commands like `logseq-files-manager.models.test`.",
+    "Custom Commands Heading": "Define custom commands that can be used by other plugins, such as the `Text Wrapper`\\`Full House Templates` plugin, and can be executed by calling commands like `logseq-files-manager.models.test`",
     "Custom Command Configuration": "Custom command configuration",
-    "Custom Commands": "Custom commands generated based on configuration"
+    "Custom Commands": "Custom commands are generated based on your configuration settings. Once created, you can easily copy these commands and utilize them with other plugins"
 }
