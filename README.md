@@ -71,9 +71,7 @@
 ![app-log](./images/app-log.png)
 - ### Development Plan
   
-  
-  Here are the translated TODO items into English with detailed descriptions and usage scenarios, following the same Markdown format:
-- ### TODO List
+
 - [ ] **1. Implement File Renaming Feature**
 	- **Description**: Develop a user-friendly file renaming mechanism that allows users to easily change file names through an intuitive interface, enhancing the flexibility and personalization of file management.
 	- **Usage Scenario**: This feature will be very useful when users need to organize a large number of files or update file names according to project progress to reflect the latest status.
