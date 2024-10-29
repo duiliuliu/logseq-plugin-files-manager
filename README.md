@@ -77,7 +77,7 @@
 - [ ] **1. Implement File Renaming Feature**
 	- **Description**: Develop a user-friendly file renaming mechanism that allows users to easily change file names through an intuitive interface, enhancing the flexibility and personalization of file management.
 	- **Usage Scenario**: This feature will be very useful when users need to organize a large number of files or update file names according to project progress to reflect the latest status.
-- [ ] **2. Add the Ability to Delete Unnecessary Attachments**
+- [x] **2. Add the Ability to Delete Unnecessary Attachments**
 	- **Description**: Design an intelligent and efficient capability to clean up unnecessary attachments, helping users identify and remove unwanted attachments, freeing up storage space, and maintaining a tidy file library.
 	- **Usage Scenario**: During daily document editing, after project completion, or during annual file organization, users can quickly clean up outdated or irrelevant file attachments with this feature.
 - [ ] **3. Support URL Data as Virtual Attachment Management**
@@ -86,7 +86,7 @@
 - [ ] **4. Support Card Data Management and Display**
 	- **Description**: Build a CARD data management system that offers more advanced horizontal management capabilities than the existing Logseq flashcards, including the creation, editing, categorization, and display of data.
 	- **Usage Scenario**: Suitable for learners and researchers who need to organize and review complex information, especially during language learning, exam review, or project planning.
-- [ ] **5. Support Adding Default Attributes When Creating a Page, Such as createdAt**
+- [x] **5. Support Adding Default Attributes When Creating a Page, Such as createdAt**
 	- **Description**: Implement a feature that allows users to automatically add default attributes, such as creation time and author, when creating a new page, simplifying the page initialization process and maintaining consistency of information.
 	- **Usage Scenario**: For teams and projects that require strict document management processes, this feature can ensure that all pages include necessary metadata for future retrieval and auditing.
 - ## Supported Languages
