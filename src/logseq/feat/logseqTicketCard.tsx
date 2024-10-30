@@ -41,7 +41,7 @@ export const initTicketFeat = () => {
         );
 
         logseq.provideUI({
-            key: 'ticket-card',
+            key: 'train-ticket-' + uuid,
             slot,
             reset: false,
             template: myDiv.innerHTML,

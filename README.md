@@ -66,6 +66,8 @@
 ![hidden-empty-journal](./images/hidden-empty-journal.png)
 
 10. Train Ticket Card Rendering: Our product now supports rendering content blocks directly into train ticket cards. This new feature significantly streamlines the user's operation process in electronic ticketing systems, making the viewing and management of train tickets more intuitive and convenient.
+you can use command: `/train-ticket`  or edit: ` {{renderer :train-ticket, *}}`
+
 ![render-train-ticket](./images/render-train-ticket.png)
 	  
 > Discover and experience more features awaiting your exploration.  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
