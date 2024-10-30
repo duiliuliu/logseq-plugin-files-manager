@@ -1,12 +1,14 @@
 import ReactDOM from "react-dom"
 import TrainTicket from "../../components/feat/ticketCard"
+import { format } from "date-fns"
 
-export const initTicketFeat = () => {
+export const initTicketFeat = (dateFormat?: string) => {
+
     logseq.Editor.registerSlashCommand('train-ticket', async () => {
         const block = await logseq.Editor.getCurrentBlock()
         if (!block?.uuid) return
-
-        logseq.Editor.insertAtEditingCursor(`{{renderer :train-ticket, *}}`)
+        const date = dateFormat ? `[[${format(new Date(), dateFormat)}]]` : format(new Date(), "yyyy-MM-dd")
+        logseq.Editor.insertAtEditingCursor(`{{renderer :train-ticket, *}}\nfromstation:: \ntostation:: \ntrainnumber:: \ndate:: ${date}\ndepartureTime:: \ncolor:: blue`)
     })
 
     logseq.App.onMacroRendererSlotted(async ({ slot, payload: { arguments: args, uuid } }) => {
