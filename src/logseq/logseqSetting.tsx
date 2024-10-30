@@ -1,9 +1,11 @@
 import { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin';
-import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i18n_CUSTOMS_VARIABLE_DATE_DESC, i18n_CUSTOMS_VARIABLE_DESC, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i18n_CUSTOMS_VARIABLE_TIME_DESC, i18n_CUSTOMS_VARIABLE_TITLE, i18n_CUSTOMS_VARIABLE_VAR_DESC, i18n_DELETE_FORMAT_DESC, i18n_DELETE_FORMAT_TITLE, i18n_DELETE_FORMAT_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_DESC, i18n_PAGE_DEFAULT_PROPS_TITLE, i18n_PAGE_DEFAULT_PROPS_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i18n_PROPS_ICON_DESC, i18n_PROPS_ICON_TITLE, i18n_UI_TOOLBAR_DROPDOWN_DESC, i18n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE, i18n_CUSTOMS_VARIABLE_TIMEOUT_DESC, i18n_CUSTOMS_VARIABLE_ERROR_HANDLER_DESC, i18n_META_BLOCK_CUSTOMS_COMMAND_CONFIG, i18n_META_BLOCK_CUSTOMS_COMMANDS, i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING, i18n_HIDDEN_EMPTY_JOURNALS, i18n_HIDDEN_EMPTY_JOURNALS_SWITCH, i18n_HIDDEN_EMPTY_JOURNALS_DAYS } from '../data/constants';
+import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i18n_CUSTOMS_VARIABLE_DATE_DESC, i18n_CUSTOMS_VARIABLE_DESC, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i18n_CUSTOMS_VARIABLE_TIME_DESC, i18n_CUSTOMS_VARIABLE_TITLE, i18n_CUSTOMS_VARIABLE_VAR_DESC, i18n_DELETE_FORMAT_DESC, i18n_DELETE_FORMAT_TITLE, i18n_DELETE_FORMAT_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_DESC, i18n_PAGE_DEFAULT_PROPS_TITLE, i18n_PAGE_DEFAULT_PROPS_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i18n_PROPS_ICON_DESC, i18n_PROPS_ICON_TITLE, i18n_UI_TOOLBAR_DROPDOWN_DESC, i18n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE, i18n_CUSTOMS_VARIABLE_TIMEOUT_DESC, i18n_CUSTOMS_VARIABLE_ERROR_HANDLER_DESC, i18n_META_BLOCK_CUSTOMS_COMMAND_CONFIG, i18n_META_BLOCK_CUSTOMS_COMMANDS, i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING, i18n_HIDDEN_EMPTY_JOURNALS, i18n_HIDDEN_EMPTY_JOURNALS_SWITCH, i18n_HIDDEN_EMPTY_JOURNALS_DAYS, i18n_META_BLOCK_CUSTOMS_COMMANDS_DESC, i18n_TRAIN_TICKET_CARD_DESC, i18n_TRAIN_TICKET_CARD_HEADING } from '../data/constants';
 import getI18nConstant, { PRE_LANGUAGE } from '../i18n/utils';
 import { stringToVarArr, stringToObject } from '../utils/objectUtil';
 import { logger } from '../utils/logger';
 import { createMetaBlockProps } from '../data/types';
+import ReactDOM from 'react-dom';
+import TrainTicket from '../components/feat/ticketCard';
 
 interface Notification {
     previousPluginVersion: string;
@@ -88,6 +90,19 @@ const DEFAULT_SETTINGS = {
 export const initLspSettingsSchema = async (lang?: string,) => {
 
     !lang && ({ preferredLanguage: lang } = await logseq.App.getUserConfigs())
+
+    let myDiv = document.createElement('div');
+    ReactDOM.render(
+        <TrainTicket
+            fromStation="北京"
+            toStation="上海"
+            trainNumber="G101"
+            date="2024-05-01"
+            departureTime="14:30"
+            color="blue"
+        />,
+        myDiv
+    );
 
     const schemas: SettingSchemaDesc[] = [
         {
@@ -246,7 +261,7 @@ export const initLspSettingsSchema = async (lang?: string,) => {
         {
             key: 'metaBlockCustomsCommandsHeading',
             title: getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING),
-            description: '',
+            description: getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMANDS_DESC),
             type: 'heading',
             default: null,
         },
@@ -311,6 +326,28 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             description: '',
             type: 'string',
             default: '',
+        },
+        {
+            key: 'ticketCardHeading',
+            title: getI18nConstant(lang, i18n_TRAIN_TICKET_CARD_HEADING),
+            description: '',
+            type: 'heading',
+            default: null,
+        },
+        {
+            key: 'ticketCard',
+            title: '',
+            type: 'heading',
+            default: false,
+            description: getI18nConstant(lang, i18n_TRAIN_TICKET_CARD_DESC) + '</br>e.g.</br>' + myDiv.innerHTML + `block properties:</br>
+            {</br>
+            &nbsp; &nbsp; date:: 2022-04-05 </br>
+            &nbsp; &nbsp; departuretime:: 12:03 </br>
+            &nbsp; &nbsp; tostation:: Beijing </br>
+            &nbsp; &nbsp; fromstation:: Shanghai </br>
+            &nbsp; &nbsp; color:: blue | pink | green | yellow </br>
+            &nbsp; &nbsp; trainnumber:: G101 </br>
+            </br>}`,
         },
     ]
 
