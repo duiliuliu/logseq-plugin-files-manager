@@ -64,10 +64,13 @@
     "Custom variable config ${time} desc": "カスタム変数設定 ${time} 説明：${time} は現在の時刻を返します。形式は固定で'HH:mm'です",
     "UI toolbar dropdown enhance": "UIツールバードロップダウンの強化",
     "UI toolbar dropdown enhance desc": "Logseq UIツールバードロップダウンが最下部までスクロールできない問題を解決し、すべてのオプションにシームレスにアクセスできるようにします",
-    "Custom Commands Heading": "他のプラグインで使用できるカスタムコマンドを定義します。例えば、`Text Wrapper`\\`Full House Templates`プラグインで、`logseq-files-manager.models.test` コマンドを呼び出して実行できます",
+    "Custom Commands Heading": "他のプラグインで使用できるカスタムコマンドを定義します",
+    "Custom Commands Desc": "他のプラグインで使用できるカスタムコマンドを定義します。例えば、`Text Wrapper`\\`Full House Templates`プラグインで、`logseq-files-manager.models.test` コマンドを呼び出して実行できます",
     "Custom Command Configuration": "カスタムコマンドの設定",
     "Custom Commands": "設定に基づいてカスタムコマンドが生成されます。その後、他のプラグインでコピーして使用することができます",
     "Hidden empty journals": "空のジャーナルを非表示",
     "Hidden empty journals switch": "空のジャーナルを非表示にするスイッチ。これを有効にすると、日記ページで空のジャーナルが非表示になります。手動で日記を作成して移動するか、Day.js プラグインやカレンダープラグインを使用して空のジャーナルにアクセスできます",
-    "Hidden empty journal days": "最近 X 日間の空のジャーナルを非表示にする"
+    "Hidden empty journal days": "最近 X 日間の空のジャーナルを非表示にする",
+    "Train Ticket Card": "列車チケットカード",
+    "Train Ticket Card desc": "ブロックを列車チケットにレンダリングする"
 }

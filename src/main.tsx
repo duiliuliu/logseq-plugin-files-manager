@@ -13,6 +13,7 @@ import { initLogCfg } from './logseq/feat/logseqAddOptLog';
 import { initLspSettingsSchema } from './logseq/logseqSetting';
 import { logger } from './utils/logger';
 import { initIconList } from './logseq/feat/logseqCustomVariable';
+import { initTicketFeat } from './logseq/feat/logseqTicketCard';
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -49,9 +50,7 @@ const main = async (_e: any) => {
   openFileManagerListener();
   await showMainUIIfFilesManager();
   await initLogCfg(true)
-
- 
-
+  initTicketFeat()
 
 };
 
