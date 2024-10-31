@@ -5,7 +5,7 @@ import { stringToVarArr, stringToObject } from '../utils/objectUtil';
 import { logger } from '../utils/logger';
 import { createMetaBlockProps } from '../data/types';
 import ReactDOM from 'react-dom';
-import TrainTicket from '../components/feat/ticketCard';
+import TrainTicket from '../components/feat/trainTicket';
 
 interface Notification {
     previousPluginVersion: string;
@@ -346,6 +346,7 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             &nbsp; &nbsp; tostation:: Beijing </br>
             &nbsp; &nbsp; fromstation:: Shanghai </br>
             &nbsp; &nbsp; color:: blue | pink | green | yellow </br>
+            &nbsp; &nbsp; seatinfo:: 特等座 </br>
             &nbsp; &nbsp; trainnumber:: G101 </br>
             </br>}`,
         },

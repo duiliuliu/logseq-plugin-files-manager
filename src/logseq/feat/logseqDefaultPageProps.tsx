@@ -89,7 +89,7 @@ const getLogseqDefaultPageProps = async (appConfig: AppConfig, page: PageEntity)
     return {};
 };
 
-const propertiesToStr = (properties?: { [s: string]: any }): [string, string, string] => {
+export const propertiesToStr = (properties?: { [s: string]: any }): [string, string, string] => {
     if (!properties || Object.keys(properties).length === 0) {
         return ['', '', '']
     }
@@ -98,5 +98,4 @@ const propertiesToStr = (properties?: { [s: string]: any }): [string, string, st
     const v3 = Object.entries(properties).map(([k, v]) => `${kebab(k)}:: ${v}`).reduce((prev, curr) => prev + "\n" + curr)
 
     return [v1, '---\n' + v1 + '\n---', v3]
-
 }

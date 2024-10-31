@@ -16,7 +16,7 @@ interface TabItemProps {
 
 const TabItem: React.FC<TabItemProps> = ({ item, iconOnly, activeKey, tabCounts, settingClick }) => {
     return (
-        <div onClick={settingClick}>
+        <div className="flex items-center text-sm" onClick={settingClick}>
             {item.icon}
             {!iconOnly && <strong style={{ marginLeft: '6px', marginRight: '6px' }}>{item.label}</strong>}
             {!iconOnly && activeKey === item.key && tabCounts && (
