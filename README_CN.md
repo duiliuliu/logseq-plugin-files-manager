@@ -64,7 +64,10 @@
 
 10. 火车票卡片渲染： 我们的产品现在支持将内容块直接渲染成火车票卡片，这一新功能极大地简化了用户在电子票务系统中的操作流程，使得查看和管理火车票变得更加直观和便捷。
 ![render-train-ticket](./images/render-train-ticket.png)
+![render-flight-ticket](./images/render-flight-ticket.png)
 你可以使用命令：`/train-ticket`  或者编辑内容为  `{{renderer :train-ticket, *}}`
+你可以使用命令：`/flight-ticket`  或者编辑内容为  `{{renderer :flight-ticket, *}}`
+你可以使用命令：`/flight-ticket2`  或者编辑内容为  `{{renderer :flight-ticket2, *}}`
 
 
 > 更多功能,期待您的探索和体验.**更多功能&使用分享 [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
