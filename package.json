@@ -42,7 +42,6 @@
     "name-styles": "^2.2.0",
     "qrcode.react": "^4.1.0",
     "react": "^18.2.0",
-    "react-frame-component": "^5.2.7",
     "react-i18next": "^13.3.1",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",

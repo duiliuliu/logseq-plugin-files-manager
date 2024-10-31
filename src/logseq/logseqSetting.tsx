@@ -6,6 +6,7 @@ import { logger } from '../utils/logger';
 import { createMetaBlockProps } from '../data/types';
 import ReactDOM from 'react-dom';
 import TrainTicket from '../components/feat/trainTicket';
+import FlightTicket2 from '../components/feat/flightTicket2';
 
 interface Notification {
     previousPluginVersion: string;
@@ -91,7 +92,9 @@ export const initLspSettingsSchema = async (lang?: string,) => {
 
     !lang && ({ preferredLanguage: lang } = await logseq.App.getUserConfigs())
 
-    let myDiv = document.createElement('div');
+    let trainTicketDiv = document.createElement('div');
+    let flightTicketDiv = document.createElement('div');
+
     ReactDOM.render(
         <TrainTicket
             fromStation="北京"
@@ -101,7 +104,26 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             departureTime="14:30"
             color="blue"
         />,
-        myDiv
+        trainTicketDiv
+    );
+    ReactDOM.render(
+        <FlightTicket2
+            date="2024-05-01"
+            weekday='星期五'
+            fromCity='上海'
+            toCity='深圳'
+            departureTime='11=00'
+            arrivalTime='13=00'
+            departureAirport='浦东机场T1'
+            arrivalAirport='宝山机场T2'
+            flightNumber='CZ3587'
+            airline='中国南方航空'
+            status='准时'
+            seatInfo='经济舱 14A'
+            mealInfo='有餐食'
+            color='dark'
+        />,
+        flightTicketDiv
     );
 
     const schemas: SettingSchemaDesc[] = [
@@ -339,16 +361,7 @@ export const initLspSettingsSchema = async (lang?: string,) => {
             title: '',
             type: 'heading',
             default: false,
-            description: getI18nConstant(lang, i18n_TRAIN_TICKET_CARD_DESC) + '</br>e.g.</br>' + myDiv.innerHTML + `block properties:</br>
-            {</br>
-            &nbsp; &nbsp; date:: 2022-04-05 </br>
-            &nbsp; &nbsp; departuretime:: 12:03 </br>
-            &nbsp; &nbsp; tostation:: Beijing </br>
-            &nbsp; &nbsp; fromstation:: Shanghai </br>
-            &nbsp; &nbsp; color:: blue | pink | green | yellow </br>
-            &nbsp; &nbsp; seatinfo:: 特等座 </br>
-            &nbsp; &nbsp; trainnumber:: G101 </br>
-            </br>}`,
+            description: getI18nConstant(lang, i18n_TRAIN_TICKET_CARD_DESC) + '</br>e.g.</br>' + trainTicketDiv.innerHTML + '</br>' + flightTicketDiv.innerHTML,
         },
     ]
 
@@ -445,9 +458,9 @@ const getLspCustomVariable = async (lspSettings?: any): Promise<Array<CustomVari
 
 const showGetConfigError = (title: string, error: any) => {
     const lang = PRE_LANGUAGE
-    logseq.UI.showMsg(`[:p "【${getI18nConstant(lang, title)}】" 
-    [:span "${getI18nConstant(lang, i18n_GET_PLUGIN_CONFIG_ERROR)}" ] [:br]
-    [:span "error:${error}"] [:br]
-    [:a {:href "#${SETTING_ROUTE}"} "${getI18nConstant(lang, i18n_OPEN_PLUGN_SETTING_TOOLTIP)}"]
+    logseq.UI.showMsg(`[: p "【${getI18nConstant(lang, title)}】" 
+    [: span "${getI18nConstant(lang, i18n_GET_PLUGIN_CONFIG_ERROR)}"][: br]
+    [: span "error:${error}"][: br]
+    [:a {:href "#${SETTING_ROUTE}" } "${getI18nConstant(lang, i18n_OPEN_PLUGN_SETTING_TOOLTIP)}"]
                             ]`, 'error')
 }

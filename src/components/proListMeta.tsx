@@ -497,10 +497,11 @@ const renderContextMenuActions = ({ record, userConfig, dirhandler }: MetaRender
         openFileWithLspAction({ record, userConfig, setRightMenuDisplay }),
         openFileWithDefaultAppAction({ record, userConfig, setRightMenuDisplay }),
         openInSidebarAction({ record, userConfig, setRightMenuDisplay }),
+        openFolderAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
+
         copyFileNodeAction({ record, userConfig, setRightMenuDisplay }),
         deleteFileAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         renameFileAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
-        openFolderAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         showPreviewModalAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         copyTitleAction({ record, userConfig, dirhandler, setRightMenuDisplay }),
         openPluginSettingAction({ record, userConfig, dirhandler, setRightMenuDisplay }),

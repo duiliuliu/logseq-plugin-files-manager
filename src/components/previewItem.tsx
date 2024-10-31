@@ -1,7 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { DataType } from '../data/enums';
 import { isMD } from '../utils/fileUtil';
-import Frame from 'react-frame-component';
 import { reanderMd } from '../utils/mdUtil';
 
 // 定义 props 结构
@@ -21,7 +20,7 @@ const PreviewFrame: React.FC<PreviewFrameProps> = ({ src, height, width, dataTyp
     const iframeSrc = `${src}#toolbar=0`;
     const frameRef = useRef<HTMLIFrameElement>(null);
 
-    const [_content, setContent] = useState<string>('')
+    const [content, setContent] = useState<string>('')
     const onLoad = (_e: any) => {
         if ((dataType === DataType.PAGE || dataType == DataType.JOURNAL || isMD(extName ?? ''))) {
             const doc = frameRef.current?.contentWindow?.document?.body
@@ -42,17 +41,16 @@ const PreviewFrame: React.FC<PreviewFrameProps> = ({ src, height, width, dataTyp
                 }}
                 src={iframeSrc}
                 ref={frameRef}
+                onLoad={onLoad}
                 frameBorder='no'
             >
             </iframe>
-            <Frame
+            <iframe
                 style={{ width: width * 0.8, height: height, border: '#e6e6e6 1px solid', }}
                 frameBorder='no'
-                src={iframeSrc}
-                onLoad={onLoad}
+                srcDoc={reanderMd(content)}
             >
-                {reanderMd(_content)}
-            </Frame>
+            </iframe>
         </div>
     }
 
