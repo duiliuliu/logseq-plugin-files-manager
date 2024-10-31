@@ -66,9 +66,9 @@
 ![hidden-empty-journal](./images/hidden-empty-journal.png)
 
 10. Train Ticket Card Rendering: Our product now supports rendering content blocks directly into train ticket cards. This new feature significantly streamlines the user's operation process in electronic ticketing systems, making the viewing and management of train tickets more intuitive and convenient.
-you can use command: `/train-ticket`  or edit: ` {{renderer :train-ticket, *}}`
-you can use command: `/flight-ticket`  or edit: ` {{renderer :flight-ticket, *}}`
-you can use command: `/flight-ticket`  or edit: ` {{renderer :flight-ticket, *}}`
+- you can use command: `/train-ticket`  or edit: ` {{renderer :train-ticket, *}}`
+- you can use command: `/flight-ticket`  or edit: ` {{renderer :flight-ticket, *}}`
+- you can use command: `/flight-ticket2`  or edit: ` {{renderer :flight-ticket2, *}}`
 
 
 ![render-train-ticket](./images/render-train-ticket.png)
