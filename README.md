@@ -70,9 +70,8 @@
 - you can use command: `/flight-ticket`  or edit: ` {{renderer :flight-ticket, *}}`
 - you can use command: `/flight-ticket2`  or edit: ` {{renderer :flight-ticket2, *}}`
 
-<center class="half"> <img src="./images/render-train-ticket.png" width="200"/><img src="./images/render-flight-ticket.png" width="200"/> </center> 
-<center class="half"> <img src="./images/cards1.png" width="200"/><img src="./images/cards2.png" width="200"/> </center> 
-
+<center class="half"> <img src="https://github.com/user-attachments/assets/bd281222-1e0a-43ee-8d86-1224a2d571bf" width="200"/><img src="https://github.com/user-attachments/assets/b24c9056-17a6-4d11-8591-a542bada743f" width="200"/> </center> 
+<center class="half"> <img src="https://github.com/user-attachments/assets/85ea12fa-601e-47a5-adba-137d7e315984" width="200"/><img src="https://github.com/user-attachments/assets/db6cb584-723d-4e31-a35e-cbeb527e1bc9" width="200"/> </center> 
 > Discover and experience more features awaiting your exploration.  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
 
   
