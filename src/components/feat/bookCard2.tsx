@@ -1,29 +1,30 @@
-import { useState, useRef, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { Book, Tag, Link as LinkIcon, ChevronDown, ChevronUp, Clock, Edit } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { getColor, getColorBg } from './color'
+
+import { useState, useRef, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Book, Tag, Link as LinkIcon, ChevronDown, ChevronUp, Clock, Edit } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { getColor, getColorBg } from './color';
 
 export interface BookCardProps {
-    cover?: string
-    title?: string
-    description?: string
-    author?: string
-    categories?: string
-    tags?: string
-    completed?: string
-    time?: string
-    readlater?: string
-    recommendation?: string
-    source?: string
-    color?: string
-    onUpdate?: (updatedData: Partial<BookCardProps>) => void
+    cover?: string;
+    title?: string;
+    description?: string;
+    author?: string;
+    categories?: string;
+    tags?: string;
+    completed?: string;
+    time?: string;
+    readlater?: string;
+    recommendation?: string;
+    source?: string;
+    color?: string;
+    onUpdate?: (updatedData: Partial<BookCardProps>) => void;
 }
 
 export default function BookCard({
@@ -41,203 +42,205 @@ export default function BookCard({
     color,
     onUpdate
 }: BookCardProps) {
-    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
-    const [isEditing, setIsEditing] = useState(false)
-    const [isFullEditing, setIsFullEditing] = useState(false)
-    const [tempDescription, setTempDescription] = useState(description)
+    const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isFullEditing, setIsFullEditing] = useState(false);
+    const [tempDescription, setTempDescription] = useState(description);
     const [tempData, setTempData] = useState<BookCardProps>({
         cover, title, description, author, categories, tags, completed, time, readlater, recommendation, source
-    })
+    });
 
-    const descriptionRef = useRef<HTMLParagraphElement>(null)
-    const inputRef = useRef<HTMLTextAreaElement>(null)
+    const descriptionRef = useRef<HTMLParagraphElement>(null);
+    const inputRef = useRef<HTMLTextAreaElement>(null);
 
     useEffect(() => {
         if ((isEditing || isFullEditing) && inputRef.current) {
-            inputRef.current.focus()
+            inputRef.current.focus();
         }
-    }, [isEditing, isFullEditing])
+    }, [isEditing, isFullEditing]);
 
-    const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded)
+    const toggleDescription = () => setIsDescriptionExpanded(!isDescriptionExpanded);
 
     const truncateDescription = (text: string, maxLength: number) => {
-        if (text.length <= maxLength) return text
-        return text.slice(0, maxLength) + '...'
-    }
+        if (text.length <= maxLength) return text;
+        return text.slice(0, maxLength) + '...';
+    };
 
     const handleDescriptionDoubleClick = () => {
-        setIsEditing(true)
-        setTempDescription(description)
-    }
+        setIsEditing(true);
+        setTempDescription(description);
+    };
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = event.target
-        setTempData(prev => ({ ...prev, [name]: value }))
-    }
+        const { name, value } = event.target;
+        setTempData(prev => ({ ...prev, [name]: value }));
+    };
 
     const handleOk = () => {
         if (isFullEditing) {
             if (onUpdate) {
-                onUpdate(tempData)
+                onUpdate(tempData);
             }
-            setIsFullEditing(false)
+            setIsFullEditing(false);
         } else {
             if (onUpdate) {
-                onUpdate({ description: tempDescription })
+                onUpdate({ description: tempDescription });
             }
-            setIsEditing(false)
+            setIsEditing(false);
         }
-    }
+    };
 
     const handleCancel = () => {
-        setIsEditing(false)
-        setIsFullEditing(false)
-        setTempDescription(description)
+        setIsEditing(false);
+        setIsFullEditing(false);
+        setTempDescription(description);
         setTempData({
             cover, title, description, author, categories, tags, completed, time, readlater, recommendation, source
-        })
-    }
+        });
+    };
 
     const handleFullEdit = () => {
-        setIsFullEditing(true)
+        setIsFullEditing(true);
         setTempData({
             cover, title, description, author, categories, tags, completed, time, readlater, recommendation, source
-        })
-    }
+        });
+    };
 
-    const categoryList = categories.split(',').map(cat => cat.trim())
-    const tagList = tags.split(',').map(tag => tag.trim())
+    const categoryList = categories.split(',').map(cat => cat.trim());
+    const tagList = tags.split(',').map(tag => tag.trim());
 
     if (isFullEditing) {
         return (
             <Card className={`w-full max-w-md mx-auto overflow-hidden ${getColorBg(color)}`} style={{ backgroundColor: getColor(color) }}>
                 <CardContent className="p-4">
                     <form className="space-y-4">
-                        <div>
-                            <label htmlFor="cover" className="block text-sm font-medium text-gray-700 mb-1">Cover URL</label>
-                            <Input
-                                id="cover"
-                                name="cover"
-                                value={tempData.cover}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                            <Input
-                                id="title"
-                                name="title"
-                                value={tempData.title}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                            <Textarea
-                                id="description"
-                                name="description"
-                                value={tempData.description}
-                                onChange={handleInputChange}
-                                className="w-full"
-                                rows={3}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1">Author</label>
-                            <Input
-                                id="author"
-                                name="author"
-                                value={tempData.author}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="categories" className="block text-sm font-medium text-gray-700 mb-1">Categories</label>
-                            <Input
-                                id="categories"
-                                name="categories"
-                                value={tempData.categories}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
-                            <Input
-                                id="tags"
-                                name="tags"
-                                value={tempData.tags}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="completed" className="block text-sm font-medium text-gray-700 mb-1">Completed Date</label>
-                            <Input
-                                id="completed"
-                                name="completed"
-                                type="date"
-                                value={tempData.completed}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                            <Input
-                                id="time"
-                                name="time"
-                                type="time"
-                                value={tempData.time}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="readlater" className="block text-sm font-medium text-gray-700 mb-1">Read Later</label>
-                            <Input
-                                id="readlater"
-                                name="readlater"
-                                value={tempData.readlater}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="recommendation" className="block text-sm font-medium text-gray-700 mb-1">Recommendation</label>
-                            <Input
-                                id="recommendation"
-                                name="recommendation"
-                                value={tempData.recommendation}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="source" className="block text-sm font-medium text-gray-700 mb-1">Source</label>
-                            <Input
-                                id="source"
-                                name="source"
-                                value={tempData.source}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div className="flex justify-end space-x-2">
-                            <Button variant="outline" onClick={handleCancel}>
-                                Cancel
-                            </Button>
-                            <Button onClick={handleOk}>
-                                Save
-                            </Button>
+                        <div className="flex flex-col space-y-2">
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="cover" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Cover URL</label>
+                                <Input
+                                    id="cover"
+                                    name="cover"
+                                    value={tempData.cover}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="title" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Title</label>
+                                <Input
+                                    id="title"
+                                    name="title"
+                                    value={tempData.title}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="description" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Description</label>
+                                <Textarea
+                                    id="description"
+                                    name="description"
+                                    value={tempData.description}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                    rows={3}
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="author" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Author</label>
+                                <Input
+                                    id="author"
+                                    name="author"
+                                    value={tempData.author}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="categories" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Categories</label>
+                                <Input
+                                    id="categories"
+                                    name="categories"
+                                    value={tempData.categories}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="tags" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Tags</label>
+                                <Input
+                                    id="tags"
+                                    name="tags"
+                                    value={tempData.tags}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="completed" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Completed Date</label>
+                                <Input
+                                    id="completed"
+                                    name="completed"
+                                    type="date"
+                                    value={tempData.completed}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="time" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Time</label>
+                                <Input
+                                    id="time"
+                                    name="time"
+                                    type="time"
+                                    value={tempData.time}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="readlater" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Read Later</label>
+                                <Input
+                                    id="readlater"
+                                    name="readlater"
+                                    value={tempData.readlater}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="recommendation" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Recommendation</label>
+                                <Input
+                                    id="recommendation"
+                                    name="recommendation"
+                                    value={tempData.recommendation}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex items-center justify-between">
+                                <label htmlFor="source" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Source</label>
+                                <Input
+                                    id="source"
+                                    name="source"
+                                    value={tempData.source}
+                                    onChange={handleInputChange}
+                                    className="w-full"
+                                />
+                            </div>
+                            <div className="flex justify-end space-x-2">
+                                <Button variant="outline" onClick={handleCancel}>
+                                    Cancel
+                                </Button>
+                                <Button onClick={handleOk}>
+                                    Save
+                                </Button>
+                            </div>
                         </div>
                     </form>
                 </CardContent>
             </Card>
-        )
+        );
     }
 
     return (
@@ -249,7 +252,8 @@ export default function BookCard({
                             {cover.startsWith('http')
                                 ? <img src={cover} alt={`${title} cover`} className="w-full h-full object-cover" />
                                 : <Image
-                                    src={cover}
+                                    src={cover
+                                    }
                                     alt={`${title} cover`}
                                     layout="fill"
                                     objectFit="cover"
@@ -373,5 +377,5 @@ export default function BookCard({
                 </div>
             </Card>
         </TooltipProvider>
-    )
-}
+    );
+} 
