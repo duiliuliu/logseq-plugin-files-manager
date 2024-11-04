@@ -66,9 +66,8 @@
 - 可使用命令：`/train-ticket`  或者编辑内容为  `{{renderer :train-ticket, *}}`
 - 可使用命令：`/flight-ticket`  或者编辑内容为  `{{renderer :flight-ticket, *}}`
 - 可使用命令：`/flight-ticket2`  或者编辑内容为  `{{renderer :flight-ticket2, *}}`
-![render-train-ticket](./images/render-train-ticket.png)
-![render-flight-ticket](./images/render-flight-ticket.png)
-
+<center class="half"> <img src="./images/render-train-ticket.png" width="200"/><img src="./images/render-flight-ticket.png" width="200"/> </center> 
+<center class="half"> <img src="./images/cards1.png" width="200"/><img src="./images/cards2.png" width="200"/> </center> 
 
 
 > 更多功能,期待您的探索和体验.**更多功能&使用分享 [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**

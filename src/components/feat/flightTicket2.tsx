@@ -3,6 +3,7 @@ import { Plane, UtensilsCrossed } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import { FlightTicketProps } from './flightTicket'
 import { format } from 'date-fns'
+import { getColor, getColorBg } from './color'
 
 const FlightTicket2 = function Component({
   date = format(new Date(), "yyyy-MM-dd"),
@@ -18,10 +19,11 @@ const FlightTicket2 = function Component({
   status = '准时',
   seatInfo = '经济舱 **A|B',
   mealInfo = '有餐食',
+  color = 'white'
 }: FlightTicketProps) {
   return (
-    <div className="relative w-full max-w-[600px] overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 p-1 text-white shadow-lg">
-      <Card className="relative overflow-hidden bg-white">
+    <div className="relative w-full max-w-[600px] overflow-hidden rounded-xl bg-gradient-to-r from-blue-600 to-blue-800 p-1 text-white shadow-lg" style={{ backgroundColor: getColor(color) }}>
+      <Card className={`relative overflow-hidden ${getColorBg(color)}`}>
         <div className="absolute left-0 top-0 h-2 w-full bg-gradient-to-r from-blue-500 to-blue-600"></div>
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">

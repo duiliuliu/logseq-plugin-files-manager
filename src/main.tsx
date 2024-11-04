@@ -14,6 +14,7 @@ import { initLspSettingsSchema } from './logseq/logseqSetting';
 import { logger } from './utils/logger';
 import { initIconList } from './logseq/feat/logseqCustomVariable';
 import { initTicketFeat } from './logseq/feat/logseqTicketCard';
+import { showMainUI } from './logseq/logseqUI';
 
 // 渲染 React 应用
 export const renderApp = () => {
@@ -31,10 +32,10 @@ const main = async (_e: any) => {
     logger.debug('onRouteChanged', e)
 
     if (e.path === PLUGIN_ROUTE) {
-      logseq.showMainUI()
+      showMainUI()
     } else if (e.path === SETTING_ROUTE) {
       logseq.showSettingsUI()
-      logseq.showMainUI()
+      showMainUI
     } else {
       logseq.hideMainUI()
     }

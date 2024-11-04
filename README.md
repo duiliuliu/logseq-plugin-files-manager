@@ -70,10 +70,9 @@
 - you can use command: `/flight-ticket`  or edit: ` {{renderer :flight-ticket, *}}`
 - you can use command: `/flight-ticket2`  or edit: ` {{renderer :flight-ticket2, *}}`
 
+<center class="half"> <img src="./images/render-train-ticket.png" width="200"/><img src="./images/render-flight-ticket.png" width="200"/> </center> 
+<center class="half"> <img src="./images/cards1.png" width="200"/><img src="./images/cards2.png" width="200"/> </center> 
 
-![render-train-ticket](./images/render-train-ticket.png)
-![render-flight-ticket](./images/render-flight-ticket.png)
-	  
 > Discover and experience more features awaiting your exploration.  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
 
   

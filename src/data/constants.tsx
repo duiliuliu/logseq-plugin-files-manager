@@ -143,6 +143,7 @@ export const i18n_HIDDEN_EMPTY_JOURNALS_DAYS = 'Hidden empty journal days' // �
 
 export const i18n_TRAIN_TICKET_CARD_HEADING = 'Train Ticket Card' // 火车票
 export const i18n_TRAIN_TICKET_CARD_DESC = 'Train Ticket Card desc'  // 支持将block渲染成为火车票
+export const i18n_TRAIN_TICKET_CARD_HIDDEN_PROPS_DESC = 'Train Ticket Card Hide Props desc'  // 隐藏卡片block的properties，true标识隐藏
 
 
 // ===================================================================================

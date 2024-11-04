@@ -1,5 +1,24 @@
 
 import { Circle } from '@phosphor-icons/react'
+import { getColor, getColorBg } from './color'
+import { format } from 'date-fns'
+
+export const getdefaultItineraryProps = (dateFormat?: string) => {
+    const defaultProps: ItineraryProps = {
+        date: dateFormat ? `[[${format(new Date(), dateFormat)}]]` : format(new Date(), "yyyy-MM-dd"),
+        fromCity: '上海',
+        toCity: '深圳',
+        departureTime: '11:00',
+        arrivalTime: '13:00',
+        departureAirport: '浦东机场T1',
+        arrivalAirport: '宝山机场T2',
+        flightNumber: 'CZ3587',
+        airline: '中国南方航空',
+        seatInfo: '经济舱 14A',
+        mealInfo: '有餐食',
+    }
+    return defaultProps
+}
 
 export interface ItineraryProps {
     date?: string
@@ -10,11 +29,33 @@ export interface ItineraryProps {
     departureAirport?: string
     arrivalAirport?: string
     flightNumber?: string
-    aircraft?: string
-    cabin?: string
-    duration?: string
-    hasMeal?: boolean
+    airline?: string
+    seatInfo?: string
+    mealInfo?: string
+    color?: 'green' | 'blue' | 'pink' | 'yellow' | ''
 }
+
+function calculateTimeDifference(departureTime: string, arrivalTime: string) {
+    // 将时间字符串转换为分钟
+    const toMinutes = (time: string) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    };
+
+    // 计算时间差（分钟）
+    const departureMinutes = toMinutes(departureTime);
+    const arrivalMinutes = toMinutes(arrivalTime);
+    let differenceInMinutes = arrivalMinutes - departureMinutes;
+    if (differenceInMinutes < 0) { differenceInMinutes = differenceInMinutes + 24 * 60 }
+
+    // 将时间差转换为小时和分钟
+    const hours = Math.floor(differenceInMinutes / 60);
+    const minutes = differenceInMinutes % 60;
+
+    // 返回格式化的时间差
+    return `${hours}小时${minutes}分钟`;
+}
+
 
 const Itinerary = function Component({
     date = '09月22日',
@@ -25,13 +66,14 @@ const Itinerary = function Component({
     departureAirport = '首都国际机场',
     arrivalAirport = '上海虹桥机场',
     flightNumber = 'MU9711',
-    aircraft = '波音737(中)',
-    cabin = '经济舱',
-    duration = '2小时14分',
-    hasMeal = true
+    airline = '波音737(中)',
+    seatInfo = '经济舱',
+    mealInfo = '有餐食',
+    color = ''
 }: ItineraryProps) {
+    const duration = calculateTimeDifference(arrivalTime, departureTime)
     return (
-        <div className="w-full max-w-md rounded-lg border-2 border-dashed border-red-400 p-4">
+        <div className={`w-full max-w-md rounded-lg border-2 border-dashed border-red-400 p-4 ${getColorBg(color)}`} style={{ backgroundColor: getColor(color) }} >
             {/* Header - Cities */}
             <div className="mb-4 text-lg font-bold">
                 {date}{fromCity}→{toCity}
@@ -61,11 +103,11 @@ const Itinerary = function Component({
                         <div className="space-x-2">
                             <span>东航{flightNumber}</span>
                             <span>|</span>
-                            <span>{cabin}</span>
+                            <span>{seatInfo}</span>
                             <span>|</span>
-                            <span>{aircraft}</span>
+                            <span>{airline}</span>
                         </div>
-                        {hasMeal && <div className="mt-1 text-orange-500">有餐食</div>}
+                        {mealInfo && <div className="mt-1 text-orange-500">{mealInfo}</div>}
                     </div>
 
                     {/* Duration */}

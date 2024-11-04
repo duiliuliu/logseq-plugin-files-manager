@@ -142,6 +142,7 @@ h1 {
     --radius: 0.5rem;
 
   }
+
   .dark {
     --background: 224 71.4% 4.1%;
     --foreground: 210 20% 98%;
@@ -169,7 +170,6 @@ h1 {
     --chart-5: 340 75% 55%;
 
   }
-
 }
 
 @layer base {
@@ -177,6 +177,7 @@ h1 {
     @apply border-border;
 
   }
+
   body {
     @apply bg-background text-foreground;
 

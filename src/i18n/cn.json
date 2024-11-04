@@ -72,5 +72,6 @@
     "Hidden empty journals switch": "空白日记隐藏开关，开启后，日记页面将隐藏空白日记。您可以手动创建日记并跳转，或使用 Day.js 插件或日历插件访问空白日记",
     "Hidden empty journal days": "隐藏最近 X 天的空白日记",
     "Train Ticket Card": "火车票",
-    "Train Ticket Card desc": "支持将block渲染成为火车票"
+    "Train Ticket Card desc": "支持将block渲染成为火车票",
+    "Train Ticket Card Hide Props desc":"隐藏卡片block的properties，true标识隐藏"
 }

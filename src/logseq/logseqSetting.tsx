@@ -1,12 +1,18 @@
 import { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin';
-import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i18n_CUSTOMS_VARIABLE_DATE_DESC, i18n_CUSTOMS_VARIABLE_DESC, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i18n_CUSTOMS_VARIABLE_TIME_DESC, i18n_CUSTOMS_VARIABLE_TITLE, i18n_CUSTOMS_VARIABLE_VAR_DESC, i18n_DELETE_FORMAT_DESC, i18n_DELETE_FORMAT_TITLE, i18n_DELETE_FORMAT_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_DESC, i18n_PAGE_DEFAULT_PROPS_TITLE, i18n_PAGE_DEFAULT_PROPS_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i18n_PROPS_ICON_DESC, i18n_PROPS_ICON_TITLE, i18n_UI_TOOLBAR_DROPDOWN_DESC, i18n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE, i18n_CUSTOMS_VARIABLE_TIMEOUT_DESC, i18n_CUSTOMS_VARIABLE_ERROR_HANDLER_DESC, i18n_META_BLOCK_CUSTOMS_COMMAND_CONFIG, i18n_META_BLOCK_CUSTOMS_COMMANDS, i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING, i18n_HIDDEN_EMPTY_JOURNALS, i18n_HIDDEN_EMPTY_JOURNALS_SWITCH, i18n_HIDDEN_EMPTY_JOURNALS_DAYS, i18n_META_BLOCK_CUSTOMS_COMMANDS_DESC, i18n_TRAIN_TICKET_CARD_DESC, i18n_TRAIN_TICKET_CARD_HEADING } from '../data/constants';
+import { EXTERNAL_PLUGIN_AWESOME_PROPS, i18n_DEFAULT_DELETE_FORMAT, i18n_GET_PLUGIN_CONFIG_ERROR, i18n_OPEN_PLUGN_SETTING_TOOLTIP, i18n_CUSTOMS_VARIABLE_DATE_DESC, i18n_CUSTOMS_VARIABLE_DESC, i18n_CUSTOMS_VARIABLE_RANDOMICON_DESC, i18n_CUSTOMS_VARIABLE_TIME_DESC, i18n_CUSTOMS_VARIABLE_TITLE, i18n_CUSTOMS_VARIABLE_VAR_DESC, i18n_DELETE_FORMAT_DESC, i18n_DELETE_FORMAT_TITLE, i18n_DELETE_FORMAT_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_DESC, i18n_PAGE_DEFAULT_PROPS_TITLE, i18n_PAGE_DEFAULT_PROPS_VAR_DESC, i18n_PAGE_DEFAULT_PROPS_VISIBLE_DESC, i18n_PROPS_ICON_DESC, i18n_PROPS_ICON_TITLE, i18n_UI_TOOLBAR_DROPDOWN_DESC, i18n_UI_TOOLBAR_DROPDOWN_TITLE, SETTING_ROUTE, i18n_CUSTOMS_VARIABLE_TIMEOUT_DESC, i18n_CUSTOMS_VARIABLE_ERROR_HANDLER_DESC, i18n_META_BLOCK_CUSTOMS_COMMAND_CONFIG, i18n_META_BLOCK_CUSTOMS_COMMANDS, i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING, i18n_HIDDEN_EMPTY_JOURNALS, i18n_HIDDEN_EMPTY_JOURNALS_SWITCH, i18n_HIDDEN_EMPTY_JOURNALS_DAYS, i18n_META_BLOCK_CUSTOMS_COMMANDS_DESC, i18n_TRAIN_TICKET_CARD_DESC, i18n_TRAIN_TICKET_CARD_HEADING, i18n_TRAIN_TICKET_CARD_HIDDEN_PROPS_DESC } from '../data/constants';
 import getI18nConstant, { PRE_LANGUAGE } from '../i18n/utils';
 import { stringToVarArr, stringToObject } from '../utils/objectUtil';
 import { logger } from '../utils/logger';
 import { createMetaBlockProps } from '../data/types';
 import ReactDOM from 'react-dom';
-import TrainTicket from '../components/feat/trainTicket';
-import FlightTicket2 from '../components/feat/flightTicket2';
+import FlightTicket2 from '@/components/feat/flightTicket2';
+import TrainTicket from '@/components/feat/trainTicket';
+import FlexibleLayout from '@/components/feat/flexibleLayout';
+import FoodCard from '@/components/feat/foodCard';
+import BookCard from '@/components/feat/bookCard2';
+import RatingCard from '@/components/feat/ratingCard2';
+import FlipCountDown from '@/components/feat/timeCountdown';
+import PageCard from '@/components/feat/pageCard';
 
 interface Notification {
     previousPluginVersion: string;
@@ -29,6 +35,7 @@ export interface PluginSettings {
     metaBlockCustomsCommands: string[]
     hiddenEmptyJournalsSwith: boolean;
     hiddenEmptyJournalDays: number;
+    hiddenTicketCardProperties: boolean;
 }
 
 const DEFAULT_SETTINGS = {
@@ -85,46 +92,26 @@ const DEFAULT_SETTINGS = {
     metaBlockCustomsCommands: [],
     hiddenEmptyJournalsSwith: false,
     hiddenEmptyJournalDays: 14,
+    hiddenTicketCardProperties: true,
 }
 
+const renderExample = (command: string, component: React.ReactNode) => {
+    let mydiv = document.createElement('div');
+    ReactDOM.render(
+        <FlexibleLayout
+            text={command}
+            media={component}
+            layout="inline"
+            imagePosition="right"
+        />,
+        mydiv
+    );
+    return mydiv.innerHTML
+}
 
 export const initLspSettingsSchema = async (lang?: string,) => {
 
     !lang && ({ preferredLanguage: lang } = await logseq.App.getUserConfigs())
-
-    let trainTicketDiv = document.createElement('div');
-    let flightTicketDiv = document.createElement('div');
-
-    ReactDOM.render(
-        <TrainTicket
-            fromStation="北京"
-            toStation="上海"
-            trainNumber="G101"
-            date="2024-05-01"
-            departureTime="14:30"
-            color="blue"
-        />,
-        trainTicketDiv
-    );
-    ReactDOM.render(
-        <FlightTicket2
-            date="2024-05-01"
-            weekday='星期五'
-            fromCity='上海'
-            toCity='深圳'
-            departureTime='11:00'
-            arrivalTime='13:00'
-            departureAirport='浦东机场T1'
-            arrivalAirport='宝山机场T2'
-            flightNumber='CZ3587'
-            airline='中国南方航空'
-            status='准时'
-            seatInfo='经济舱 14A'
-            mealInfo='有餐食'
-            color='dark'
-        />,
-        flightTicketDiv
-    );
 
     const schemas: SettingSchemaDesc[] = [
         {
@@ -283,14 +270,15 @@ export const initLspSettingsSchema = async (lang?: string,) => {
         {
             key: 'metaBlockCustomsCommandsHeading',
             title: getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMANDS_HEADING),
-            description: getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMANDS_DESC),
+            description: "",
             type: 'heading',
             default: null,
         },
         {
             key: 'metaBlockCustomsCommandConfig',
             title: '',
-            description: getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMAND_CONFIG) + ` e.g.</br>
+            description: getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMANDS_DESC) + "</br></br>"
+                + getI18nConstant(lang, i18n_META_BLOCK_CUSTOMS_COMMAND_CONFIG) + ` e.g.</br>
             { </br>
                 &nbsp; &nbsp; 'test': { </br>
                 &nbsp; &nbsp; &nbsp; &nbsp;     parentBlock: 'test parent block', </br>
@@ -352,16 +340,101 @@ export const initLspSettingsSchema = async (lang?: string,) => {
         {
             key: 'ticketCardHeading',
             title: getI18nConstant(lang, i18n_TRAIN_TICKET_CARD_HEADING),
-            description: '',
+            description: "",
             type: 'heading',
             default: null,
         },
         {
-            key: 'ticketCard',
+            key: 'hiddenTicketCardProperties',
             title: '',
-            type: 'heading',
-            default: false,
-            description: getI18nConstant(lang, i18n_TRAIN_TICKET_CARD_DESC) + '</br>e.g.</br>' + trainTicketDiv.innerHTML + '</br>' + flightTicketDiv.innerHTML,
+            type: 'boolean',
+            default: true,
+            description: getI18nConstant(lang, i18n_TRAIN_TICKET_CARD_HIDDEN_PROPS_DESC),
+        },
+        {
+            key: 'ticketCardDesc',
+            title: '',
+            type: 'object',
+            default: true,
+            description: getI18nConstant(lang, i18n_TRAIN_TICKET_CARD_DESC) + '</br>e.g.</br>' +
+                renderExample('command:\\train-ticket', <TrainTicket
+                    fromStation="北京"
+                    toStation="上海"
+                    trainNumber="G101"
+                    date="2024-05-01"
+                    departureTime="14:30"
+                    color="blue"
+                />) + '</br>' +
+                renderExample('command:\\flight-ticket', <FlightTicket2
+                    date="2024-05-01"
+                    weekday='星期五'
+                    fromCity='上海'
+                    toCity='深圳'
+                    departureTime='11:00'
+                    arrivalTime='13:00'
+                    departureAirport='浦东机场T1'
+                    arrivalAirport='宝山机场T2'
+                    flightNumber='CZ3587'
+                    airline='中国南方航空'
+                    status='准时'
+                    seatInfo='经济舱 14A'
+                    mealInfo='有餐食'
+                    color='dark'
+                />) + '</br>' +
+                renderExample('command:\\food-card', <FoodCard
+                    foodName="金悦轩"
+                    specialDishes="鲜虾泡饭和水晶虾饺"
+                    location="珠海"
+                    avgCost={180}
+                    category="粤菜"
+                    recommendation="金悦轩的鲜虾泡饭和水晶虾饺都非常美味，推荐尝试。"
+                    cover="/placeholder.svg?height=200&width=400"
+                />) + '</br > ' +
+                renderExample('command:\\book-card', <BookCard
+                    cover="https://www.ibs.it/images/9788804739036_0_536_0_75.jpg"
+                    title="测试数据"
+                    description="La coscienza, la vita. i computer e la nostra natura"
+                    author="测试作家"
+                    categories="Philosophy,Science"
+                    tags="#📖/周末闲读,#AI"
+                    completed="2023-12-18"
+                    time="12:35"
+                />) + '</br > ' +
+                renderExample('command:\\book-card', <RatingCard
+                    rating={4.5}
+                    review="这是一个很棒的产品，我非常喜欢！"
+                    color="#e0f2fe"
+                    source="https://example.com/review"
+                    completed="2023-12-18"
+                    time="12:35"
+                />) + '</br > ' +
+                renderExample('command:\\flipcountdown-card', <FlipCountDown
+                    targetDate="2024-12-31T00:00:00"
+                    color="#f4a261"
+                    message="倒计时结束!"
+                />) + '</br > ' +
+                renderExample('command:\\page-card', <PageCard
+                    icon="📄"
+                    title="Technical Specifications"
+                    summary="Detailed technical specifications including system architecture, data models, and API documentation."
+                    properties={{
+                        "Version": "2.3",
+                        "Last Reviewed": "2023-06-01",
+                        "Approved By": "Tech Lead",
+                        "Framework": "React",
+                        "Database": "PostgreSQL",
+                        "API Type": "RESTful",
+                        "ip": "shanghai",
+                        "temperature": "+21°C",
+                        "summary": 'summary-test',
+                        "link": 'link-test',
+                        "source": "source-test",
+                        "size": '2.4KB'
+                    }}
+                    createdTime="2023-02-05 10:15 AM"
+                    updatedTime="2023-06-10 11:45 AM"
+                    size="3.7 MB"
+                />) + '</br > '
         },
     ]
 
@@ -391,6 +464,7 @@ export const getPluginSettings = async (): Promise<PluginSettings> => {
         metaBlockCustomsCommands: lspSettings.metaBlockCustomsCommands,
         hiddenEmptyJournalsSwith: lspSettings.hiddenEmptyJournalsSwith,
         hiddenEmptyJournalDays: lspSettings.hiddenEmptyJournalDays,
+        hiddenTicketCardProperties: lspSettings.hiddenTicketCardProperties,
     }
 }
 
