@@ -36,7 +36,7 @@ export const addLogseqDefaultPageProps = async (appConfig: AppConfig, page: stri
         const newBlock = visible && await logseq.Editor.appendBlockInPage(name, '', { properties: { ...pageE.properties, ...defaultProps } });
         // 检查是否存在第一个区块
         firstBlock && newBlock && await logseq.Editor.moveBlock(newBlock.uuid, firstBlock.uuid, { before: true, children: true })
-        // 删除重复的快
+        // 删除重复的快 
         propertiesToStr(firstBlock?.properties).includes(firstBlock?.content || '') && firstBlock?.uuid && logseq.Editor.removeBlock(firstBlock?.uuid)
         logseq.Editor.exitEditingMode()
     } catch (error) {

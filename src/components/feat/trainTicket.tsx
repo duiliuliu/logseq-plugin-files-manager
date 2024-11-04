@@ -2,6 +2,21 @@
 import { format } from 'date-fns'
 import { QRCodeSVG } from 'qrcode.react'
 import { useId } from 'react'
+import { getColor, getColorBg } from './color'
+
+export const getdefaultTrainTicketProps = (dateFormat?: string) => {
+    const defaultProps: TrainTicketProps = {
+        fromStation: '北京',
+        toStation: '上海',
+        trainNumber: 'G717',
+        date: dateFormat ? `[[${format(new Date(), dateFormat)}]]` : format(new Date(), "yyyy-MM-dd"),
+        departureTime: '10:00',
+        arrivalTime: "20:00",
+        color: 'green',
+        seatInfo: '一等座',
+    }
+    return defaultProps
+}
 
 export interface TrainTicketProps {
     fromStation?: string
@@ -12,21 +27,6 @@ export interface TrainTicketProps {
     arrivalTime?: string
     seatInfo?: string
     color?: 'green' | 'blue' | 'pink' | 'yellow'
-}
-
-const colorMap = {
-    green: 'bg-[#e8f6f6]',
-    blue: 'bg-[#e8f0f6]',
-    pink: 'bg-[#f6e8e8]',
-    yellow: 'bg-[#f6f3e8]',
-}
-
-
-const colorPMap = {
-    green: '#e8f6f6',
-    blue: '#e8f0f6',
-    pink: '#f6e8e8',
-    yellow: '#f6f3e8',
 }
 
 function compareTimes(time1: string, time2: string) {
@@ -48,7 +48,6 @@ function compareTimes(time1: string, time2: string) {
     }
 }
 
-
 const TrainTicket = function Component({
     fromStation = '**',
     toStation = '**',
@@ -65,7 +64,7 @@ const TrainTicket = function Component({
     const isnextday = compareTimes(departureTime, arrivalTime) != '-1'
 
     return (
-        <div className={`relative w-full max-w-[520px] overflow-hidden rounded-lg ${colorMap[color]} p-4 font-mono shadow-lg`} style={{ minWidth: 410, backgroundColor: colorPMap[color] || color }}>
+        <div className={`relative w-full max-w-[520px] overflow-hidden rounded-lg ${getColorBg(color)} p-4 font-mono shadow-lg`} style={{ minWidth: 410, backgroundColor: getColor(color) }}>
             {/* Pattern Overlay */}
             <div
                 className="absolute inset-0 opacity-10"

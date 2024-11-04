@@ -72,5 +72,6 @@
     "Hidden empty journals switch": "Toggle to hide empty journals. When enabled, empty journals will be hidden on the diary page. You can manually create diary entries and navigate to them, or use the Day.js or calendar plugins to access empty journals",
     "Hidden empty journal days": "Hide emty journals for the past X days",
     "Train Ticket Card": "Train Ticket Card",
-    "Train Ticket Card desc": "Support rendering blocks into train tickets"
+    "Train Ticket Card desc": "Support rendering blocks into train tickets",
+    "Train Ticket Card Hide Props desc": "Hide the properties of the card block when the identifier is set to true"
 }

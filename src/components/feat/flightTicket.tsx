@@ -2,6 +2,27 @@
 import { Plane, UtensilsCrossed } from 'lucide-react'
 import { Card } from "@/components/ui/card"
 import { format } from 'date-fns'
+import { getColor, getColorBg } from './color'
+
+export const getdefaultFilghtTicketProps = (dateFormat?: string) => {
+    const defaultProps: FlightTicketProps = {
+        date: dateFormat ? `[[${format(new Date(), dateFormat)}]]` : format(new Date(), "yyyy-MM-dd"),
+        weekday: '星期五',
+        fromCity: '上海',
+        toCity: '深圳',
+        departureTime: '11:00',
+        arrivalTime: '13:00',
+        departureAirport: '浦东机场T1',
+        arrivalAirport: '宝山机场T2',
+        flightNumber: 'CZ3587',
+        airline: '中国南方航空',
+        status: '准时',
+        seatInfo: '经济舱 14A',
+        mealInfo: '有餐食',
+        color: 'dark'
+    }
+    return defaultProps
+}
 
 export interface FlightTicketProps {
     date?: string
@@ -17,18 +38,8 @@ export interface FlightTicketProps {
     status?: string
     seatInfo?: string
     mealInfo?: string
-    color?: 'green' | 'blue' | 'pink' | 'yellow' | 'dark'
+    color?: 'green' | 'blue' | 'pink' | 'yellow' | 'dark' | 'white'
 }
-
-
-const colorPMap = {
-    green: '#e8f6f6',
-    blue: '#e8f0f6',
-    pink: '#f6e8e8',
-    yellow: '#f6f3e8',
-    dark: '#143642'
-}
-
 
 const FlightTicket = function Component({
     date = format(new Date(), "yyyy-MM-dd"),
@@ -47,7 +58,7 @@ const FlightTicket = function Component({
     color = 'dark'
 }: FlightTicketProps) {
     return (
-        <div className="relative w-full max-w-[600px] overflow-hidden rounded-xl bg-gradient-to-r from-slate-800 to-slate-900 p-4 text-white" style={{ backgroundColor: colorPMap[color] || color }}>
+        <div className={`relative w-full max-w-[600px] overflow-hidden rounded-xl bg-gradient-to-r from-slate-800 to-slate-900 p-4 text-white ${getColorBg(color)}`} style={{ backgroundColor: getColor(color) }} >
             {/* City Skyline Background */}
             <div
                 className="absolute inset-x-0 bottom-0 h-16 opacity-10"

@@ -5,12 +5,13 @@ import getI18nConstant from "../i18n/utils";
 import { logger } from "../utils/logger";
 import { deleteLogseqPage } from "./feat/logseqDeletePage";
 import { fetchUserConfigs } from "./useUserConfigs";
+import { showMainUI } from "./logseqUI";
 
 
 // 打开文件管理器的函数
 export const openFileManager = () => {
     logger.debug(`openFileManager`)
-    logseq.showMainUI();
+    showMainUI()
 };
 
 /**
@@ -25,10 +26,10 @@ export const showMainUIIfFilesManager = async (): Promise<void> => {
     // 检查当前页面的原始名称是否为 'files-manager'
     if (currPage?.originalName === HOME_PAGE) {
         // 如果条件满足，则显示主 UI
-        logseq.showMainUI();
+        showMainUI()
     }
     if (currPage?.originalName === SETTING_PAGE) {
-        logseq.showMainUI();
+        showMainUI()
         logseq.showSettingsUI();
     }
 }

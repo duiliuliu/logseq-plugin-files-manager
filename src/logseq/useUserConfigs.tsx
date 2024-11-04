@@ -11,7 +11,13 @@ import { initPropsIconObserver, runEnhanceLspPluginDropdown, runPropsIconObserve
 import { logseq as lsp } from '../../package.json';
 import { initMetaBlock } from './feat/logseqMetaBlock';
 import { openHiddenEmptyJournal, stopHiddenEmptyJournal } from './feat/logseqHiddenEmptyJournal';
+import { initTicketFeat } from './feat/logseqTicketCard';
 
+let gloableUserConfig: AppConfig
+
+export const getGloableUserConfigs = () => {
+    return gloableUserConfig
+}
 
 export const fetchUserConfigs = async (setUserConfigs?: (arg0: AppConfig) => void): Promise<AppConfig> => {
     logger.debug(`useUserConfigs update`)
@@ -23,12 +29,13 @@ export const fetchUserConfigs = async (setUserConfigs?: (arg0: AppConfig) => voi
             return mockUserConfigs
         } else {
             const userCfg = await logseq.App.getUserConfigs();
-
             await fetchAppConfig(userCfg)
-            setUserConfigs && setUserConfigs(userCfg);
+            userCfg && (userCfg.pluginSettings = await getPluginSettings())
             i18n.changeLanguage(userCfg.preferredLanguage);
             document.querySelector('html')?.setAttribute('lang', userCfg.preferredLanguage);
-            // logger.debug(`useUserConfigs update,userConfigs:`, userCfg)
+
+            userCfg && (gloableUserConfig = userCfg)
+            setUserConfigs && userCfg && setUserConfigs(userCfg);
             return userCfg
         }
     } catch (error) {
@@ -71,14 +78,18 @@ export const useUserConfigs = (userConfigUpdated: number) => {
 
     // 用户APP配置
     useEffect(() => {
-        fetchUserConfigs(setUserConfigs);
-        setupFileManagerNav(userConfigs.preferredLanguage)
-        initLspSettingsSchema(userConfigs.preferredLanguage)
-        const graphChangeListen = (_e: any) => { fetchUserConfigs(setUserConfigs); };
-        logseq.App.onCurrentGraphChanged(graphChangeListen);
+        const init = async () => {
+            const userCfg = await fetchUserConfigs(setUserConfigs);
+            logger.debug('userCfg', userCfg, userConfigs)
+            setupFileManagerNav(userCfg.preferredLanguage)
+            initLspSettingsSchema(userCfg.preferredLanguage)
+            initTicketFeat(userCfg)
+        }
 
+        init()
+        logseq.App.onCurrentGraphChanged(init);
         return () => {
-            logseq.App.offCurrentGraphChanged(graphChangeListen);
+            logseq.App.offCurrentGraphChanged(init);
         }
     }, [userConfigUpdated]);
 
@@ -87,12 +98,11 @@ export const useUserConfigs = (userConfigUpdated: number) => {
     useEffect(() => {
         const settingListen = async () => {
             const settings = await getPluginSettings()
+            !gloableUserConfig && (gloableUserConfig = userConfigs)
+            gloableUserConfig && (gloableUserConfig.pluginSettings = settings)
             setUserConfigs((prev: AppConfig) => ({ ...prev, pluginSettings: settings }))
         }
-
-        settingListen()
         logseq.on('settings:changed', settingListen)
-
         return () => {
             logseq.off('settings:changed', settingListen)
         }

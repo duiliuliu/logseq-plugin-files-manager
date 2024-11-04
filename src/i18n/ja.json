@@ -72,5 +72,6 @@
     "Hidden empty journals switch": "空のジャーナルを非表示にするスイッチ。これを有効にすると、日記ページで空のジャーナルが非表示になります。手動で日記を作成して移動するか、Day.js プラグインやカレンダープラグインを使用して空のジャーナルにアクセスできます",
     "Hidden empty journal days": "最近 X 日間の空のジャーナルを非表示にする",
     "Train Ticket Card": "列車チケットカード",
-    "Train Ticket Card desc": "ブロックを列車チケットにレンダリングする"
+    "Train Ticket Card desc": "ブロックを列車チケットにレンダリングする",
+    "Train Ticket Card Hide Props desc": "trueのとき、カードブロックのプロパティを隠します"
 }
