@@ -19,6 +19,7 @@ export default function RatingCard({
     updateRating,
     updateReview,
     updateSource,
+    editable = false,
     updateAll
 }: RatingCardProps) {
     const [rating, setRating] = useState(initRating)
@@ -139,7 +140,7 @@ export default function RatingCard({
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Rating</label>
                             <div className="flex items-center space-x-2">
-                                <Slider  
+                                <Slider
                                     value={[tempRating]}
                                     onValueChange={handleSliderChange}
                                     max={5}
@@ -214,11 +215,11 @@ export default function RatingCard({
                         {renderStars()}
                         <span className="ml-2 text-sm font-semibold">{rating.toString()}</span>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    {editable && <div className="flex items-center space-x-2">
                         <Button variant="ghost" size="icon" onClick={handleFullEdit} className="text-gray-400 hover:text-gray-600">
                             <Edit className="h-4 w-4" />
                         </Button>
-                    </div>
+                    </div>}
                 </div>
                 {isEditing ? (
                     <div className="space-y-2">

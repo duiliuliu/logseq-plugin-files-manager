@@ -1,12 +1,8 @@
-import { getdefaultBookCardProps } from "@/components/feat/bookCard"
-import ExpenseCard, { getdefaultExpenseCardProps } from "@/components/feat/expenseCard"
-import FlightTicket, { getdefaultFilghtTicketProps } from "@/components/feat/flightTicket"
-import FlightTicket2 from "@/components/feat/flightTicket2"
-import FoodCard, { getdefaultFoodCardProps } from "@/components/feat/foodCard"
+import { BookCardProps, getdefaultBookCardProps } from "@/components/feat/bookCard"
+import { FoodCardProps, getdefaultFoodCardProps } from "@/components/feat/foodCard"
 import { getdefaultRatingCardProps } from "@/components/feat/ratingCard"
 import FlipCountDown, { countDownStyles, getdefaultFlipCountDownProps } from "@/components/feat/timeCountdown"
 import CountdownTimer, { getdefaultCountdownTimerProps } from "@/components/feat/timeCountDown2"
-import TrainTicket, { getdefaultTrainTicketProps } from "@/components/feat/trainTicket"
 import { AppConfig } from "@/data/types"
 import { logger } from "@/utils/logger"
 import { getDay, parse } from "date-fns"
@@ -19,11 +15,22 @@ import React from "react"
 import FlexibleLayout from "@/components/feat/flexibleLayout"
 import { mockBlocks } from "@/mock/logseqBlocks"
 import { ASSETS_PATH_REGEX, GRAPH_PREFIX } from "@/data/constants"
-import PageCard, { pageCardStyles } from "@/components/feat/pageCard"
+import { pageCardStyles, TodoItem } from "@/components/feat/pageCard"
 import PageCard2 from "@/components/feat/pageCard2"
 import Itinerary, { getdefaultItineraryProps } from "@/components/feat/itinerary"
-import RatingCard2 from "@/components/feat/ratingCard2"
-import BookCard2, { BookCardProps } from "@/components/feat/bookCard2"
+import RatingCard2 from "@/components/feat/ratingCardEdit"
+import BookCard2 from "@/components/feat/bookCardEdit"
+import ExpenseCard from "@/components/feat/expenseCardEdit"
+import { ExpenseCardProps, getdefaultExpenseCardProps } from "@/components/feat/expenseCard"
+import TrainTicket from "@/components/feat/trainTicketEdit"
+import { getdefaultTrainTicketProps, TrainTicketProps } from "@/components/feat/trainTicket"
+import FlightTicket from "@/components/feat/flightticketEdit"
+import { FlightTicketProps, getdefaultFilghtTicketProps } from "@/components/feat/flightTicket"
+import FlightTicket2 from "@/components/feat/flightTicketEdit2"
+import FoodCard from "@/components/feat/foodCardEditor"
+import MovieCard, { getdefaultMovieCardProps, MovieCardProps } from "@/components/feat/movieCard"
+import PageCardPro from "@/components/feat/pageCardPro"
+import { getPageTodos2 } from "./logseqGetTODOs"
 
 const hiddenBlockCardProp = (blockUid: string) => {
     logger.debug('hiddenBlockCardProp', blockUid)
@@ -44,48 +51,92 @@ const tryGetElement = async (id: string, times?: number): Promise<HTMLElement | 
     return null
 }
 
+const tryGetBlockOtrherElement = (version: string, cardType: string, blockE: BlockEntity, hiddenBlockCardProps?: boolean) => {
+    if (version === 'v1') {
+        return blockE?.content.replace(/{{renderer .*}}/g, '').replace(/\w+::.*/g, '') || ''
+    }
+    if (version === ' v2') {
+
+
+        const blockUid = blockE.uuid
+        const blockClone = parent?.document?.getElementById(`block-content-${blockUid}`)?.cloneNode(true) as HTMLDivElement
+        // 删除指定的子节点
+        if (blockClone) {
+            blockClone.id = 'clone-' + blockClone.id
+            const cardElement = blockClone.querySelector(`#${cardType}-${blockUid}`);
+            cardElement && cardElement.remove();
+        }
+        if (hiddenBlockCardProps) {
+            const propsDiv = blockClone?.querySelector("div.block-properties.rounded") as HTMLDivElement
+            propsDiv && (propsDiv.className = 'hidden')
+        }
+
+        if (blockClone) {
+            return ReactDOM.createPortal(
+                <div>{/* 这里可以添加更多子元素 */}</div>,
+                blockClone
+            );
+        }
+    }
+    return ''
+}
+
+const getPageInfo = async (pageName?: string) => {
+    let pageE: PageEntity | null
+    let todoList
+    if (pageName) {
+        pageName = pageName.replace('[[', '').replace(']]', '')
+        pageE = await logseq.Editor.getPage(pageName.replace('[[', '').replace(']]', ''));
+        todoList = await getPageTodos2(pageName)
+
+    } else {
+        pageE = (await logseq.Editor.getCurrentPage()) as PageEntity
+    }
+    return { pageE, todoList }
+}
+
+type PageInfo = { pageE: PageEntity | null, todoList: Array<TodoItem> | undefined }
 type registeAndRenderMicroDomProps = {
-    prefix: string,
+    cardType: string,
     hiddenBlockCardProps: boolean | undefined,
-    elementFunc: (blockE?: BlockEntity, pageE?: PageEntity) => React.ReactElement,
+    elementFunc: (blockE?: BlockEntity, pageinfo?: PageInfo) => React.ReactElement,
     defaultPropsFunc?: () => { [K: string]: any }
     renderType?: 'native' | 'reactive'
     pramTemps?: string[]
     styles?: string
 }
 type renderMicroParam = { [K: string]: any, block?: string, page?: string, display?: string, position?: string, }
-const registeAndRenderMicroDom = ({ prefix, hiddenBlockCardProps, elementFunc, defaultPropsFunc, renderType = 'reactive', pramTemps = ['*'], styles }: registeAndRenderMicroDomProps) => {
-    logger.debug('registeAndRenderMicroDom', { prefix, hiddenBlockCardProps, renderType })
-    let slotContent = ` {{renderer :${prefix}, ${pramTemps.join(',')}}} `
+const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc, defaultPropsFunc, renderType = 'reactive', pramTemps = ['*'], styles }: registeAndRenderMicroDomProps) => {
+    logger.debug('registeAndRenderMicroDom', { prefix: cardType, hiddenBlockCardProps, renderType })
+    let slotContent = ` {{renderer :${cardType}, ${pramTemps.join(',')}}} `
     if (defaultPropsFunc) { slotContent += '\n' + propertiesToStr(defaultPropsFunc())[0] }
-    logseq.Editor.registerSlashCommand(prefix, async () => {
+    logseq.Editor.registerSlashCommand(cardType, async () => {
         const block = await logseq.Editor.getCurrentBlock()
         if (!block?.uuid) return
         logseq.Editor.updateBlock(block.uuid, block.content + slotContent)
     })
 
     logseq.App.onMacroRendererSlotted(async ({ slot, payload: { arguments: args, uuid } }) => {
-        const id = prefix + '-' + uuid
-        if (args?.[0].trim() != (':' + prefix)) { return }
-        let blockE: BlockEntity | null
-        let pageE: PageEntity | null
-        let wrapElementFunc = elementFunc
-
+        const id = cardType + '-' + uuid
+        if (args?.[0].trim() != (':' + cardType)) { return }
         const params: renderMicroParam = args.reduce((acc, curr) => {
             const [key, value] = curr.trim().split(':');
             if (key && value) {
                 //@ts-ignore
-                acc[key] = value?.trim();
+                value?.trim() != '*' && (acc[key] = value?.trim());
             }
             return acc;
         }, {});
         logger.debug('onMacroRendererSlotted-params', params)
+
+        let blockE: BlockEntity | null
+        let pageInfo: PageInfo = await getPageInfo(params.page);
+        let wrapElementFunc = elementFunc
         if (params.block) { blockE = (await logseq.Editor.getBlock(params.block.replace('((', '').replace('))', ''))) } else { blockE = (await logseq.Editor.getBlock(uuid)) }
-        if (params.page) { pageE = await logseq.Editor.getPage(params.page.replace('[[', '').replace(']]', '')) } else { pageE = (await logseq.Editor.getCurrentPage()) as PageEntity }
         if (params.display) {
-            wrapElementFunc = (blockE?: BlockEntity, pageE?: PageEntity) => <FlexibleLayout
-                text={blockE?.content.replace(slotContent, '').replace(/\w+:: .*/g, '') || ''}
-                media={elementFunc(blockE, pageE)}
+            wrapElementFunc = (blockE?: BlockEntity, pageinfo?: PageInfo) => <FlexibleLayout
+                text={blockE && tryGetBlockOtrherElement('v1', cardType, blockE, hiddenBlockCardProps)}
+                media={elementFunc(blockE, pageinfo)}
                 layout={(params.display as 'column' | 'row' | 'inline' | 'wrap' | 'float' | 'inlinetextbox')}
                 imagePosition={params.position && params.position === 'right' ? 'right' : 'left'}
             />
@@ -97,19 +148,19 @@ const registeAndRenderMicroDom = ({ prefix, hiddenBlockCardProps, elementFunc, d
                 logseq.provideUI({ key: id, slot, reset: false, template: `<div id='${id}'></div>`, })
                 mydiv = await tryGetElement(id, 5)
                 // mydiv && ReactDOMCli.createRoot(mydiv!).render(wrapElementFunc(blockE || undefined, pageE || undefined))
-                mydiv && ReactDOM.render(wrapElementFunc(blockE || undefined, pageE || undefined), mydiv);
+                mydiv && ReactDOM.render(wrapElementFunc(blockE || undefined, pageInfo || undefined), mydiv);
                 // showCardUI()
                 break
             case 'native':
                 logger.debug('registeAndRenderMicroDom-onMacroRendererSlotted-reactive')
                 mydiv = document.createElement('div');
-                mydiv && ReactDOM.render(wrapElementFunc(blockE || undefined, pageE || undefined), mydiv);
+                mydiv && ReactDOM.render(wrapElementFunc(blockE || undefined, pageInfo || undefined), mydiv);
                 logseq.provideUI({ key: id, slot, reset: false, template: mydiv.innerHTML, })
                 break
         }
         hiddenBlockCardProps && hiddenBlockCardProp(uuid)
     })
-    styles && logseq.provideStyle({ key: prefix, style: styles })
+    styles && logseq.provideStyle({ key: cardType, style: styles })
 }
 
 const formatTargetDate = (blockE: BlockEntity, dateFormat: string): Date => {
@@ -152,7 +203,7 @@ const formatLink = (input?: string, graph?: string) => {
     }
     // 检查是否为Markdown格式的本地链接
     else if (/^!\[.*?\]\(\.{1,2}([^)]+\.\w+)/.test(input)) {
-        return graph?.replace(GRAPH_PREFIX, '') || '' + input.match(/\((\.{1,2}[^)]+\.\w+)/)?.[1];
+        return (graph?.replace(GRAPH_PREFIX, '') || '') + input.match(/\((\.{1,2}[^)]+\.\w+)/)?.[1];
     }
     // 检查是否为http/https链接
     else if (/^http[s]?:\/\/[^ ]+/.test(input)) {
@@ -160,11 +211,30 @@ const formatLink = (input?: string, graph?: string) => {
     }
     // 检查是否为本地链接
     else if (ASSETS_PATH_REGEX.test(input)) {
-        return graph?.replace(GRAPH_PREFIX, '') || '' + 'assets' + input.match(ASSETS_PATH_REGEX)?.[2];
+        return (graph?.replace(GRAPH_PREFIX, '') || '') + '/assets' + input.match(ASSETS_PATH_REGEX)?.[2];
+    } else if (input.includes('.')) {
+        return (graph?.replace(GRAPH_PREFIX, '') || '') + '/assets/' + input;
     }
     // 如果不匹配任何已知格式，返回原字符串
     return input;
 }
+
+const updateBlockProps = <T extends { [K: string]: any }>(blockE: BlockEntity, data: Partial<T>) => {
+    if (!blockE) return; // 如果 blockE 不存在，直接返回
+
+    Object.entries(data).forEach(([key, value]) => {
+        if (typeof value === 'function') return; // 如果 value 是函数，跳过
+        if (value !== undefined && value !== null) { // 只有当 value 存在且不是 null 时才更新
+            switch (key) {
+                case 'color':
+                    logseq.Editor.upsertBlockProperty(blockE.uuid, key, value.replace('#', ''));
+                    break;
+                default:
+                    logseq.Editor.upsertBlockProperty(blockE.uuid, key.toLowerCase(), value);
+            }
+        }
+    });
+};
 
 
 export const initTicketFeat = (appConfig?: AppConfig) => {
@@ -178,7 +248,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
     logger.debug('hiddenBlockCardProperties', hiddenBlockCardProps)
 
     registeAndRenderMicroDom({
-        prefix: 'train-ticket',
+        cardType: 'train-ticket',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <TrainTicket
             fromStation={blockE?.properties?.fromstation}
@@ -189,6 +259,10 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             arrivalTime={blockE?.properties?.arrivaltime}
             color={blockE?.properties?.color}
             seatInfo={blockE?.properties?.seatinfo}
+            editable={blockE?.properties?.editable}
+            onUpdate={(data: Partial<TrainTicketProps>) => {
+                blockE && updateBlockProps(blockE, data)
+            }}
         />,
         defaultPropsFunc: () => { return getdefaultTrainTicketProps(dateFormat) },
         renderType: 'reactive'
@@ -196,7 +270,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
 
 
     registeAndRenderMicroDom({
-        prefix: 'flight-ticket',
+        cardType: 'flight-ticket',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <FlightTicket
             fromCity={blockE?.properties?.fromcity}
@@ -212,7 +286,9 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             status={blockE?.properties?.status}
             seatInfo={blockE?.properties?.seatinfo}
             mealInfo={blockE?.properties?.mealinfo}
+            editable={blockE?.properties?.editable}
             color={blockE?.properties?.color}
+            onUpdate={(data: Partial<FlightTicketProps>) => { blockE && updateBlockProps(blockE, data) }}
         />,
         defaultPropsFunc: () => { return getdefaultFilghtTicketProps(dateFormat) },
         renderType: 'reactive'
@@ -220,7 +296,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
 
 
     registeAndRenderMicroDom({
-        prefix: 'flight-ticket2',
+        cardType: 'flight-ticket2',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <FlightTicket2
             fromCity={blockE?.properties?.fromcity}
@@ -236,14 +312,16 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             status={blockE?.properties?.status}
             seatInfo={blockE?.properties?.seatinfo}
             mealInfo={blockE?.properties?.mealinfo}
+            editable={blockE?.properties?.editable}
             color={blockE?.properties?.color}
+            onUpdate={(data: Partial<FlightTicketProps>) => { blockE && updateBlockProps(blockE, data) }}
         />,
         defaultPropsFunc: () => { return getdefaultFilghtTicketProps(dateFormat) },
         renderType: 'reactive'
     })
 
     registeAndRenderMicroDom({
-        prefix: 'expense-card',
+        cardType: 'expense-card',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <ExpenseCard
             title={blockE?.properties?.title}
@@ -252,30 +330,34 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             location={blockE?.properties?.location || blockE?.properties?.ip}
             category={blockE?.properties?.category}
             color={blockE?.properties?.color}
+            editable={blockE?.properties?.editable}
+            onUpdate={(data: Partial<ExpenseCardProps>) => { blockE && updateBlockProps(blockE, data) }}
         />,
         defaultPropsFunc: getdefaultExpenseCardProps,
         renderType: 'reactive'
     })
 
     registeAndRenderMicroDom({
-        prefix: 'food-card',
+        cardType: 'food-card',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <FoodCard
-            foodName={blockE?.properties?.foodname}
-            specialDishes={blockE?.properties?.specialdishes}
+            title={blockE?.properties?.title || blockE?.properties?.foodname}
+            description={blockE?.properties?.description || blockE?.properties?.specialdishes}
             location={blockE?.properties?.location || blockE?.properties?.ip}
             avgCost={blockE?.properties?.avgCost}
             category={blockE?.properties?.category}
             recommendation={blockE?.properties?.recommendation}
             cover={formatLink(blockE?.properties?.cover, graph)}
             color={blockE?.properties?.color}
+            editable={blockE?.properties?.editable}
+            onUpdate={(data: Partial<FoodCardProps>) => { blockE && updateBlockProps(blockE, data) }}
         />,
         defaultPropsFunc: getdefaultFoodCardProps,
         renderType: 'reactive'
     })
 
     registeAndRenderMicroDom({
-        prefix: 'book-card',
+        cardType: 'book-card',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <BookCard2
             title={blockE?.properties?.title}
@@ -290,23 +372,15 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             readlater={blockE?.properties?.readlater}
             recommendation={blockE?.properties?.recommendation}
             color={blockE?.properties?.color}
-            onUpdate={(data: Partial<BookCardProps>) => {
-                Object.entries(data).forEach(([k, v]) => {
-                    if (typeof v === 'function') {
-                        return
-                    }
-                    if (v) {
-                        blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, k, v)
-                    }
-                })
-            }}
+            editable={blockE?.properties?.editable}
+            onUpdate={(data: Partial<BookCardProps>) => { blockE && updateBlockProps(blockE, data) }}
         />,
         defaultPropsFunc: getdefaultBookCardProps,
         renderType: 'reactive'
     })
 
     registeAndRenderMicroDom({
-        prefix: 'rating-card',
+        cardType: 'rating-card',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <RatingCard2
             rating={blockE?.properties?.rating}
@@ -318,23 +392,14 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             updateRating={(newRating: number) => { blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, 'rating', newRating) }}
             updateReview={(newReview: string) => { blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, 'review', newReview) }}
             updateSource={(newSource: string) => { blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, 'source', newSource) }}
-            updateAll={(data: { rating: number; review: string; source: string; completed: string; time: string }) => {
-                Object.entries(data).forEach(([k, v]) => {
-                    if (typeof v === 'function') {
-                        return
-                    }
-                    if (v) {
-                        blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, k, v)
-                    }
-                })
-            }}
+            updateAll={(data: { rating: number; review: string; source: string; completed: string; time: string }) => { blockE && updateBlockProps(blockE, data) }}
         />,
         defaultPropsFunc: getdefaultRatingCardProps,
         renderType: 'reactive'
     })
 
     registeAndRenderMicroDom({
-        prefix: 'flipcountdown-card',
+        cardType: 'flipcountdown-card',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <FlipCountDown
             targetDate={blockE?.properties?.targetdate}
@@ -346,7 +411,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
     })
 
     registeAndRenderMicroDom({
-        prefix: 'flipcountdown-card2',
+        cardType: 'flipcountdown-card2',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <CountdownTimer
             targetDate={formatTargetDate(blockE || mockBlocks[0], dateFormat)}
@@ -358,15 +423,16 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
     })
 
     registeAndRenderMicroDom({
-        prefix: 'page-card',
+        cardType: 'page-card',
         hiddenBlockCardProps,
-        elementFunc: (blockE?: BlockEntity, pageE?: PageEntity) => {
+        elementFunc: (blockE?: BlockEntity, pageInfo?: PageInfo) => {
+            const pageE = pageInfo?.pageE
             const newProps = { ...pageE?.properties }
             delete newProps.summary;
             delete newProps.icon
             delete newProps.createdtime
             delete newProps.updatedtime
-            return <PageCard
+            return <PageCardPro
                 icon={pageE?.properties?.icon}
                 title={pageE?.originalName}
                 summary={pageE?.properties?.summary}
@@ -381,17 +447,23 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
                         }
                     }
                 }
+                todoList={pageInfo?.todoList}
+                onTodoUpdate={(updatedTodo: TodoItem) => {
+                    logseq.Editor.updateBlock(updatedTodo.id, updatedTodo.text.replace(updatedTodo.maker, 'DONE'))
+                }}
                 color={blockE?.properties?.color}
                 size={'0'} />
         },
         renderType: 'reactive',
-        styles: pageCardStyles
+        styles: pageCardStyles,
+        pramTemps: ["page:*"]
     })
 
     registeAndRenderMicroDom({
-        prefix: 'page-card2',
+        cardType: 'page-card2',
         hiddenBlockCardProps,
-        elementFunc: (blockE?: BlockEntity, pageE?: PageEntity) => {
+        elementFunc: (blockE?: BlockEntity, pageInfo?: PageInfo) => {
+            const pageE = pageInfo?.pageE
             const newProps = { ...pageE?.properties }
             delete newProps.summary;
             delete newProps.icon
@@ -415,12 +487,13 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
                 color={blockE?.properties?.color}
                 size={'0'} />
         },
-        renderType: 'reactive'
+        renderType: 'reactive',
+        pramTemps: ["page:*"]
     })
 
 
     registeAndRenderMicroDom({
-        prefix: 'itinerary-card',
+        cardType: 'itinerary-card',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <Itinerary
             fromCity={blockE?.properties?.fromcity}
@@ -436,6 +509,26 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             mealInfo={blockE?.properties?.mealinfo}
             color={blockE?.properties?.color} />,
         defaultPropsFunc: getdefaultItineraryProps,
+        renderType: 'reactive'
+    })
+
+    registeAndRenderMicroDom({
+        cardType: 'movie-card',
+        hiddenBlockCardProps,
+        elementFunc: (blockE?: BlockEntity) => <MovieCard
+            title={blockE?.properties?.title}
+            source={blockE?.properties?.source}
+            rating={blockE?.properties?.rating}
+            date={blockE?.properties?.date}
+            duration={blockE?.properties?.duration}
+            categories={blockE?.properties?.categories}
+            description={blockE?.properties?.description}
+            review={blockE?.properties?.review}
+            color={blockE?.properties?.color}
+            editable={blockE?.properties?.editable}
+            onUpdate={(data: Partial<MovieCardProps>) => { blockE && updateBlockProps(blockE, data) }}
+        />,
+        defaultPropsFunc: getdefaultMovieCardProps,
         renderType: 'reactive'
     })
 

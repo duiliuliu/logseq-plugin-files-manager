@@ -32,6 +32,14 @@ export const pageCardStyles = `
 }
 `
 
+export interface TodoItem {
+    id: string;
+    text: string;
+    maker: string
+    completed: boolean;
+}
+
+
 export interface PageCardProps {
     icon?: string
     title?: string
@@ -41,6 +49,10 @@ export interface PageCardProps {
     updatedTime?: string
     size?: string
     color?: string
+    cover?: string
+    source?: string
+    todoList?: TodoItem[]
+    onTodoUpdate?: (updatedTodo: TodoItem) => void
     onSummaryUpdate?: (newSummary: string) => void
 }
 

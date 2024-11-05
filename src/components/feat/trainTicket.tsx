@@ -14,6 +14,7 @@ export const getdefaultTrainTicketProps = (dateFormat?: string) => {
         arrivalTime: "20:00",
         color: 'green',
         seatInfo: '一等座',
+        editable:false
     }
     return defaultProps
 }
@@ -26,7 +27,9 @@ export interface TrainTicketProps {
     departureTime?: string
     arrivalTime?: string
     seatInfo?: string
-    color?: 'green' | 'blue' | 'pink' | 'yellow'
+    color?: string
+    editable?: boolean
+    onUpdate?: (updatedData: Partial<TrainTicketProps>) => void
 }
 
 function compareTimes(time1: string, time2: string) {

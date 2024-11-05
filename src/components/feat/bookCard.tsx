@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Book, Tag, Link as LinkIcon, ChevronDown, ChevronUp, Clock } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 import { getColor, getColorBg } from './color'
 
@@ -20,11 +19,11 @@ export const getdefaultBookCardProps = () => {
         time: "12:35",
         readlater: "",
         recommendation: "",
-        source: ""
+        source: "",
+        editable: true,
     }
     return defaultProps
 }
-
 
 export interface BookCardProps {
     cover?: string
@@ -39,6 +38,8 @@ export interface BookCardProps {
     recommendation?: string
     source?: string
     color?: string
+    editable?: boolean,
+    onUpdate?: (updatedData: Partial<BookCardProps>) => void;
 }
 
 const BookCard = function Component({
@@ -53,7 +54,7 @@ const BookCard = function Component({
     readlater,
     recommendation,
     source,
-    color
+    color,
 }: BookCardProps) {
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
@@ -73,15 +74,7 @@ const BookCard = function Component({
                 <div className="flex p-4">
                     {cover && (
                         <div className="relative w-20 h-20 mr-4 flex-shrink-0">
-                            {cover.startsWith('http')
-                                ? <img src={cover}
-                                    alt={`${title} cover`} />
-                                : <Image
-                                    src={cover}
-                                    alt={`${title} cover`}
-                                    layout="fill"
-                                    objectFit="cover" />
-                            }
+                            <img src={cover} alt={`${title} cover`} className="w-full h-full object-cover" />
                         </div>
                     )}
                     <div className="flex flex-col justify-between flex-grow">

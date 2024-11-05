@@ -1,13 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, DollarSign, Utensils } from "lucide-react"
-import Image from "next/image"
+
 import { getColor, getColorBg } from "./color"
 
 export const getdefaultFoodCardProps = () => {
   const defaultProps: FoodCardProps = {
-    foodName: "金悦轩",
-    specialDishes: "鲜虾泡饭和水晶虾饺",
+    title: "金悦轩",
+    description: "鲜虾泡饭和水晶虾饺",
     location: "珠海（拱北或横琴）",
     avgCost: 180,
     category: "粤菜",
@@ -18,19 +18,21 @@ export const getdefaultFoodCardProps = () => {
 }
 
 export interface FoodCardProps {
-  foodName?: string
-  specialDishes?: string
+  title?: string
+  description?: string
   location?: string
   avgCost?: number
   category?: string
   recommendation?: string
   cover?: string
-  color?: 'green' | 'blue' | 'pink' | 'yellow' | ''
+  color?: string
+  editable?: boolean
+  onUpdate?: (updatedData: Partial<FoodCardProps>) => void
 }
 
 const FoodCard = function Component({
-  foodName = "金悦轩",
-  specialDishes = "鲜虾泡饭和水晶虾饺",
+  title = "金悦轩",
+  description = "鲜虾泡饭和水晶虾饺",
   location = "珠海",
   avgCost = 180,
   category = "粤菜",
@@ -42,25 +44,16 @@ const FoodCard = function Component({
     <Card className={`w-full max-w-md mx-auto overflow-hidden ${getColorBg(color)}`} style={{ backgroundColor: getColor(color) }}>
       {cover && (
         <div className="relative w-full h-20">
-          {cover.startsWith('http')
-            ? <img src={cover}
-              alt={`${foodName} cover`} />
-            : <Image
-              src={cover}
-              alt={`${foodName} cover`}
-              layout="fill"
-              objectFit="cover" />
-          }
-
+          <img src={cover} alt={`${title} cover`} className="w-full h-full object-cover" />
         </div>
       )}
       <CardHeader>
         <div className="flex justify-between items-center">
-          <CardTitle className="text-xl font-semibold">{foodName}</CardTitle>
+          <CardTitle className="text-xl font-semibold">{title}</CardTitle>
           {category && <Badge>{category}</Badge>}
         </div>
-        {specialDishes && (
-          <p className="text-sm text-muted-foreground">特色菜：{specialDishes}</p>
+        {description && (
+          <p className="text-sm text-muted-foreground">特色菜：{description}</p>
         )}
       </CardHeader>
       <CardContent className="grid gap-4">

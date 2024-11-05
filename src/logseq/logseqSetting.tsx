@@ -9,8 +9,8 @@ import FlightTicket2 from '@/components/feat/flightTicket2';
 import TrainTicket from '@/components/feat/trainTicket';
 import FlexibleLayout from '@/components/feat/flexibleLayout';
 import FoodCard from '@/components/feat/foodCard';
-import BookCard from '@/components/feat/bookCard2';
-import RatingCard from '@/components/feat/ratingCard2';
+import BookCard from '@/components/feat/bookCardEdit';
+import RatingCard from '@/components/feat/ratingCardEdit';
 import FlipCountDown from '@/components/feat/timeCountdown';
 import PageCard from '@/components/feat/pageCard';
 
@@ -382,8 +382,8 @@ export const initLspSettingsSchema = async (lang?: string,) => {
                     color='dark'
                 />) + '</br>' +
                 renderExample('command:\\food-card', <FoodCard
-                    foodName="金悦轩"
-                    specialDishes="鲜虾泡饭和水晶虾饺"
+                    title="金悦轩"
+                    description="鲜虾泡饭和水晶虾饺"
                     location="珠海"
                     avgCost={180}
                     category="粤菜"
