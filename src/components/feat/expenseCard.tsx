@@ -11,20 +11,28 @@ export const getdefaultExpenseCardProps = () => {
         time: "HH:mm",
         location: "string",
         category: "string",
+        cover: "string",
+        source: "string",
+        display: "top-image",
         editable: true,
-
     }
     return defaultProps
 }
 
 export type ExpenseCardProps = {
-    title?: string;
-    amount?: string;
-    time?: string;
-    location?: string;
-    category?: string;
+    title?: string
+    amount?: string
+    time?: string
+    location?: string
+    category?: string
     color?: string
-    editable?: boolean,
+    cover?: string
+    source?: string
+    description?: string
+    platform?: string
+    tags?: string
+    display?: 'left-image' | 'right-image' | 'top-image' | 'bottom-image' | 'overlay'
+    editable?: boolean
     onUpdate?: (updatedData: Partial<ExpenseCardProps>) => void
 }
 

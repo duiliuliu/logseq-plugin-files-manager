@@ -43,11 +43,7 @@ export default function FlightTicket({
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setTempData(prev => ({ ...prev, cover: reader.result as string }))
-            }
-            reader.readAsDataURL(file)
+            setTempData(prev => ({ ...prev, cover: file.name }))
         }
     }
 
