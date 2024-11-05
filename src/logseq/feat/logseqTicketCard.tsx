@@ -389,6 +389,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             source={blockE?.properties?.source}
             completed={blockE?.properties?.completed}
             time={blockE?.properties?.time}
+            editable={blockE?.properties?.editable}
             updateRating={(newRating: number) => { blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, 'rating', newRating) }}
             updateReview={(newReview: string) => { blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, 'review', newReview) }}
             updateSource={(newSource: string) => { blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, 'source', newSource) }}
