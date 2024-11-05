@@ -1,7 +1,15 @@
+const regexWithoutPrifix = /^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+
+function isHexColorCodeWithoutPrefix(color: string) {
+    return regexWithoutPrifix.test(color);
+}
 
 export const getColorBg = (color?: string): string => {
     if (!color || color?.trim() === '') {
         return ''
+    }
+    if (isHexColorCodeWithoutPrefix(color)) {
+        return `bg-[#${color}]`
     }
     return colorBgMap[color] || `bg-[${color}]`
 }
@@ -9,6 +17,9 @@ export const getColorBg = (color?: string): string => {
 export const getColor = (color?: string): string | undefined => {
     if (!color || color?.trim() === '') {
         return
+    }
+    if (isHexColorCodeWithoutPrefix(color)) {
+        return `#${color}`
     }
     return colorMap[color] || color
 }
@@ -32,6 +43,26 @@ export const colorBgMap: { [K: string]: string } = {
     maroon: 'bg-[#f6e8f6]',
     silver: 'bg-[#e8e8f6]',
     gold: 'bg-[#f6e8b8]',
+    white: 'bg-[#ffffff]',
+    black: 'bg-[#000000]',
+    skyblue: 'bg-[#e6f7ff]',
+    deepblue: 'bg-[#001529]',
+    indigo: 'bg-[#4b79cf]',
+    violet: 'bg-[#b083fc]',
+    plum: 'bg-[#de6ebd]',
+    rose: 'bg-[#f7a1a1]',
+    peach: 'bg-[#fbb8b8]',
+    mint: 'bg-[#d1f2eb]',
+    jade: 'bg-[#b5e8b9]',
+    forest: 'bg-[#6ca57c]',
+    grass: 'bg-[#a3d69c]',
+    sand: 'bg-[#f5e7d8]',
+    beige: 'bg-[#f6e6d8]',
+    cream: 'bg-[#f7f3e3]',
+    crimson: 'bg-[#d91b1b]',
+    scarlet: 'bg-[#d94e1b]',
+    rust: 'bg-[#bd5d38]',
+    bronze: 'bg-[#c07a4d]',
 };
 
 export const colorMap: { [K: string]: string } = {
@@ -53,4 +84,24 @@ export const colorMap: { [K: string]: string } = {
     maroon: '#f6e8f6',
     silver: '#e8e8f6',
     gold: '#f6e8b8',
+    white: '#ffffff',
+    black: '#000000',
+    skyblue: '#e6f7ff',
+    deepblue: '#001529',
+    indigo: '#4b79cf',
+    violet: '#b083fc',
+    plum: '#de6ebd',
+    rose: '#f7a1a1',
+    peach: '#fbb8b8',
+    mint: '#d1f2eb',
+    jade: '#b5e8b9',
+    forest: '#6ca57c',
+    grass: '#a3d69c',
+    sand: '#f5e7d8',
+    beige: '#f6e6d8',
+    cream: '#f7f3e3',
+    crimson: '#d91b1b',
+    scarlet: '#d94e1b',
+    rust: '#bd5d38',
+    bronze: '#c07a4d',
 };

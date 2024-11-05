@@ -10,7 +10,9 @@ export const getdefaultExpenseCardProps = () => {
         amount: "0",
         time: "HH:mm",
         location: "string",
-        category: "string"
+        category: "string",
+        editable: true,
+
     }
     return defaultProps
 }
@@ -21,7 +23,9 @@ export type ExpenseCardProps = {
     time?: string;
     location?: string;
     category?: string;
-    color?: 'green' | 'blue' | 'pink' | 'yellow' | ''
+    color?: string
+    editable?: boolean,
+    onUpdate?: (updatedData: Partial<ExpenseCardProps>) => void
 }
 
 const ExpenseCard = function Component({

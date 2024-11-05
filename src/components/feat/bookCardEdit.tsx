@@ -4,28 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Book, Tag, Link as LinkIcon, ChevronDown, ChevronUp, Clock, Edit } from "lucide-react";
-import Image from "next/image";
+;
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { getColor, getColorBg } from './color';
-
-export interface BookCardProps {
-    cover?: string;
-    title?: string;
-    description?: string;
-    author?: string;
-    categories?: string;
-    tags?: string;
-    completed?: string;
-    time?: string;
-    readlater?: string;
-    recommendation?: string;
-    source?: string;
-    color?: string;
-    onUpdate?: (updatedData: Partial<BookCardProps>) => void;
-}
+import { BookCardProps } from './bookCard';
 
 export default function BookCard({
     cover = "https://www.ibs.it/images/9788804739036_0_536_0_75.jpg",
@@ -40,6 +25,7 @@ export default function BookCard({
     recommendation,
     source,
     color,
+    editable = true,
     onUpdate
 }: BookCardProps) {
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
@@ -106,24 +92,61 @@ export default function BookCard({
         });
     };
 
+    const handleDoubleClick = () => {
+        setIsEditing(true)
+    }
+
+
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0]
+        if (file) {
+            const reader = new FileReader()
+            reader.onloadend = () => {
+                setTempData(prev => ({ ...prev, cover: reader.result as string }))
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+
+    const [isUrlInput, setIsUrlInput] = useState(true)
+    const fileInputRef = useRef<HTMLInputElement>(null)
+    const toggleCoverInputType = () => {
+        setIsUrlInput(!isUrlInput)
+    }
+
     const categoryList = categories.split(',').map(cat => cat.trim());
     const tagList = tags.split(',').map(tag => tag.trim());
 
     if (isFullEditing) {
         return (
-            <Card className={`w-full max-w-md mx-auto overflow-hidden ${getColorBg(color)}`} style={{ backgroundColor: getColor(color) }}>
+            <Card className={`w-full max-w-md mx-auto overflow-hidden ${getColorBg(color)}`} style={{  backgroundColor: getColor(color) }} onDoubleClick={handleDoubleClick}>
                 <CardContent className="p-4">
                     <form className="space-y-4">
                         <div className="flex flex-col space-y-2">
                             <div className="flex items-center justify-between">
                                 <label htmlFor="cover" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Cover URL</label>
-                                <Input
-                                    id="cover"
-                                    name="cover"
-                                    value={tempData.cover}
-                                    onChange={handleInputChange}
-                                    className="w-full"
-                                />
+                                <div className="flex items-center space-x-2">
+                                    {isUrlInput ? (
+                                        <Input
+                                            id="cover"
+                                            name="cover"
+                                            value={tempData.cover}
+                                            onChange={handleInputChange}
+                                            className="w-full"
+                                        />
+                                    ) : (
+                                        <Input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            ref={fileInputRef}
+                                            className="w-full"
+                                        />
+                                    )}
+                                    <Button type="button" onClick={toggleCoverInputType}>
+                                        {isUrlInput ? 'Use File' : 'Use URL'}
+                                    </Button>
+                                </div>
                             </div>
                             <div className="flex items-center justify-between">
                                 <label htmlFor="title" className="block text-xs font-medium text-gray-700 whitespace-nowrap" style={{ minWidth: '100px' }}>Title</label>
@@ -249,25 +272,16 @@ export default function BookCard({
                 <div className="flex p-4">
                     {cover && (
                         <div className="relative w-20 h-20 mr-4 flex-shrink-0">
-                            {cover.startsWith('http')
-                                ? <img src={cover} alt={`${title} cover`} className="w-full h-full object-cover" />
-                                : <Image
-                                    src={cover
-                                    }
-                                    alt={`${title} cover`}
-                                    layout="fill"
-                                    objectFit="cover"
-                                />
-                            }
+                           <img src={cover} alt={`${title} cover`} className="w-full h-full object-cover" />
                         </div>
                     )}
                     <div className="flex flex-col justify-between flex-grow">
                         <CardHeader className="p-0">
                             <div className="flex justify-between items-start">
                                 <CardTitle className="text-lg font-semibold">{title}</CardTitle>
-                                <Button variant="ghost" size="icon" onClick={handleFullEdit} className="text-gray-400 hover:text-gray-600">
+                                {editable && <Button variant="ghost" size="icon" onClick={handleFullEdit} className="text-gray-400 hover:text-gray-600">
                                     <Edit className="h-4 w-4" />
-                                </Button>
+                                </Button>}
                             </div>
                             {description && (
                                 <div className="relative">

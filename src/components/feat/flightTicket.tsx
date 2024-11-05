@@ -38,7 +38,10 @@ export interface FlightTicketProps {
     status?: string
     seatInfo?: string
     mealInfo?: string
-    color?: 'green' | 'blue' | 'pink' | 'yellow' | 'dark' | 'white'
+    color?: string
+    cover?: string
+    editable?: boolean
+    onUpdate?: (updatedData: Partial<FlightTicketProps>) => void
 }
 
 const FlightTicket = function Component({

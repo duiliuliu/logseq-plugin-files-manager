@@ -1,5 +1,7 @@
 import React from 'react'
 import { Card, CardContent } from "@/components/ui/card"
+import FlexibleCombinedCard from './flexCombineCard'
+import { logger } from '@/utils/logger'
 
 export const getdefaultFlexibleLayoutProps = () => {
     const defaultFlexibleLayoutProps: FlexibleLayoutProps = {
@@ -12,7 +14,7 @@ export const getdefaultFlexibleLayoutProps = () => {
 }
 
 export interface FlexibleLayoutProps {
-    text: string
+    text: string | React.ReactNode
     media: React.ReactNode
     layout: 'column' | 'row' | 'inline' | 'wrap' | 'float' | 'inlinetextbox'
     imagePosition?: 'left' | 'right'
@@ -24,21 +26,22 @@ const FlexibleLayout = function Component({
     layout = 'column',
     imagePosition = 'left'
 }: FlexibleLayoutProps) {
+    logger.debug('FlexibleLayout init', layout)
     const renderContent = () => {
         switch (layout) {
             case 'column':
                 return (
-                    <div className="flex flex-col space-y-4">
-                        <div>{media}</div>
-                        <p>{text}</p>
-                    </div>
+                    <FlexibleCombinedCard
+                        children={imagePosition ? [media, text] : [text, media,]}
+                        display='vertical'
+                    />
                 )
             case 'row':
                 return (
-                    <div className={`flex flex-col md:flex-row md:space-x-4 ${imagePosition === 'right' ? 'md:flex-row-reverse' : ''}`}>
-                        <div className="md:w-1/2">{media}</div>
-                        <p className="md:w-1/2 mt-4 md:mt-0">{text}</p>
-                    </div>
+                    <FlexibleCombinedCard
+                        children={imagePosition ? [media, text] : [text, media,]}
+                        display='horizontal'
+                    />
                 )
             case 'inline':
                 return (
