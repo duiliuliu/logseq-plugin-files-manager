@@ -30,7 +30,6 @@ const handleFileChanged = async (appConfig: AppConfig, changes: FileChanges, dir
         return { fileModified: false }
     }
 
-
     if (operation === OperationType.CONFIG_MODIFIED) return { configUpdated: true };
     if (operation === OperationType.CREATE) {
         addLogseqDefaultPageProps(appConfig, alias)

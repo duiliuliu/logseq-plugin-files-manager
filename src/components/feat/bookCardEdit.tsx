@@ -96,15 +96,10 @@ export default function BookCard({
         setIsEditing(true)
     }
 
-
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (file) {
-            const reader = new FileReader()
-            reader.onloadend = () => {
-                setTempData(prev => ({ ...prev, cover: reader.result as string }))
-            }
-            reader.readAsDataURL(file)
+            setTempData(prev => ({ ...prev, cover: file.name }))
         }
     }
 
@@ -119,7 +114,7 @@ export default function BookCard({
 
     if (isFullEditing) {
         return (
-            <Card className={`w-full max-w-md mx-auto overflow-hidden ${getColorBg(color)}`} style={{  backgroundColor: getColor(color) }} onDoubleClick={handleDoubleClick}>
+            <Card className={`w-full max-w-md mx-auto overflow-hidden ${getColorBg(color)}`} style={{ backgroundColor: getColor(color) }} onDoubleClick={handleDoubleClick}>
                 <CardContent className="p-4">
                     <form className="space-y-4">
                         <div className="flex flex-col space-y-2">
@@ -272,7 +267,7 @@ export default function BookCard({
                 <div className="flex p-4">
                     {cover && (
                         <div className="relative w-20 h-20 mr-4 flex-shrink-0">
-                           <img src={cover} alt={`${title} cover`} className="w-full h-full object-cover" />
+                            <img src={cover} alt={`${title} cover`} className="w-full h-full object-cover" />
                         </div>
                     )}
                     <div className="flex flex-col justify-between flex-grow">

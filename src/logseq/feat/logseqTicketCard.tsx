@@ -56,8 +56,6 @@ const tryGetBlockOtrherElement = (version: string, cardType: string, blockE: Blo
         return blockE?.content.replace(/{{renderer .*}}/g, '').replace(/\w+::.*/g, '') || ''
     }
     if (version === ' v2') {
-
-
         const blockUid = blockE.uuid
         const blockClone = parent?.document?.getElementById(`block-content-${blockUid}`)?.cloneNode(true) as HTMLDivElement
         // 删除指定的子节点
@@ -128,23 +126,23 @@ const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc,
             return acc;
         }, {});
         logger.debug('onMacroRendererSlotted-params', params)
-
         let blockE: BlockEntity | null
         let pageInfo: PageInfo = await getPageInfo(params.page);
-        let wrapElementFunc = elementFunc
         if (params.block) { blockE = (await logseq.Editor.getBlock(params.block.replace('((', '').replace('))', ''))) } else { blockE = (await logseq.Editor.getBlock(uuid)) }
-        if (params.display) {
-            wrapElementFunc = (blockE?: BlockEntity, pageinfo?: PageInfo) => <FlexibleLayout
-                text={blockE && tryGetBlockOtrherElement('v1', cardType, blockE, hiddenBlockCardProps)}
-                media={elementFunc(blockE, pageinfo)}
-                layout={(params.display as 'column' | 'row' | 'inline' | 'wrap' | 'float' | 'inlinetextbox')}
-                imagePosition={params.position && params.position === 'right' ? 'right' : 'left'}
-            />
-        }
         let mydiv
         switch (renderType) {
             case 'reactive':
                 logger.debug('registeAndRenderMicroDom-onMacroRendererSlotted-reactive')
+                let wrapElementFunc = elementFunc
+                if (params.display) {
+                    wrapElementFunc = (blockE?: BlockEntity, pageinfo?: PageInfo) => <FlexibleLayout
+                        text={blockE && tryGetBlockOtrherElement('v1', cardType, blockE, hiddenBlockCardProps)}
+                        media={elementFunc(blockE, pageinfo)}
+                        layout={(params.display as 'column' | 'row' | 'inline' | 'wrap' | 'float' | 'inlinetextbox')}
+                        imagePosition={params.position && params.position === 'right' ? 'right' : 'left'}
+                    />
+                }
+
                 logseq.provideUI({ key: id, slot, reset: false, template: `<div id='${id}'></div>`, })
                 mydiv = await tryGetElement(id, 5)
                 // mydiv && ReactDOMCli.createRoot(mydiv!).render(wrapElementFunc(blockE || undefined, pageE || undefined))
@@ -152,9 +150,9 @@ const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc,
                 // showCardUI()
                 break
             case 'native':
-                logger.debug('registeAndRenderMicroDom-onMacroRendererSlotted-reactive')
+                logger.debug('registeAndRenderMicroDom-onMacroRendererSlotted-native')
                 mydiv = document.createElement('div');
-                mydiv && ReactDOM.render(wrapElementFunc(blockE || undefined, pageInfo || undefined), mydiv);
+                mydiv && ReactDOM.render(elementFunc(blockE || undefined, pageInfo || undefined), mydiv);
                 logseq.provideUI({ key: id, slot, reset: false, template: mydiv.innerHTML, })
                 break
         }
@@ -212,7 +210,9 @@ const formatLink = (input?: string, graph?: string) => {
     // 检查是否为本地链接
     else if (ASSETS_PATH_REGEX.test(input)) {
         return (graph?.replace(GRAPH_PREFIX, '') || '') + '/assets' + input.match(ASSETS_PATH_REGEX)?.[2];
-    } else if (input.includes('.')) {
+    }
+    // 检查是否为本地链接
+    else if (input.includes('.')) {
         return (graph?.replace(GRAPH_PREFIX, '') || '') + '/assets/' + input;
     }
     // 如果不匹配任何已知格式，返回原字符串
@@ -221,7 +221,6 @@ const formatLink = (input?: string, graph?: string) => {
 
 const updateBlockProps = <T extends { [K: string]: any }>(blockE: BlockEntity, data: Partial<T>) => {
     if (!blockE) return; // 如果 blockE 不存在，直接返回
-
     Object.entries(data).forEach(([key, value]) => {
         if (typeof value === 'function') return; // 如果 value 是函数，跳过
         if (value !== undefined && value !== null) { // 只有当 value 存在且不是 null 时才更新
@@ -236,16 +235,14 @@ const updateBlockProps = <T extends { [K: string]: any }>(blockE: BlockEntity, d
     });
 };
 
-
 export const initTicketFeat = (appConfig?: AppConfig) => {
-    logger.debug('initTicketFeat')
+    logger.debug('initTicketFeat', appConfig)
     if (!appConfig) {
         appConfig = getGloableUserConfigs()
     }
     const dateFormat = appConfig?.preferredDateFormat || 'yyyy-MM-dd'
     const hiddenBlockCardProps = appConfig?.pluginSettings?.hiddenTicketCardProperties
     const graph = appConfig?.currentGraph
-    logger.debug('hiddenBlockCardProperties', hiddenBlockCardProps)
 
     registeAndRenderMicroDom({
         cardType: 'train-ticket',
@@ -267,7 +264,6 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
         defaultPropsFunc: () => { return getdefaultTrainTicketProps(dateFormat) },
         renderType: 'reactive'
     })
-
 
     registeAndRenderMicroDom({
         cardType: 'flight-ticket',
@@ -293,7 +289,6 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
         defaultPropsFunc: () => { return getdefaultFilghtTicketProps(dateFormat) },
         renderType: 'reactive'
     })
-
 
     registeAndRenderMicroDom({
         cardType: 'flight-ticket2',
@@ -328,8 +323,14 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             amount={blockE?.properties?.amount || (blockE?.properties?.expense && ('-' + blockE?.properties?.expense)) || (blockE?.properties?.income && ('+' + blockE?.properties?.income))}
             time={blockE?.properties?.time}
             location={blockE?.properties?.location || blockE?.properties?.ip}
-            category={blockE?.properties?.category}
+            category={blockE?.properties?.category || blockE?.properties?.categories}
             color={blockE?.properties?.color}
+            cover={formatLink(blockE?.properties?.cover, graph)}
+            source={blockE?.properties?.source}
+            description={blockE?.properties?.description}
+            platform={blockE?.properties?.platform}
+            tags={blockE?.properties?.tags || blockE?.properties?.tag}
+            display={blockE?.properties?.display}
             editable={blockE?.properties?.editable}
             onUpdate={(data: Partial<ExpenseCardProps>) => { blockE && updateBlockProps(blockE, data) }}
         />,
@@ -363,7 +364,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             title={blockE?.properties?.title}
             description={blockE?.properties?.description}
             author={blockE?.properties?.author}
-            categories={blockE?.properties?.category || blockE?.properties?.categorys}
+            categories={blockE?.properties?.category || blockE?.properties?.categories}
             tags={blockE?.properties?.tag || blockE?.properties?.tags}
             source={blockE?.properties?.source}
             cover={formatLink(blockE?.properties?.cover, graph)}
@@ -477,7 +478,6 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
         renderType: 'reactive',
         pramTemps: ["page:*"]
     })
-
 
     registeAndRenderMicroDom({
         cardType: 'itinerary-card',
