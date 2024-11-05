@@ -389,6 +389,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             source={blockE?.properties?.source}
             completed={blockE?.properties?.completed}
             time={blockE?.properties?.time}
+            editable={blockE?.properties?.editable}
             updateRating={(newRating: number) => { blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, 'rating', newRating) }}
             updateReview={(newReview: string) => { blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, 'review', newReview) }}
             updateSource={(newSource: string) => { blockE && logseq.Editor.upsertBlockProperty(blockE.uuid, 'source', newSource) }}
@@ -439,14 +440,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
                 properties={newProps}
                 createdTime={pageE?.properties?.createdtime || pageE?.createdAt?.toString()}
                 updatedTime={pageE?.properties?.updatedtime || pageE?.updatedAt?.toString()}
-                onSummaryUpdate={
-                    (newSummary: string) => {
-                        console.log(newSummary)
-                        if (pageE) {
-                            logseq.Editor.upsertBlockProperty(pageE.uuid, 'summary', newSummary)
-                        }
-                    }
-                }
+                onSummaryUpdate={(newSummary: string) => { pageE && logseq.Editor.upsertBlockProperty(pageE.uuid, 'summary', newSummary) }}
                 todoList={pageInfo?.todoList}
                 onTodoUpdate={(updatedTodo: TodoItem) => {
                     logseq.Editor.updateBlock(updatedTodo.id, updatedTodo.text.replace(updatedTodo.maker, 'DONE'))
@@ -476,14 +470,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
                 properties={newProps}
                 createdTime={pageE?.properties?.createdtime || pageE?.createdAt?.toString()}
                 updatedTime={pageE?.properties?.updatedtime || pageE?.updatedAt?.toString()}
-                onSummaryUpdate={
-                    (newSummary: string) => {
-                        console.log('update page summary:' + newSummary)
-                        if (pageE) {
-                            logseq.Editor.upsertBlockProperty(pageE.uuid, 'summary', newSummary)
-                        }
-                    }
-                }
+                onSummaryUpdate={(newSummary: string) => { pageE && logseq.Editor.upsertBlockProperty(pageE.uuid, 'summary', newSummary) }}
                 color={blockE?.properties?.color}
                 size={'0'} />
         },
