@@ -98,12 +98,7 @@ const DEFAULT_SETTINGS = {
 const renderExample = (command: string, component: React.ReactNode) => {
     let mydiv = document.createElement('div');
     ReactDOM.render(
-        <FlexibleLayout
-            text={command}
-            media={component}
-            layout="inline"
-            imagePosition="right"
-        />,
+        <FlexibleLayout mainElement={component} children={[command]} />,
         mydiv
     );
     return mydiv.innerHTML

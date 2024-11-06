@@ -32,6 +32,7 @@ export type ExpenseCardProps = {
     platform?: string
     tags?: string
     display?: 'left-image' | 'right-image' | 'top-image' | 'bottom-image' | 'overlay'
+    icon?: string
     editable?: boolean
     onUpdate?: (updatedData: Partial<ExpenseCardProps>) => void
 }
