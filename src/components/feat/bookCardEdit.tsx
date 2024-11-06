@@ -127,8 +127,8 @@ export default function BookCard({
         setIsUrlInput(!isUrlInput)
     }
 
-    const categoryList = categories.split(',').map(cat => cat.trim())
-    const tagList = tags.split(',').map(tag => tag.trim())
+    const categoryList = Array.isArray(categories) ? categories : categories.trim().split(',').map(cat => cat.trim())
+    const tagList = Array.isArray(tags) ? tags : tags.trim().split(',').map(tag => tag.trim())
 
     if (isFullEditing) {
         return (

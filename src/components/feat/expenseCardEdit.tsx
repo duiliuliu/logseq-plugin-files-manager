@@ -10,6 +10,7 @@ import { format } from "date-fns"
 import { MapPin, Clock, DollarSign, Edit, ChevronDown, ChevronUp, Link, ShoppingCart } from "lucide-react"
 import { getColor, getColorBg } from "./color"
 import { ExpenseCardProps } from './expenseCard'
+import { logger } from '@/utils/logger'
 
 export default function ExpenseCard({
     title = '',
@@ -28,6 +29,8 @@ export default function ExpenseCard({
     editable = true,
     onUpdate
 }: ExpenseCardProps) {
+    logger.debug("init ExpenseCard", tags)
+
     const [isEditing, setIsEditing] = useState(false)
     const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
     const [tempData, setTempData] = useState({ title, amount, time, location, category, color, cover, source, description, platform, tags, display, icon })
@@ -337,8 +340,8 @@ export default function ExpenseCard({
         )
     }
 
-    const categoryTags = category.trim().split(',').map(cat => cat.trim())
-    const tagList = tags.trim().split(',').map(tag => tag.trim())
+    const categoryTags = Array.isArray(category) ? category : category.trim().split(',').map(cat => cat.trim())
+    const tagList = Array.isArray(tags) ? tags : tags.trim().split(',').map(tag => tag.trim())
 
     return (
         <Card
