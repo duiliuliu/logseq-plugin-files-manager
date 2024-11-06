@@ -51,11 +51,6 @@ export default function PageCardPro({
         setIsEditing(false)
     }
 
-    const handleTimeInfoClick = () => {
-        setShowTimeInfo(true)
-        setTimeout(() => setShowTimeInfo(false), 3000)
-    }
-
     const handleTodoToggle = (todo: TodoItem) => {
         if (onTodoUpdate) {
             onTodoUpdate({ ...todo, completed: !todo.completed })
@@ -189,7 +184,7 @@ export default function PageCardPro({
             <CardFooter className="flex items-center p-3">
                 <div className="flex items-center space-x-2">
                     <div className="relative">
-                        <Button variant="ghost" size="sm" onClick={handleTimeInfoClick}>
+                        <Button variant="ghost" size="sm" onMouseEnter={() => setShowTimeInfo(true)} onMouseLeave={() => setShowTimeInfo(false)}>
                             <Clock className="w-4 h-4" />
                         </Button>
                         {showTimeInfo && (

@@ -1,9 +1,7 @@
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Card } from "@/components/ui/card"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { getColor } from "./color"
-
 
 export const countDownStyles = `
 
@@ -152,6 +150,22 @@ const FlipCountDown = function Component({
   const [isFinished, setIsFinished] = useState(false)
   const targetTime = getTargetTime(targetDate)
 
+  // 1. Add state and ref for tooltip
+  const [showTooltip, setShowTooltip] = useState(false)
+  const tooltipRef = useRef<HTMLDivElement>(null)
+
+  // 2. Add click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
+        setShowTooltip(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   useEffect(() => {
     const calculateTimeLeft = () => {
       const difference = targetTime - new Date().getTime()
@@ -197,24 +211,25 @@ const FlipCountDown = function Component({
   }
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="flex items-center space-x-2">
-            <FlipCard value={timeLeft.days} label="天" />
-            <span className="text-2xl font-bold mt-[-1rem]">:</span>
-            <FlipCard value={timeLeft.hours} label="时" />
-            <span className="text-2xl font-bold mt-[-1rem]">:</span>
-            <FlipCard value={timeLeft.minutes} label="分" />
-            <span className="text-2xl font-bold mt-[-1rem]">:</span>
-            <FlipCard value={timeLeft.seconds} label="秒" />
+    <>
+      <div className="flex items-center space-x-2" onMouseEnter={() => setShowTooltip(true)} onMouseLeave={() => setShowTooltip(false)}>
+        <FlipCard value={timeLeft.days} label="天" />
+        <span className="text-2xl font-bold mt-[-1rem]">:</span>
+        <FlipCard value={timeLeft.hours} label="时" />
+        <span className="text-2xl font-bold mt-[-1rem]">:</span>
+        <FlipCard value={timeLeft.minutes} label="分" />
+        <span className="text-2xl font-bold mt-[-1rem]">:</span>
+        <FlipCard value={timeLeft.seconds} label="秒" />
+      </div>
+      <div className="relative" ref={tooltipRef}>
+        {showTooltip && (
+          <div className="absolute w-auto min-w-max bottom-full top-0 mb-2 p-2 bg-white shadow-md rounded text-xs z-50 whitespace-nowrap">
+            <p>{message}</p>
           </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{message}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+        )}
+      </div>
+    </>
+
   )
 }
 

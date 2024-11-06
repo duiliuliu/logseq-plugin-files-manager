@@ -12,7 +12,7 @@ import { propertiesToStr } from "./logseqDefaultPageProps"
 import { BlockEntity, PageEntity } from "@logseq/libs/dist/LSPlugin"
 import { sleep } from "../logseqCommonProxy"
 import React from "react"
-import FlexibleLayout from "@/components/feat/flexibleLayout"
+import FlexibleLayout, { DisplayStyle } from "@/components/feat/flexibleLayout"
 import { mockBlocks } from "@/mock/logseqBlocks"
 import { ASSETS_PATH_REGEX, GRAPH_PREFIX } from "@/data/constants"
 import { pageCardStyles, TodoItem } from "@/components/feat/pageCard"
@@ -47,6 +47,26 @@ const tryGetElement = async (id: string, times?: number): Promise<HTMLElement | 
         await sleep(20 * index + 1)
         const mydiv = parent?.document?.getElementById(id)
         if (mydiv) { return mydiv }
+    }
+    return null
+}
+
+
+const tryAppendBlock = (blockUid: string, id: string): HTMLElement | null => {
+    const block = parent?.document?.getElementById(`block-content-${blockUid}`) as HTMLDivElement
+    if (block) {
+        const mydiv = document.createElement('div')
+        mydiv.id = id
+
+        for (const child of block.childNodes) {
+            if (child.nodeType === Node.ELEMENT_NODE) { // 确保 child 是元素节点
+                const el = child as HTMLElement
+                el.className = el.className.includes('hidden') ? el.className : el.className + ' hidden '; // 设置所有子元素的 display 样式为 none
+            }
+        }
+
+        block.appendChild(mydiv)
+        return mydiv
     }
     return null
 }
@@ -134,17 +154,17 @@ const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc,
             case 'reactive':
                 logger.debug('registeAndRenderMicroDom-onMacroRendererSlotted-reactive')
                 let wrapElementFunc = elementFunc
+                let wrapId = params.display ? 'slot-' + id : id
                 if (params.display) {
                     wrapElementFunc = (blockE?: BlockEntity, pageinfo?: PageInfo) => <FlexibleLayout
-                        text={blockE && tryGetBlockOtrherElement('v1', cardType, blockE, hiddenBlockCardProps)}
-                        media={elementFunc(blockE, pageinfo)}
-                        layout={(params.display as 'column' | 'row' | 'inline' | 'wrap' | 'float' | 'inlinetextbox')}
-                        imagePosition={params.position && params.position === 'right' ? 'right' : 'left'}
+                        mainElement={elementFunc(blockE, pageinfo)}
+                        children={[(blockE && tryGetBlockOtrherElement('v1', cardType, blockE, hiddenBlockCardProps)) || '']}
+                        display={(params.display as DisplayStyle)}
+                        onTextUpdate={(index: number, text: string | null) => console.log('onTextUpdate', index, text)}
                     />
                 }
-
-                logseq.provideUI({ key: id, slot, reset: false, template: `<div id='${id}'></div>`, })
-                mydiv = await tryGetElement(id, 5)
+                logseq.provideUI({ key: wrapId, slot, reset: false, template: `<div id='${wrapId}'></div>`, })
+                mydiv = params.display ? tryAppendBlock(uuid, id) : (await tryGetElement(id, 5))
                 // mydiv && ReactDOMCli.createRoot(mydiv!).render(wrapElementFunc(blockE || undefined, pageE || undefined))
                 mydiv && ReactDOM.render(wrapElementFunc(blockE || undefined, pageInfo || undefined), mydiv);
                 // showCardUI()
@@ -319,6 +339,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
         cardType: 'expense-card',
         hiddenBlockCardProps,
         elementFunc: (blockE?: BlockEntity) => <ExpenseCard
+            icon={blockE?.properties?.icon}
             title={blockE?.properties?.title}
             amount={blockE?.properties?.amount || (blockE?.properties?.expense && ('-' + blockE?.properties?.expense)) || (blockE?.properties?.income && ('+' + blockE?.properties?.income))}
             time={blockE?.properties?.time}

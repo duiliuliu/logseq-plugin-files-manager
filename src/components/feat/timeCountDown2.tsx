@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getTargetTime } from "./timeCountdown"
+import { getColor } from "./color"
 
 export const getdefaultCountdownTimerProps = (): CountdownTimerProps => {
     return {
@@ -73,7 +74,7 @@ const CountdownTimer = function Component({
         <div className="flex flex-col items-center">
             <div
                 className={`w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center text-2xl sm:text-3xl font-bold relative overflow-hidden ${updated ? animationStyle : ''}`}
-                style={{ backgroundColor: color, color: fontColor }}
+                style={{ backgroundColor: getColor(color), color: fontColor }}
             >
                 <div className="absolute inset-0 flex items-center justify-center">
                     {String(value).padStart(2, '0')}
@@ -89,7 +90,7 @@ const CountdownTimer = function Component({
     )
 
     return (
-        <Card className="w-full max-w-md mx-auto overflow-hidden" style={{ backgroundColor: color }}>
+        <Card className="w-full max-w-md mx-auto overflow-hidden" style={{ backgroundColor: getColor(color) }}>
             <CardHeader>
                 <CardTitle className="text-center text-gray-300">{message}</CardTitle>
             </CardHeader>

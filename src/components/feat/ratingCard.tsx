@@ -12,7 +12,7 @@ export const getdefaultRatingCardProps = () => {
         source: "https://example.com/review",
         completed: "2023-12-18",
         time: "12:35",
-        editable:false
+        editable: false
     }
     return defaultRatingCardProps
 }
@@ -24,10 +24,10 @@ export interface RatingCardProps {
     source?: string
     completed?: string
     time?: string
+    updateRating?: (rating: number) => void
+    updateReview?: (review: string) => void
+    updateSource?: (source: string) => void
     editable?: boolean
-    updateRating?: (newRating: number) => void
-    updateReview?: (newReview: string) => void
-    updateSource?: (newSource: string) => void
     updateAll?: (data: { rating: number; review: string; source: string; completed: string; time: string }) => void
 }
 

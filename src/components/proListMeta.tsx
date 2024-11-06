@@ -368,7 +368,9 @@ const renderListDescription = ({ record, userConfig }: MetaRenderProps) => (
  * @param {MetaRenderProps} props - 包含 record 的属性
  */
 const renderListAvatar = ({ record }: MetaRenderProps) => (
-    <div className='list-avatar' >{record.icon ? record.icon : record.extName ? record.extName.toUpperCase() : '🕰'}</div>
+    record.icon
+        ? <div className='list-avatar' dangerouslySetInnerHTML={{ __html: record.icon }} ></div>
+        : <div className='list-avatar' >{record.extName ? record.extName.toUpperCase() : '🕰'}</div>
 );
 
 /**
