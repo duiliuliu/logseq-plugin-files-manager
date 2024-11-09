@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronDown, ChevronUp, Clock, RefreshCw, HardDrive, FileIcon, Link, ArrowRight, ArrowLeft } from "lucide-react"
-import { getColor } from './color'
+import { getColor } from '../customs/color'
 import { format } from 'date-fns'
 import { PageCardProps, TodoItem } from './pageCard'
 

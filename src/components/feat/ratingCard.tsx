@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Star, Info, ExternalLink } from "lucide-react"
 import Link from "next/link"
-import { getColor } from "./color"
+import { getColor } from "../customs/color"
 
 export const getdefaultRatingCardProps = () => {
     const defaultRatingCardProps: RatingCardProps = {

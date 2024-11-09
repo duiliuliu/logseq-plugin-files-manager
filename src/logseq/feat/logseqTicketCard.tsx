@@ -1,5 +1,3 @@
-import { BookCardProps, getdefaultBookCardProps } from "@/components/feat/bookCard"
-import { FoodCardProps, getdefaultFoodCardProps } from "@/components/feat/foodCard"
 import { getdefaultRatingCardProps } from "@/components/feat/ratingCard"
 import FlipCountDown, { countDownStyles, getdefaultFlipCountDownProps } from "@/components/feat/timeCountdown"
 import CountdownTimer, { getdefaultCountdownTimerProps } from "@/components/feat/timeCountDown2"
@@ -7,30 +5,29 @@ import { AppConfig } from "@/data/types"
 import { logger } from "@/utils/logger"
 import { getDay, parse } from "date-fns"
 import ReactDOM from "react-dom"
-import { getGloableUserConfigs } from "../useUserConfigs"
 import { propertiesToStr } from "./logseqDefaultPageProps"
 import { BlockEntity, PageEntity } from "@logseq/libs/dist/LSPlugin"
 import { sleep } from "../logseqCommonProxy"
 import React from "react"
-import FlexibleLayout, { DisplayStyle } from "@/components/feat/flexibleLayout"
+import FlexibleLayout, { DisplayStyle } from "@/components/customs/flexibleLayout"
 import { mockBlocks } from "@/mock/logseqBlocks"
 import { ASSETS_PATH_REGEX, GRAPH_PREFIX } from "@/data/constants"
 import { pageCardStyles, TodoItem } from "@/components/feat/pageCard"
 import PageCard2 from "@/components/feat/pageCard2"
 import Itinerary, { getdefaultItineraryProps } from "@/components/feat/itinerary"
 import RatingCard2 from "@/components/feat/ratingCardEdit"
-import BookCard2 from "@/components/feat/bookCardEdit"
-import ExpenseCard from "@/components/feat/expenseCardEdit"
-import { ExpenseCardProps, getdefaultExpenseCardProps } from "@/components/feat/expenseCard"
+import BookCard2, { BookCardProps, getdefaultBookCardProps } from "@/components/feat/bookCardEdit"
+import ExpenseCard, { getdefaultExpenseCardProps } from "@/components/feat/expenseCardEdit"
 import TrainTicket from "@/components/feat/trainTicketEdit"
 import { getdefaultTrainTicketProps, TrainTicketProps } from "@/components/feat/trainTicket"
 import FlightTicket from "@/components/feat/flightticketEdit"
 import { FlightTicketProps, getdefaultFilghtTicketProps } from "@/components/feat/flightTicket"
 import FlightTicket2 from "@/components/feat/flightTicketEdit2"
-import FoodCard from "@/components/feat/foodCardEditor"
 import MovieCard, { getdefaultMovieCardProps, MovieCardProps } from "@/components/feat/movieCard"
 import PageCardPro from "@/components/feat/pageCardPro"
 import { getPageTodos2 } from "./logseqGetTODOs"
+import FoodCard, { getdefaultFoodCardProps } from "@/components/feat/foodCardEdit"
+import { CardProps } from "antd"
 
 const hiddenBlockCardProp = (blockUid: string) => {
     logger.debug('hiddenBlockCardProp', blockUid)
@@ -246,6 +243,7 @@ const updateBlockProps = <T extends { [K: string]: any }>(blockE: BlockEntity, d
         if (value !== undefined && value !== null) { // 只有当 value 存在且不是 null 时才更新
             switch (key) {
                 case 'color':
+                    logger.debug('updateBlockProps color', key, value.replace('#', ''))
                     logseq.Editor.upsertBlockProperty(blockE.uuid, key, value.replace('#', ''));
                     break;
                 default:
@@ -255,10 +253,18 @@ const updateBlockProps = <T extends { [K: string]: any }>(blockE: BlockEntity, d
     });
 };
 
+const editBlock = (blockE?: BlockEntity) => {
+    blockE && logseq.Editor.editBlock(blockE?.uuid)
+}
+
+const appendNextBlock = (blockE?: BlockEntity) => {
+    blockE && logseq.Editor.insertBlock(blockE?.uuid, '')
+}
+
 export const initTicketFeat = (appConfig?: AppConfig) => {
     logger.debug('initTicketFeat', appConfig)
     if (!appConfig) {
-        appConfig = getGloableUserConfigs()
+        return
     }
     const dateFormat = appConfig?.preferredDateFormat || 'yyyy-MM-dd'
     const hiddenBlockCardProps = appConfig?.pluginSettings?.hiddenTicketCardProperties
@@ -351,9 +357,11 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             description={blockE?.properties?.description}
             platform={blockE?.properties?.platform}
             tags={blockE?.properties?.tags || blockE?.properties?.tag}
-            display={blockE?.properties?.display}
+            imageposition={blockE?.properties?.display || blockE?.properties?.imageposition}
             editable={blockE?.properties?.editable}
-            onUpdate={(data: Partial<ExpenseCardProps>) => { blockE && updateBlockProps(blockE, data) }}
+            onUpdate={(data: Partial<CardProps>) => { blockE && updateBlockProps(blockE, data); logger.debug('onupdate', data) }}
+            onAddBlock={() => { appendNextBlock(blockE) }}
+            onEditBlock={() => { editBlock(blockE) }}
         />,
         defaultPropsFunc: getdefaultExpenseCardProps,
         renderType: 'reactive'
@@ -366,13 +374,18 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             title={blockE?.properties?.title || blockE?.properties?.foodname}
             description={blockE?.properties?.description || blockE?.properties?.specialdishes}
             location={blockE?.properties?.location || blockE?.properties?.ip}
-            avgCost={blockE?.properties?.avgCost}
+            avgcost={blockE?.properties?.avgcost}
             category={blockE?.properties?.category}
-            recommendation={blockE?.properties?.recommendation}
+            note={blockE?.properties?.recommendation || blockE?.properties?.note}
             cover={formatLink(blockE?.properties?.cover, graph)}
             color={blockE?.properties?.color}
+            source={blockE?.properties?.source}
+            imageposition={blockE?.properties?.imageposition}
+            displaymode={blockE?.properties?.displaymode}
             editable={blockE?.properties?.editable}
-            onUpdate={(data: Partial<FoodCardProps>) => { blockE && updateBlockProps(blockE, data) }}
+            onUpdate={(data: Partial<CardProps>) => { blockE && updateBlockProps(blockE, data); logger.debug('onupdate', data) }}
+            onAddBlock={() => { appendNextBlock(blockE) }}
+            onEditBlock={() => { editBlock(blockE) }}
         />,
         defaultPropsFunc: getdefaultFoodCardProps,
         renderType: 'reactive'

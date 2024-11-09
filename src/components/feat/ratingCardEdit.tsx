@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { RatingCardProps } from './ratingCard'
-import { getColor } from './color'
+import { getColor } from '../customs/color'
 
 export default function RatingCard({
     rating: initRating = 0,
