@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react'
 import { CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Book, Link as LinkIcon, ChevronDown, ChevronUp, Info } from "lucide-react"
-import Link from "next/link"
 import { Question } from '@phosphor-icons/react'
 import Tooltip from '../customs/tooltip'
 import { renderTags } from '../customs/tags'
 import CardWithEdit from '../customs/cardWithEdit'
+import { formatSource } from './utils'
 
 export const getdefaultBookCardProps = (): BookCardProps => ({
     cover: "https://www.ibs.it/images/9788804739036_0_536_0_75.jpg",
@@ -64,7 +64,28 @@ const BookCard: React.FC<BookCardProps> = ({
                         />
                     </div>
                 )}
-                <CardTitle className="text-base font-semibold truncate flex-grow">{data.title}</CardTitle>
+                <div className="p-0 grid gap-2 mt-4">
+                    <CardTitle className="text-base font-semibold truncate flex-grow">{data.title}</CardTitle>
+                    {data.description && (
+                        <div className="relative mt-2">
+                            <p className="text-sm text-muted-foreground cursor-pointer">
+                                {isDescriptionExpanded ? data.description : truncateDescription(data.description, 100)}
+                            </p>
+                            {data.description.length > 100 && (
+                                <button
+                                    onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                                    className="text-primary text-xs mt-1 flex items-center"
+                                >
+                                    {isDescriptionExpanded ? (
+                                        <>收起 <ChevronUp className="h-3 w-3 ml-1" /></>
+                                    ) : (
+                                        <>展开 <ChevronDown className="h-3 w-3 ml-1" /></>
+                                    )}
+                                </button>
+                            )}
+                        </div>
+                    )}
+                </div>
             </div>
             : <>
                 <div className="flex p-4" onClick={() => setShowInfoTooltip(!showInfoTooltip)}>
@@ -115,9 +136,9 @@ const BookCard: React.FC<BookCardProps> = ({
                                 {data.source ? (
                                     <div className="flex items-center">
                                         <LinkIcon className="mr-2 h-4 w-4 opacity-70" />
-                                        <Link href={data.source} className="text-sm text-primary hover:underline">
+                                        <a href={formatSource(data.source)} className="text-sm text-primary hover:underline">
                                             查看资源
-                                        </Link>
+                                        </a>
                                     </div>
                                 ) : <div></div>}
                                 {(data.completed || data.time) && (

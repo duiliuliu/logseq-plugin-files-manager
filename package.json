@@ -46,7 +46,6 @@
     "markdown-it-highlightjs": "^4.2.0",
     "markdown-it-table": "^4.1.1",
     "name-styles": "^2.2.0",
-    "next": "^15.0.2",
     "qrcode.react": "^4.1.0",
     "react": "^18.2.0",
     "react-i18next": "^13.3.1",
