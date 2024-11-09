@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getTargetTime } from "./timeCountdown"
-import { getColor } from "./color"
+import { getColor } from "../customs/color"
 
 export const getdefaultCountdownTimerProps = (): CountdownTimerProps => {
     return {

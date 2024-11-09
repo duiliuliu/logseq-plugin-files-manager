@@ -7,12 +7,12 @@ import { createMetaBlockProps } from '../data/types';
 import ReactDOM from 'react-dom';
 import FlightTicket2 from '@/components/feat/flightTicket2';
 import TrainTicket from '@/components/feat/trainTicket';
-import FlexibleLayout from '@/components/feat/flexibleLayout';
-import FoodCard from '@/components/feat/foodCard';
+import FlexibleLayout from '@/components/customs/flexibleLayout';
 import BookCard from '@/components/feat/bookCardEdit';
 import RatingCard from '@/components/feat/ratingCardEdit';
 import FlipCountDown from '@/components/feat/timeCountdown';
 import PageCard from '@/components/feat/pageCard';
+import FoodCard from '@/components/feat/foodCardEdit';
 
 interface Notification {
     previousPluginVersion: string;
@@ -380,9 +380,9 @@ export const initLspSettingsSchema = async (lang?: string,) => {
                     title="金悦轩"
                     description="鲜虾泡饭和水晶虾饺"
                     location="珠海"
-                    avgCost={180}
+                    avgcost={180}
                     category="粤菜"
-                    recommendation="金悦轩的鲜虾泡饭和水晶虾饺都非常美味，推荐尝试。"
+                    note="金悦轩的鲜虾泡饭和水晶虾饺都非常美味，推荐尝试。"
                     cover="/placeholder.svg?height=200&width=400"
                 />) + '</br > ' +
                 renderExample('command:\\book-card', <BookCard

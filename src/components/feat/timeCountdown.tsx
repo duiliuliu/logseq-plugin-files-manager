@@ -1,7 +1,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Card } from "@/components/ui/card"
-import { getColor } from "./color"
+import { getColor } from "../customs/color"
 
 export const countDownStyles = `
 

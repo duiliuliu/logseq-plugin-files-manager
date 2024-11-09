@@ -2,7 +2,7 @@
 import { Plane, UtensilsCrossed } from 'lucide-react'
 import { Card } from "@/components/ui/card"
 import { format } from 'date-fns'
-import { getColor, getColorBg } from './color'
+import { getColor, getColorBg } from '../customs/color'
 
 export const getdefaultFilghtTicketProps = (dateFormat?: string) => {
     const defaultProps: FlightTicketProps = {

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Star, Clock, Calendar, Film, Edit, ChevronDown, ChevronUp } from "lucide-react"
-import { getColor, getColorBg } from "./color"
+import { getColor, getColorBg } from "../customs/color"
 
 export const getdefaultMovieCardProps = (): MovieCardProps => {
     return {

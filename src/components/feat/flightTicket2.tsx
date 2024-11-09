@@ -3,7 +3,7 @@ import { Plane, UtensilsCrossed } from 'lucide-react'
 import { Card, CardContent } from "@/components/ui/card"
 import { FlightTicketProps } from './flightTicket'
 import { format } from 'date-fns'
-import { getColor, getColorBg } from './color'
+import { getColor, getColorBg } from '../customs/color'
 
 const FlightTicket2 = function Component({
   date = format(new Date(), "yyyy-MM-dd"),
