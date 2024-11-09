@@ -2,7 +2,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Star, Clock, ExternalLink, Edit } from "lucide-react"
-import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -282,7 +281,7 @@ export default function RatingCard({
                             {source ? (
                                 <div className="flex items-center text-sm text-blue-500 hover:underline">
                                     <ExternalLink className="w-4 h-4 mr-1" />
-                                    <Link href={source}>查看来源</Link>
+                                    <a href={source}>查看来源</a>
                                 </div>
                             ) : <div></div>}
                             {(completed || time) && (

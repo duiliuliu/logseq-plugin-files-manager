@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Clock, DollarSign, Link as LinkIcon, ShoppingCart, ChevronDown, ChevronUp } from "lucide-react"
 import CardWithEdit from '../customs/cardWithEdit'
 import { format } from 'date-fns'
+import { formatSource } from './utils'
 
 export const getdefaultExpenseCardProps = () => {
     const defaultProps: ExpenseCardProps = {
@@ -92,7 +93,7 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
             </CardContent>
             <CardFooter className="flex justify-between items-center p-4">
                 {data.source && (
-                    <a href={data.source} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">
+                    <a href={formatSource(data.source)} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">
                         Source
                     </a>
                 )}

@@ -1,7 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Star, Info, ExternalLink } from "lucide-react"
-import Link from "next/link"
 import { getColor } from "../customs/color"
 
 export const getdefaultRatingCardProps = () => {
@@ -64,7 +63,7 @@ const RatingCard = function Component({
                         {source && (
                             <div className="flex items-center text-sm text-blue-500 hover:underline">
                                 <ExternalLink className="w-4 h-4 mr-1" />
-                                <Link href={source}>查看来源</Link>
+                                <a href={source}>查看来源</a>
                             </div>
                         )}
                         {(completed || time) && (

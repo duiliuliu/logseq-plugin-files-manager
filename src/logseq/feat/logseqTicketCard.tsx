@@ -16,7 +16,6 @@ import { pageCardStyles, TodoItem } from "@/components/feat/pageCard"
 import PageCard2 from "@/components/feat/pageCard2"
 import Itinerary, { getdefaultItineraryProps } from "@/components/feat/itinerary"
 import RatingCard2 from "@/components/feat/ratingCardEdit"
-import BookCard2, { BookCardProps, getdefaultBookCardProps } from "@/components/feat/bookCardEdit"
 import ExpenseCard, { getdefaultExpenseCardProps } from "@/components/feat/expenseCardEdit"
 import TrainTicket from "@/components/feat/trainTicketEdit"
 import { getdefaultTrainTicketProps, TrainTicketProps } from "@/components/feat/trainTicket"
@@ -28,6 +27,7 @@ import PageCardPro from "@/components/feat/pageCardPro"
 import { getPageTodos2 } from "./logseqGetTODOs"
 import FoodCard, { getdefaultFoodCardProps } from "@/components/feat/foodCardEdit"
 import { CardProps } from "antd"
+import BookCard, { BookCardProps, getdefaultBookCardProps } from "@/components/feat/bookCardEdit"
 
 const hiddenBlockCardProp = (blockUid: string) => {
     logger.debug('hiddenBlockCardProp', blockUid)
@@ -394,7 +394,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
     registeAndRenderMicroDom({
         cardType: 'book-card',
         hiddenBlockCardProps,
-        elementFunc: (blockE?: BlockEntity) => <BookCard2
+        elementFunc: (blockE?: BlockEntity) => <BookCard
             title={blockE?.properties?.title}
             description={blockE?.properties?.description}
             author={blockE?.properties?.author}
@@ -409,6 +409,8 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             color={blockE?.properties?.color}
             editable={blockE?.properties?.editable}
             onUpdate={(data: Partial<BookCardProps>) => { blockE && updateBlockProps(blockE, data) }}
+            onAddBlock={() => { appendNextBlock(blockE) }}
+            onEditBlock={() => { editBlock(blockE) }}
         />,
         defaultPropsFunc: getdefaultBookCardProps,
         renderType: 'reactive'

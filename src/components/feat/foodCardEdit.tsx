@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { MapPin, DollarSign, Utensils, LinkIcon } from "lucide-react"
 import CardWithEdit from '../customs/cardWithEdit'
 import { ImageDisplay } from "../customs/imageDisplay"
+import { formatSource } from "./utils"
 
 export const getdefaultFoodCardProps = () => {
     const defaultProps: FoodCardProps = {
@@ -49,7 +50,7 @@ const FoodCard: React.FC<FoodCardProps> = ({
                         <CardTitle className="text-xl font-semibold">
                             <div style={{ display: 'inline-flex', alignItems: 'center' }}>
                                 {data.title}
-                                {data.source && <a href={data.source} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">
+                                {data.source && <a href={formatSource(data.source)} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline">
                                     <LinkIcon className="ml-1 h-4 w-4 opacity-70" />
                                 </a>}
                             </div>
