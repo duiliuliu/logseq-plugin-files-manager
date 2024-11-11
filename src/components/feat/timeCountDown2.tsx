@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { getTargetTime } from "./timeCountdown"
 import { getColor } from "../customs/color"
+import { format } from "date-fns"
+import Tooltip from "../customs/tooltip"
 
 export const getdefaultCountdownTimerProps = (): CountdownTimerProps => {
     return {
@@ -35,14 +37,16 @@ const CountdownTimer = function Component({
         daysUpdated: false,
         hoursUpdated: false,
         minutesUpdated: false,
+        finished: false
     })
     const targetTime = getTargetTime(targetDate)
+    const cardRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const calculateTimeLeft = () => {
             const difference = targetTime - new Date().getTime()
             if (difference <= 0) {
-                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, daysUpdated: false, hoursUpdated: false, minutesUpdated: false })
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, daysUpdated: false, hoursUpdated: false, minutesUpdated: false, finished: true })
                 return
             }
 
@@ -60,6 +64,7 @@ const CountdownTimer = function Component({
                     daysUpdated: prev.days !== days,
                     hoursUpdated: prev.hours !== hours,
                     minutesUpdated: prev.minutes !== minutes,
+                    finished: false
                 }
             })
         }
@@ -90,9 +95,14 @@ const CountdownTimer = function Component({
     )
 
     return (
-        <Card className="w-full max-w-md mx-auto overflow-hidden" style={{ backgroundColor: getColor(color) }}>
+        <Card className="w-full max-w-md mx-auto overflow-hidden" style={{ backgroundColor: getColor(color) }} ref={cardRef}>
             <CardHeader>
-                <CardTitle className="text-center text-gray-300">{message}</CardTitle>
+                <CardTitle className="text-center text-gray-300">
+                    <Tooltip
+                        icon={message}
+                        text={format(targetTime, 'yyyy-MM-dd HH:mm:ss')}
+                        containerRef={cardRef} />
+                </CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="flex justify-center items-center space-x-2">
@@ -102,7 +112,7 @@ const CountdownTimer = function Component({
                     <span className="text-2xl font-bold mt-[-1rem]" style={{ color: fontColor }}>:</span>
                     <AnimatedNumber value={timeLeft.minutes} label="分" updated={timeLeft.minutesUpdated} />
                     <span className="text-2xl font-bold mt-[-1rem]" style={{ color: fontColor }}>:</span>
-                    <AnimatedNumber value={timeLeft.seconds} label="秒" updated={true} />
+                    <AnimatedNumber value={timeLeft.seconds} label="秒" updated={!timeLeft.finished} />
                 </div>
             </CardContent>
         </Card>

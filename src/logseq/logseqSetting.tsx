@@ -395,7 +395,7 @@ export const initLspSettingsSchema = async (lang?: string,) => {
                     completed="2023-12-18"
                     time="12:35"
                 />) + '</br > ' +
-                renderExample('command:\\book-card', <RatingCard
+                renderExample('command:\\rating-card', <RatingCard
                     rating={4.5}
                     review="这是一个很棒的产品，我非常喜欢！"
                     color="#e0f2fe"
