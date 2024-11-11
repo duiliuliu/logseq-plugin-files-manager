@@ -6,17 +6,18 @@ import { MapPin, Clock, DollarSign, Link as LinkIcon, ShoppingCart, ChevronDown,
 import CardWithEdit from '../customs/cardWithEdit'
 import { format } from 'date-fns'
 import { formatSource } from './utils'
+import { truncateDescription } from '../customs/description'
 
 export const getdefaultExpenseCardProps = () => {
     const defaultProps: ExpenseCardProps = {
         title: "expense_card_title",
         amount: "0",
-        time: "HH:mm",
-        location: "string",
-        category: "string",
-        cover: "string",
-        source: "string",
-        imageposition: "top-image",
+        time: "",
+        location: "beijing",
+        category: "",
+        cover: "",
+        source: "",
+        imageposition: "left-image",
         editable: true,
     }
     return defaultProps
@@ -164,10 +165,48 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
         </>
     )
 
+    const renderCompactMode = (data: ExpenseCardProps) => (
+        <div className="p-4">
+            <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center">
+                    {renderIcon(data.icon)}
+                    <CardTitle className="text-base font-semibold">
+                        {data.title || ''}
+                    </CardTitle>
+                </div>
+                <div className="flex items-center">
+                    <DollarSign className="mr-1 h-4 w-4 opacity-70" />
+                    <span className="font-medium">{data.amount || 0} 元</span>
+                </div>
+            </div>
+            {data.description && (
+                <div className="mt-2">
+                    <p className="text-sm text-muted-foreground">
+                        {isDescriptionExpanded ? data.description : truncateDescription(data.description, 100)}
+                    </p>
+                    {data.description.length > 100 && (
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                            className="text-xs text-primary p-0 h-6 mt-1"
+                        >
+                            {isDescriptionExpanded ? (
+                                <>收起 <ChevronUp className="h-3 w-3 ml-1" /></>
+                            ) : (
+                                <>展开 <ChevronDown className="h-3 w-3 ml-1" /></>
+                            )}
+                        </Button>
+                    )}
+                </div>
+            )}
+        </div>
+    )
+
     return (
         <CardWithEdit
             data={{ ...props, displaymode, editable, imageposition }}
-            renderContent={renderContent}
+            renderContent={(data) => data.displaymode === 'compact' ? renderCompactMode(data) : renderContent(data)}
             onUpdate={props.onUpdate}
             onEditBlock={props.onEditBlock}
             onAddBlock={props.onAddBlock}
