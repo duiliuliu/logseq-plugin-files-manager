@@ -117,13 +117,20 @@ type registeAndRenderMicroDomProps = {
     elementFunc: (blockE?: BlockEntity, pageinfo?: PageInfo) => React.ReactElement,
     defaultPropsFunc?: () => { [K: string]: any }
     renderType?: 'native' | 'reactive'
-    pramTemps?: string[]
+    paramTemps?: string[] | { [K: string]: string }
     styles?: string
 }
-type renderMicroParam = { [K: string]: any, block?: string, page?: string, display?: string, position?: string, }
-const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc, defaultPropsFunc, renderType = 'reactive', pramTemps = ['*'], styles }: registeAndRenderMicroDomProps) => {
+type renderMicroParam = {
+    [K: string]: any,
+    block?: string,
+    page?: string,
+    display?: string,
+    position?: string,
+    hiddenBlockProps?: string
+}
+const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc, defaultPropsFunc, renderType = 'reactive', paramTemps: pramTemps = ['*'], styles }: registeAndRenderMicroDomProps) => {
     logger.debug('registeAndRenderMicroDom', { prefix: cardType, hiddenBlockCardProps, renderType })
-    let slotContent = ` {{renderer :${cardType}, ${pramTemps.join(',')}}} `
+    let slotContent = pramTemps ? Array.isArray(pramTemps) ? ` {{renderer :${cardType}, ${pramTemps.join(',')}}} ` : ` {{renderer :${cardType}, ${Object.entries(pramTemps).map(([k, v]) => `${k}:${v}`).reduce((prev, curr) => prev + ',' + curr)}}} ` : ` {{renderer :${cardType} }} `
     if (defaultPropsFunc) { slotContent += '\n' + propertiesToStr(defaultPropsFunc())[0] }
     logseq.Editor.registerSlashCommand(cardType, async () => {
         const block = await logseq.Editor.getCurrentBlock()
@@ -173,7 +180,11 @@ const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc,
                 logseq.provideUI({ key: id, slot, reset: false, template: mydiv.innerHTML, })
                 break
         }
-        hiddenBlockCardProps && hiddenBlockCardProp(uuid)
+        if (params.hiddenBlockProps) {
+            (params.hiddenBlockProps === 'true') && hiddenBlockCardProp(uuid)
+        } else {
+            hiddenBlockCardProps && hiddenBlockCardProp(uuid)
+        }
     })
     styles && logseq.provideStyle({ key: cardType, style: styles })
 }
@@ -447,7 +458,8 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             message={blockE?.properties?.message} />,
         defaultPropsFunc: getdefaultFlipCountDownProps,
         renderType: 'reactive',
-        styles: countDownStyles
+        styles: countDownStyles,
+        paramTemps: { "hiddenBlockProps": 'false' }
     })
 
     registeAndRenderMicroDom({
@@ -459,7 +471,8 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             message={blockE?.properties?.message}
             animationStyle={blockE?.properties?.animation} />,
         defaultPropsFunc: getdefaultCountdownTimerProps,
-        renderType: 'reactive'
+        renderType: 'reactive',
+        paramTemps: { "hiddenBlockProps": 'false' }
     })
 
     registeAndRenderMicroDom({
@@ -489,7 +502,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
         },
         renderType: 'reactive',
         styles: pageCardStyles,
-        pramTemps: ["page:*"]
+        paramTemps: ["page:*"]
     })
 
     registeAndRenderMicroDom({
@@ -514,7 +527,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
                 size={'0'} />
         },
         renderType: 'reactive',
-        pramTemps: ["page:*"]
+        paramTemps: ["page:*"]
     })
 
     registeAndRenderMicroDom({
