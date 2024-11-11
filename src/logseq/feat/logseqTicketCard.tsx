@@ -359,6 +359,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             tags={blockE?.properties?.tags || blockE?.properties?.tag}
             imageposition={blockE?.properties?.display || blockE?.properties?.imageposition}
             editable={blockE?.properties?.editable}
+            displaymode={blockE?.properties?.displaymode}
             onUpdate={(data: Partial<CardProps>) => { blockE && updateBlockProps(blockE, data); logger.debug('onupdate', data) }}
             onAddBlock={() => { appendNextBlock(blockE) }}
             onEditBlock={() => { editBlock(blockE) }}
@@ -407,6 +408,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             readlater={blockE?.properties?.readlater}
             recommendation={blockE?.properties?.recommendation}
             color={blockE?.properties?.color}
+            displaymode={blockE?.properties?.displaymode}
             editable={blockE?.properties?.editable}
             onUpdate={(data: Partial<BookCardProps>) => { blockE && updateBlockProps(blockE, data) }}
             onAddBlock={() => { appendNextBlock(blockE) }}
