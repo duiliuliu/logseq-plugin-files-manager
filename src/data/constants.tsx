@@ -70,6 +70,7 @@ export const i18n_SEARCH_PLACEHOLDER = 'Search pages';
 
 // 页面常量
 export const i18n_VIEW_CARD_MODE = 'Card View';
+export const i18n_VIEW_TABLE_MODE = 'Table View';
 export const i18n_VIEW_LIST_MODE = 'List View';
 export const i18n_REBUILD_DATA = 'Rebuild Data';
 export const i18n_BUILDING = 'Building';

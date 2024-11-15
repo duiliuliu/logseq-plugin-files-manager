@@ -28,7 +28,7 @@ interface DataItem {
     extName?: string;       // 资产的扩展名
     size?: string;          // 资产的尺寸或大小
 
-    related?: RelatedItem[]; // 与当前数据项相关联的其他项目
+    related?: RelatedItem[]; // 与当前数据项相关联的其他项目 
 }
 
 /**

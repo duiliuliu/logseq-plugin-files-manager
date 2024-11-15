@@ -28,6 +28,7 @@ enum DocFormat {
 enum DisplayMode {
     CARD = 'card',
     LIST = 'list',
+    TABLE = 'table'
 }
 
 // 标签页枚举，用于定义不同的标签页

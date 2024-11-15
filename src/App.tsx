@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import Tabs from './components/tabs';
 import { Button, ConfigProvider, Empty, GetProps, Input, Result, Spin, } from 'antd';
 import { ActionItemProps } from './components/actionItem';
-import { ArrowsClockwise, FolderSimplePlus, List, Newspaper, SquaresFour } from '@phosphor-icons/react';
+import { ArrowsClockwise, FolderSimplePlus, List, Newspaper, SquaresFour, Table } from '@phosphor-icons/react';
 import Search from 'antd/es/input/Search';
 import { DisplayMode, TabEnum } from './data/enums';
 import ProList from './components/proList';
@@ -11,7 +11,7 @@ import { useLoadData } from './data/useLoadData';
 import { useRebuildData } from './data/useRebuildData';
 import { useLoadDataCount } from './data/useLoadDataCount';
 import useCalculateHeight from './ui_hooks/useCalculateHeight';
-import { i18n_AUTHORIZE, i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH, i18n_BUILDING, i18n_LOG_TOOLTIP, i18n_REBUILD_DATA, i18n_SEARCH_PLACEHOLDER, i18n_VIEW_CARD_MODE, i18n_VIEW_LIST_MODE, LOG_PAGE, } from './data/constants';
+import { i18n_AUTHORIZE, i18n_AUTHORIZE_TOOLTIP, i18n_AUTHORIZE_TOOLTIP_PATH, i18n_BUILDING, i18n_LOG_TOOLTIP, i18n_REBUILD_DATA, i18n_SEARCH_PLACEHOLDER, i18n_VIEW_CARD_MODE, i18n_VIEW_LIST_MODE, i18n_VIEW_TABLE_MODE, LOG_PAGE, } from './data/constants';
 import { useFileChangeListener } from './data/useFileChangeListener';
 import getI18nConstant from './i18n/utils';
 import { useUserConfigs } from './logseq/useUserConfigs';
@@ -22,6 +22,8 @@ import { useUpdateMaxNumberOnScroll } from './ui_hooks/useUpdateOnScroll';
 import useComponentSizeAndPosition from './ui_hooks/useSizeAndPos';
 import { useDirectoryHandle } from './ui_hooks/useDirectoryHandle';
 import { initLogCfg } from './logseq/feat/logseqAddOptLog';
+import VirtualTable, { TableSettings } from './components/proTable';
+import { tableColumns } from './components/proTableMeta';
 
 type SearchProps = GetProps<typeof Input.Search>;
 
@@ -62,8 +64,19 @@ const App: React.FC = () => {
 
     const onSearch: SearchProps['onSearch'] = (value, _e, _info) => { setSearchValue(value) };
 
-    const toggleMode = () => { setMode((prevMode) => (DisplayMode.isCard(prevMode) ? DisplayMode.LIST : DisplayMode.CARD)); };
-
+    const toggleMode = () => {
+        setMode((prevMode) => {
+            switch (prevMode) {
+                case DisplayMode.CARD:
+                    return DisplayMode.LIST;
+                case DisplayMode.LIST:
+                    return DisplayMode.TABLE;
+                case DisplayMode.TABLE:
+                default:
+                    return DisplayMode.LIST;
+            }
+        });
+    };
     const viewLog = async () => { await initLogCfg(); logseq.App.pushState('page', { name: LOG_PAGE }) };
 
     const actions: ActionItemProps[] = [
@@ -72,8 +85,11 @@ const App: React.FC = () => {
             text: getI18nConstant(userConfig.preferredLanguage, i18n_REBUILD_DATA),
             onClick: () => { rebuildData(true); }
         }, {
-            icon: DisplayMode.isCard(mode) ? List : SquaresFour,
-            text: DisplayMode.isCard(mode) ? getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_LIST_MODE) : getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_CARD_MODE),
+            icon: mode === DisplayMode.CARD ? SquaresFour :
+                mode === DisplayMode.LIST ? List : Table,
+            text: mode === DisplayMode.CARD ? getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_LIST_MODE) :
+                mode === DisplayMode.LIST ? getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_CARD_MODE) :
+                    getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_TABLE_MODE),
             onClick: toggleMode
         }, {
             icon: Newspaper,
@@ -81,6 +97,7 @@ const App: React.FC = () => {
             onClick: viewLog
         }
     ]
+
 
 
     return (
@@ -141,16 +158,27 @@ const App: React.FC = () => {
                                         extra={<Button icon={<FolderSimplePlus />} onClick={() => getDirectoryHandle()} type="default">{getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE)}</Button>}
                                     />
                                     : <Spin spinning={preparing} tip={getI18nConstant(userConfig.preferredLanguage, i18n_BUILDING)} percent='auto' delay={100}>
-                                        <ProList
-                                            data={data}
-                                            mode={mode}
-                                            userConfig={userConfig}
-                                            size={{ width, height }}
-                                            emptyNode={<Empty />}
-                                            loading={loading}
-                                            dirhandler={getDirectoryHandle}
-                                            scrollPosition={scrollPosition}
-                                        />
+                                        {mode ?
+                                            <div className="p-4">
+                                                <VirtualTable
+                                                    data={data}
+                                                    columns={tableColumns}
+                                                    rowHeight={48}
+                                                    onSettingsChange={(settings: TableSettings) => { console.log(settings) }}
+                                                />
+                                            </div>
+                                            :
+                                            <ProList
+                                                data={data}
+                                                mode={mode}
+                                                userConfig={userConfig}
+                                                size={{ width, height }}
+                                                emptyNode={<Empty />}
+                                                loading={loading}
+                                                dirhandler={getDirectoryHandle}
+                                                scrollPosition={scrollPosition}
+                                            />
+                                        }
                                     </Spin>
                             }
 
