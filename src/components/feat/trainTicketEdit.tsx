@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { format } from 'date-fns'
 import { QRCodeSVG } from 'qrcode.react'
 import { useId } from 'react'
-import { getColor, getColorBg } from './color'
+import { getColor, getColorBg } from '../customs/color'
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

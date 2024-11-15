@@ -1,6 +1,6 @@
 
 import { Circle } from '@phosphor-icons/react'
-import { getColor, getColorBg } from './color'
+import { getColor, getColorBg } from '../customs/color'
 import { format } from 'date-fns'
 
 export const getdefaultItineraryProps = (dateFormat?: string) => {

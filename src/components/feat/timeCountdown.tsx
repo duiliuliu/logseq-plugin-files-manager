@@ -1,7 +1,9 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Card } from "@/components/ui/card"
-import { getColor } from "./color"
+import { getColor } from "../customs/color"
+import Tooltip from "../customs/tooltip"
+import { format } from "date-fns"
 
 export const countDownStyles = `
 
@@ -149,6 +151,8 @@ const FlipCountDown = function Component({
   })
   const [isFinished, setIsFinished] = useState(false)
   const targetTime = getTargetTime(targetDate)
+  const cardRef = useRef<HTMLDivElement>(null)
+
 
   // 1. Add state and ref for tooltip
   const [showTooltip, setShowTooltip] = useState(false)
@@ -203,8 +207,11 @@ const FlipCountDown = function Component({
 
   if (isFinished) {
     return (
-      <Card className="p-6 flex flex-col items-center justify-center space-y-4" style={{ backgroundColor: getColor(color) }}>
-        <p className="text-xl font-bold text-gray-300">{message}</p>
+      <Card className="p-6 flex flex-col items-center justify-center space-y-4" style={{ backgroundColor: getColor(color), minWidth: 380 }} ref={cardRef}>
+        <Tooltip
+          icon={<p className="text-xl font-bold text-gray-300">{message}</p>}
+          text={format(targetTime, 'yyyy-MM-dd HH:mm:ss')}
+          containerRef={cardRef} />
         <p className="text-gray-300 opacity-80">倒计时已结束</p>
       </Card>
     )

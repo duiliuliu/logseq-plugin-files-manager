@@ -1,5 +1,3 @@
-import { BookCardProps, getdefaultBookCardProps } from "@/components/feat/bookCard"
-import { FoodCardProps, getdefaultFoodCardProps } from "@/components/feat/foodCard"
 import { getdefaultRatingCardProps } from "@/components/feat/ratingCard"
 import FlipCountDown, { countDownStyles, getdefaultFlipCountDownProps } from "@/components/feat/timeCountdown"
 import CountdownTimer, { getdefaultCountdownTimerProps } from "@/components/feat/timeCountDown2"
@@ -7,30 +5,29 @@ import { AppConfig } from "@/data/types"
 import { logger } from "@/utils/logger"
 import { getDay, parse } from "date-fns"
 import ReactDOM from "react-dom"
-import { getGloableUserConfigs } from "../useUserConfigs"
 import { propertiesToStr } from "./logseqDefaultPageProps"
 import { BlockEntity, PageEntity } from "@logseq/libs/dist/LSPlugin"
 import { sleep } from "../logseqCommonProxy"
 import React from "react"
-import FlexibleLayout, { DisplayStyle } from "@/components/feat/flexibleLayout"
+import FlexibleLayout, { DisplayStyle } from "@/components/customs/flexibleLayout"
 import { mockBlocks } from "@/mock/logseqBlocks"
 import { ASSETS_PATH_REGEX, GRAPH_PREFIX } from "@/data/constants"
 import { pageCardStyles, TodoItem } from "@/components/feat/pageCard"
 import PageCard2 from "@/components/feat/pageCard2"
 import Itinerary, { getdefaultItineraryProps } from "@/components/feat/itinerary"
 import RatingCard2 from "@/components/feat/ratingCardEdit"
-import BookCard2 from "@/components/feat/bookCardEdit"
-import ExpenseCard from "@/components/feat/expenseCardEdit"
-import { ExpenseCardProps, getdefaultExpenseCardProps } from "@/components/feat/expenseCard"
+import ExpenseCard, { getdefaultExpenseCardProps } from "@/components/feat/expenseCardEdit"
 import TrainTicket from "@/components/feat/trainTicketEdit"
 import { getdefaultTrainTicketProps, TrainTicketProps } from "@/components/feat/trainTicket"
 import FlightTicket from "@/components/feat/flightticketEdit"
 import { FlightTicketProps, getdefaultFilghtTicketProps } from "@/components/feat/flightTicket"
 import FlightTicket2 from "@/components/feat/flightTicketEdit2"
-import FoodCard from "@/components/feat/foodCardEditor"
 import MovieCard, { getdefaultMovieCardProps, MovieCardProps } from "@/components/feat/movieCard"
 import PageCardPro from "@/components/feat/pageCardPro"
 import { getPageTodos2 } from "./logseqGetTODOs"
+import FoodCard, { getdefaultFoodCardProps } from "@/components/feat/foodCardEdit"
+import { CardProps } from "antd"
+import BookCard, { BookCardProps, getdefaultBookCardProps } from "@/components/feat/bookCardEdit"
 
 const hiddenBlockCardProp = (blockUid: string) => {
     logger.debug('hiddenBlockCardProp', blockUid)
@@ -120,13 +117,20 @@ type registeAndRenderMicroDomProps = {
     elementFunc: (blockE?: BlockEntity, pageinfo?: PageInfo) => React.ReactElement,
     defaultPropsFunc?: () => { [K: string]: any }
     renderType?: 'native' | 'reactive'
-    pramTemps?: string[]
+    paramTemps?: string[] | { [K: string]: string }
     styles?: string
 }
-type renderMicroParam = { [K: string]: any, block?: string, page?: string, display?: string, position?: string, }
-const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc, defaultPropsFunc, renderType = 'reactive', pramTemps = ['*'], styles }: registeAndRenderMicroDomProps) => {
+type renderMicroParam = {
+    [K: string]: any,
+    block?: string,
+    page?: string,
+    display?: string,
+    position?: string,
+    hiddenBlockProps?: string
+}
+const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc, defaultPropsFunc, renderType = 'reactive', paramTemps: pramTemps = ['*'], styles }: registeAndRenderMicroDomProps) => {
     logger.debug('registeAndRenderMicroDom', { prefix: cardType, hiddenBlockCardProps, renderType })
-    let slotContent = ` {{renderer :${cardType}, ${pramTemps.join(',')}}} `
+    let slotContent = pramTemps ? Array.isArray(pramTemps) ? ` {{renderer :${cardType}, ${pramTemps.join(',')}}} ` : ` {{renderer :${cardType}, ${Object.entries(pramTemps).map(([k, v]) => `${k}:${v}`).reduce((prev, curr) => prev + ',' + curr)}}} ` : ` {{renderer :${cardType} }} `
     if (defaultPropsFunc) { slotContent += '\n' + propertiesToStr(defaultPropsFunc())[0] }
     logseq.Editor.registerSlashCommand(cardType, async () => {
         const block = await logseq.Editor.getCurrentBlock()
@@ -176,7 +180,11 @@ const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc,
                 logseq.provideUI({ key: id, slot, reset: false, template: mydiv.innerHTML, })
                 break
         }
-        hiddenBlockCardProps && hiddenBlockCardProp(uuid)
+        if (params.hiddenBlockProps) {
+            (params.hiddenBlockProps === 'true') && hiddenBlockCardProp(uuid)
+        } else {
+            hiddenBlockCardProps && hiddenBlockCardProp(uuid)
+        }
     })
     styles && logseq.provideStyle({ key: cardType, style: styles })
 }
@@ -246,6 +254,7 @@ const updateBlockProps = <T extends { [K: string]: any }>(blockE: BlockEntity, d
         if (value !== undefined && value !== null) { // 只有当 value 存在且不是 null 时才更新
             switch (key) {
                 case 'color':
+                    logger.debug('updateBlockProps color', key, value.replace('#', ''))
                     logseq.Editor.upsertBlockProperty(blockE.uuid, key, value.replace('#', ''));
                     break;
                 default:
@@ -255,10 +264,18 @@ const updateBlockProps = <T extends { [K: string]: any }>(blockE: BlockEntity, d
     });
 };
 
+const editBlock = (blockE?: BlockEntity) => {
+    blockE && logseq.Editor.editBlock(blockE?.uuid)
+}
+
+const appendNextBlock = (blockE?: BlockEntity) => {
+    blockE && logseq.Editor.insertBlock(blockE?.uuid, '')
+}
+
 export const initTicketFeat = (appConfig?: AppConfig) => {
     logger.debug('initTicketFeat', appConfig)
     if (!appConfig) {
-        appConfig = getGloableUserConfigs()
+        return
     }
     const dateFormat = appConfig?.preferredDateFormat || 'yyyy-MM-dd'
     const hiddenBlockCardProps = appConfig?.pluginSettings?.hiddenTicketCardProperties
@@ -351,9 +368,12 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             description={blockE?.properties?.description}
             platform={blockE?.properties?.platform}
             tags={blockE?.properties?.tags || blockE?.properties?.tag}
-            display={blockE?.properties?.display}
+            imageposition={blockE?.properties?.display || blockE?.properties?.imageposition}
             editable={blockE?.properties?.editable}
-            onUpdate={(data: Partial<ExpenseCardProps>) => { blockE && updateBlockProps(blockE, data) }}
+            displaymode={blockE?.properties?.displaymode}
+            onUpdate={(data: Partial<CardProps>) => { blockE && updateBlockProps(blockE, data); logger.debug('onupdate', data) }}
+            onAddBlock={() => { appendNextBlock(blockE) }}
+            onEditBlock={() => { editBlock(blockE) }}
         />,
         defaultPropsFunc: getdefaultExpenseCardProps,
         renderType: 'reactive'
@@ -366,13 +386,18 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             title={blockE?.properties?.title || blockE?.properties?.foodname}
             description={blockE?.properties?.description || blockE?.properties?.specialdishes}
             location={blockE?.properties?.location || blockE?.properties?.ip}
-            avgCost={blockE?.properties?.avgCost}
+            avgcost={blockE?.properties?.avgcost}
             category={blockE?.properties?.category}
-            recommendation={blockE?.properties?.recommendation}
+            note={blockE?.properties?.recommendation || blockE?.properties?.note}
             cover={formatLink(blockE?.properties?.cover, graph)}
             color={blockE?.properties?.color}
+            source={blockE?.properties?.source}
+            imageposition={blockE?.properties?.imageposition}
+            displaymode={blockE?.properties?.displaymode}
             editable={blockE?.properties?.editable}
-            onUpdate={(data: Partial<FoodCardProps>) => { blockE && updateBlockProps(blockE, data) }}
+            onUpdate={(data: Partial<CardProps>) => { blockE && updateBlockProps(blockE, data); logger.debug('onupdate', data) }}
+            onAddBlock={() => { appendNextBlock(blockE) }}
+            onEditBlock={() => { editBlock(blockE) }}
         />,
         defaultPropsFunc: getdefaultFoodCardProps,
         renderType: 'reactive'
@@ -381,7 +406,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
     registeAndRenderMicroDom({
         cardType: 'book-card',
         hiddenBlockCardProps,
-        elementFunc: (blockE?: BlockEntity) => <BookCard2
+        elementFunc: (blockE?: BlockEntity) => <BookCard
             title={blockE?.properties?.title}
             description={blockE?.properties?.description}
             author={blockE?.properties?.author}
@@ -394,8 +419,11 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             readlater={blockE?.properties?.readlater}
             recommendation={blockE?.properties?.recommendation}
             color={blockE?.properties?.color}
+            displaymode={blockE?.properties?.displaymode}
             editable={blockE?.properties?.editable}
             onUpdate={(data: Partial<BookCardProps>) => { blockE && updateBlockProps(blockE, data) }}
+            onAddBlock={() => { appendNextBlock(blockE) }}
+            onEditBlock={() => { editBlock(blockE) }}
         />,
         defaultPropsFunc: getdefaultBookCardProps,
         renderType: 'reactive'
@@ -430,7 +458,8 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             message={blockE?.properties?.message} />,
         defaultPropsFunc: getdefaultFlipCountDownProps,
         renderType: 'reactive',
-        styles: countDownStyles
+        styles: countDownStyles,
+        paramTemps: { "hiddenBlockProps": 'false' }
     })
 
     registeAndRenderMicroDom({
@@ -442,7 +471,8 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             message={blockE?.properties?.message}
             animationStyle={blockE?.properties?.animation} />,
         defaultPropsFunc: getdefaultCountdownTimerProps,
-        renderType: 'reactive'
+        renderType: 'reactive',
+        paramTemps: { "hiddenBlockProps": 'false' }
     })
 
     registeAndRenderMicroDom({
@@ -472,7 +502,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
         },
         renderType: 'reactive',
         styles: pageCardStyles,
-        pramTemps: ["page:*"]
+        paramTemps: ["page:*"]
     })
 
     registeAndRenderMicroDom({
@@ -497,7 +527,7 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
                 size={'0'} />
         },
         renderType: 'reactive',
-        pramTemps: ["page:*"]
+        paramTemps: ["page:*"]
     })
 
     registeAndRenderMicroDom({

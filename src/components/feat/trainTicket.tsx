@@ -2,7 +2,7 @@
 import { format } from 'date-fns'
 import { QRCodeSVG } from 'qrcode.react'
 import { useId } from 'react'
-import { getColor, getColorBg } from './color'
+import { getColor, getColorBg } from '../customs/color'
 
 export const getdefaultTrainTicketProps = (dateFormat?: string) => {
     const defaultProps: TrainTicketProps = {

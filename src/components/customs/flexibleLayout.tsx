@@ -45,8 +45,8 @@ export default function FlexibleLayout({
             }
         }
 
-        document.addEventListener('mousedown', handleClickOutside)
-        return () => document.removeEventListener('mousedown', handleClickOutside)
+        parent?.document?.addEventListener('mousedown', handleClickOutside)
+        return () => parent?.document?.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
     const handleTextDoubleClick = (index: number, text: string) => {

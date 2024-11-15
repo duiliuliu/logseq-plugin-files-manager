@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ChevronDown, ChevronUp, FileIcon, Clock, RefreshCw, HardDrive } from "lucide-react"
 import { PageCardProps } from './pageCard'
-import { getColor } from './color'
+import { getColor } from '../customs/color'
 import { logger } from '@/utils/logger'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
