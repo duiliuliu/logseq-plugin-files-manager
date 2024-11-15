@@ -19,6 +19,7 @@
     "Search pages": "搜索页面",
     "Card View": "卡片视图",
     "List View": "列表视图",
+    "Table View": "列表视图",
     "Rebuild Data": "重建数据",
     "Building": "构建中",
     "Authorize": "授权",
@@ -73,5 +74,5 @@
     "Hidden empty journal days": "隐藏最近 X 天的空白日记",
     "Train Ticket Card": "火车票",
     "Train Ticket Card desc": "支持将block渲染成为火车票",
-    "Train Ticket Card Hide Props desc":"隐藏卡片block的properties，true标识隐藏"
+    "Train Ticket Card Hide Props desc": "隐藏卡片block的properties，true标识隐藏"
 }

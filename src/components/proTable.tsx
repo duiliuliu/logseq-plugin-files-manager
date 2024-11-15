@@ -1,19 +1,15 @@
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Settings, Eye, EyeOff } from "lucide-react"
+import { Settings, Eye, EyeOff } from 'lucide-react'
 import { format } from "date-fns"
 import { logger } from '@/utils/logger'
-
-interface ColumnDef<T> {
-    key: string
-    title: string
-    visible?: boolean
-    width?: number
-    render?: (value: any, record: T) => React.ReactNode
-}
+import { ColumnDef } from './proTableMeta'
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 export interface TableSettings {
     borderColor: string
@@ -26,15 +22,18 @@ interface VirtualTableProps<T> {
     rowHeight?: number
     onSettingsChange?: (settings: TableSettings) => void
     className?: string
+    loadMoreData: () => void
+    hasMore: boolean
 }
 
 export default function VirtualTable<T extends { [key: string]: any }>({
     data,
     columns: initialColumns,
     rowHeight = 40,
-    onSettingsChange }: VirtualTableProps<T>) {
-    logger.debug('init VIrtualTable', data, initialColumns)
-
+    onSettingsChange,
+    loadMoreData,
+    hasMore
+}: VirtualTableProps<T>) {
     const [columns, setColumns] = useState(initialColumns)
     const [settings, setSettings] = useState<TableSettings>({
         borderColor: "#e5e7eb",
@@ -44,59 +43,113 @@ export default function VirtualTable<T extends { [key: string]: any }>({
     const [visibleRange, setVisibleRange] = useState({ start: 0, end: 20 })
     const containerRef = useRef<HTMLDivElement>(null)
     const [isSettingsVisible, setIsSettingsVisible] = useState(false)
+    const [expandedCells, setExpandedCells] = useState<{ [key: string]: boolean }>({})
+    const [selectedItem, setSelectedItem] = useState<T | null>(null)
+    const [showDialog, setShowDialog] = useState(false)
 
-    // Handle scroll to update visible range
+    const handleScroll = useCallback(() => {
+        const container = containerRef.current
+        if (!container) return
+
+        const scrollTop = container.scrollTop
+        const start = Math.floor(scrollTop / rowHeight)
+        const visibleCount = Math.ceil(container.clientHeight / rowHeight)
+        const end = Math.min(start + visibleCount + 10, data.length)
+        setVisibleRange({ start: Math.max(0, start - 10), end })
+
+        // Check if we're near the bottom and should load more data
+        if (container.scrollHeight - scrollTop <= container.clientHeight * 1.5 && hasMore) {
+            loadMoreData()
+        }
+    }, [data.length, rowHeight, hasMore, loadMoreData])
+
     useEffect(() => {
         const container = containerRef.current
         if (!container) return
 
-        const handleScroll = () => {
-            const scrollTop = container.scrollTop
-            const start = Math.floor(scrollTop / rowHeight)
-            const visibleCount = Math.ceil(container.clientHeight / rowHeight)
-            const end = Math.min(start + visibleCount + 10, data.length) // Add buffer
-            setVisibleRange({ start: Math.max(0, start - 10), end }) // Add buffer
-        }
-
         container.addEventListener('scroll', handleScroll)
-        handleScroll() // Initial calculation
+        handleScroll()
 
         return () => container.removeEventListener('scroll', handleScroll)
-    }, [data.length, rowHeight])
+    }, [handleScroll])
 
-    // Format cell value based on type
-    const formatCellValue = (value: any) => {
-        if (value === null || value === undefined) return '-'
-        if (value instanceof Date || (typeof value === 'number' && value > 1000000000)) {
-            return format(new Date(value), 'yyyy-MM-dd HH:mm:ss')
+    const formatCellValue = useCallback((record: T, column: ColumnDef<T>, rowIndex: number) => {
+        try {
+            if (column.render) {
+                return column.render(record[column.key], record)
+            }
+            const value = record[column.key]
+            if (value === null || value === undefined) return '-'
+            if (value instanceof Date || (typeof value === 'number' && value > 1000000000)) {
+                return format(new Date(value), 'yyyy-MM-dd HH:mm:ss')
+            }
+            if (typeof value === 'object') {
+                return JSON.stringify(value)
+            }
+            if (typeof value === 'string') {
+                return renderStringCell(value, column, rowIndex)
+            }
+            return value?.toString()
+        } catch (error) {
+            logger.error(error, record)
+            return '-'
         }
-        if (typeof value === 'object') {
-            return JSON.stringify(value)
-        }
-        return value.toString()
-    }
+    }, [])
 
-    const updateSettings = (newSettings: Partial<TableSettings>) => {
+    const updateSettings = useCallback((newSettings: Partial<TableSettings>) => {
         const updated = { ...settings, ...newSettings }
         setSettings(updated)
-        setColumns(columns.map(col => {
-            col.visible = newSettings?.columns?.[col.key]
-            return col
-        }))
+        setColumns(columns => columns.map(col => ({
+            ...col,
+            visible: updated.columns[col.key]
+        })))
         onSettingsChange?.(updated)
-    }
+    }, [settings, onSettingsChange])
 
-    const toggleColumn = (key: string) => {
-        const newColumns = {
-            ...settings.columns,
-            [key]: !settings.columns[key]
+    const toggleColumn = useCallback((key: string) => {
+        updateSettings({
+            columns: {
+                ...settings.columns,
+                [key]: !settings.columns[key]
+            }
+        })
+    }, [settings.columns, updateSettings])
+
+    const toggleCellExpansion = useCallback((rowIndex: number, colKey: string) => {
+        setExpandedCells(prev => ({
+            ...prev,
+            [`${rowIndex}-${colKey}`]: !prev[`${rowIndex}-${colKey}`]
+        }))
+    }, [])
+
+    const renderStringCell = useCallback((value: string, column: ColumnDef<T>, rowIndex: number) => {
+        const key = `${rowIndex}-${column.key}`
+        const isExpanded = expandedCells[key]
+
+        return (
+            <div
+                className="cursor-pointer"
+                onClick={() => toggleCellExpansion(rowIndex, column.key)}
+            >
+                {isExpanded ? value : value.slice(0, 15) + "..."}
+            </div>
+        )
+    }, [expandedCells, toggleCellExpansion])
+
+    const handleAction = useCallback((action: string, item: T) => {
+        switch (action) {
+            case "view":
+                setSelectedItem(item)
+                setShowDialog(true)
+                break
+            case "copy":
+                navigator.clipboard.writeText(item.path || item.name)
+                break
+            // Add more actions as needed
         }
-        updateSettings({ columns: newColumns })
-    }
+    }, [])
 
     const visibleData = data.slice(visibleRange.start, visibleRange.end)
-    const paddingTop = visibleRange.start * rowHeight
-    const paddingBottom = (data.length - visibleRange.end) * rowHeight
 
     return (
         <div className="relative w-full">
@@ -109,8 +162,7 @@ export default function VirtualTable<T extends { [key: string]: any }>({
                     variant="ghost"
                     size="icon"
                     onClick={() => setShowSettings(!showSettings)}
-                    className={`h-8 w-8 p-0 opacity-0 transition-opacity ${isSettingsVisible ? "opacity-100" : ""
-                        }`}
+                    className={`h-8 w-8 p-0 opacity-0 transition-opacity ${isSettingsVisible ? "opacity-100" : ""}`}
                 >
                     <Settings className="h-4 w-4" />
                 </Button>
@@ -169,7 +221,7 @@ export default function VirtualTable<T extends { [key: string]: any }>({
                                 settings.columns[col.key] ? (
                                     <div
                                         key={col.key}
-                                        className="p-2 font-medium"
+                                        className="p-1 font-medium"
                                         style={{ width: col.width || 150 }}
                                     >
                                         {col.title}
@@ -179,34 +231,70 @@ export default function VirtualTable<T extends { [key: string]: any }>({
                         </div>
                     </div>
 
-                    <div style={{ paddingTop, paddingBottom }}>
+                    <div style={{ transform: `translateY(${visibleRange.start * rowHeight}px)` }}>
                         {visibleData.map((record, idx) => (
-                            <div
-                                key={idx}
-                                className="flex hover:bg-muted/50"
-                                style={{
-                                    borderBottom: `1px solid ${settings.borderColor}`,
-                                    height: rowHeight
-                                }}
-                            >
-                                {columns.map((col) =>
-                                    settings.columns[col.key] ? (
-                                        <div
-                                            key={col.key}
-                                            className="p-2 truncate"
-                                            style={{ width: col.width || 150 }}
-                                        >
-                                            {col.render
-                                                ? col.render(record[col.key], record)
-                                                : formatCellValue(record[col.key])}
-                                        </div>
-                                    ) : null
-                                )}
-                            </div>
+                            <ContextMenu key={visibleRange.start + idx}>
+                                <ContextMenuTrigger>
+                                    <div
+                                        className="flex hover:bg-muted/50"
+                                        style={{
+                                            borderBottom: `1px solid ${settings.borderColor}`,
+                                            height: rowHeight
+                                        }}
+                                    >
+                                        {columns.map((col) =>
+                                            settings.columns[col.key] ? (
+                                                <div
+                                                    key={col.key}
+                                                    className="p-2 truncate"
+                                                    style={{ width: col.width || 150 }}
+                                                >
+                                                    {formatCellValue(record, col, visibleRange.start + idx)}
+                                                </div>
+                                            ) : null
+                                        )}
+                                    </div>
+                                </ContextMenuTrigger>
+                                <ContextMenuContent>
+                                    <ContextMenuItem onClick={() => handleAction("view", record)}>
+                                        View Details
+                                    </ContextMenuItem>
+                                    <ContextMenuItem onClick={() => handleAction("copy", record)}>
+                                        Copy Path
+                                    </ContextMenuItem>
+                                    <ContextMenuSeparator />
+                                    <ContextMenuItem className="text-destructive">
+                                        Delete
+                                    </ContextMenuItem>
+                                </ContextMenuContent>
+                            </ContextMenu>
                         ))}
                     </div>
                 </div>
             </div>
+
+            <Dialog open={showDialog} onOpenChange={setShowDialog}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>{selectedItem?.name}</DialogTitle>
+                        <DialogDescription>
+                            Details for {selectedItem?.alias || selectedItem?.name}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <ScrollArea className="max-h-[80vh]">
+                        <div className="space-y-4">
+                            {selectedItem && Object.entries(selectedItem).map(([key, value]) => (
+                                <div key={key} className="space-y-2">
+                                    <div className="font-medium capitalize">{key}</div>
+                                    <div className="text-sm text-muted-foreground">
+                                        {typeof value === 'object' ? JSON.stringify(value, null, 2) : value?.toString()}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </ScrollArea>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import Tabs from './components/tabs';
 import { Button, ConfigProvider, Empty, GetProps, Input, Result, Spin, } from 'antd';
 import { ActionItemProps } from './components/actionItem';
@@ -56,6 +56,21 @@ const App: React.FC = () => {
     const { width, height, left, top } = useComponentSizeAndPosition()
     const listHeight = useCalculateHeight(40, height); // 使用自定义钩子计算高度
 
+    const [hasMore, setHasMore] = useState(true);
+
+    const loadMoreData = useCallback(() => {
+        if (!hasMore) return;
+
+        // Implement your data loading logic here
+        // For example:
+        setMaxNumber(prevMaxNumber => {
+            const newMaxNumber = prevMaxNumber + calBatchSize();
+            if (newMaxNumber >= typeCount[currentTab as TabEnum]) {
+                setHasMore(false);
+            }
+            return newMaxNumber;
+        });
+    }, [hasMore, calBatchSize, typeCount, currentTab]);
 
     const handleTabClick = (tabKey: string) => {
         setCurrentTab(tabKey);
@@ -72,6 +87,7 @@ const App: React.FC = () => {
                 case DisplayMode.LIST:
                     return DisplayMode.TABLE;
                 case DisplayMode.TABLE:
+                    return DisplayMode.CARD;
                 default:
                     return DisplayMode.LIST;
             }
@@ -88,8 +104,8 @@ const App: React.FC = () => {
             icon: mode === DisplayMode.CARD ? SquaresFour :
                 mode === DisplayMode.LIST ? List : Table,
             text: mode === DisplayMode.CARD ? getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_LIST_MODE) :
-                mode === DisplayMode.LIST ? getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_CARD_MODE) :
-                    getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_TABLE_MODE),
+                mode === DisplayMode.LIST ? getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_TABLE_MODE) :
+                    getI18nConstant(userConfig.preferredLanguage, i18n_VIEW_CARD_MODE),
             onClick: toggleMode
         }, {
             icon: Newspaper,
@@ -97,7 +113,6 @@ const App: React.FC = () => {
             onClick: viewLog
         }
     ]
-
 
 
     return (
@@ -149,7 +164,7 @@ const App: React.FC = () => {
                         <div className='tab-content' ref={tabContentRef} style={{
                             maxHeight: listHeight, // 设置最大高度
                             minHeight: height - 100,
-                            overflow: 'auto', // 启用滚动
+                            overflow: mode === 'table' ? 'hidden' : 'auto', // 启用滚动
                         }} >
                             {
                                 needAuth ?
@@ -158,13 +173,15 @@ const App: React.FC = () => {
                                         extra={<Button icon={<FolderSimplePlus />} onClick={() => getDirectoryHandle()} type="default">{getI18nConstant(userConfig.preferredLanguage, i18n_AUTHORIZE)}</Button>}
                                     />
                                     : <Spin spinning={preparing} tip={getI18nConstant(userConfig.preferredLanguage, i18n_BUILDING)} percent='auto' delay={100}>
-                                        {mode ?
+                                        {mode === 'table' ?
                                             <div className="p-4">
                                                 <VirtualTable
                                                     data={data}
                                                     columns={tableColumns}
                                                     rowHeight={48}
                                                     onSettingsChange={(settings: TableSettings) => { console.log(settings) }}
+                                                    loadMoreData={loadMoreData}
+                                                    hasMore={hasMore}
                                                 />
                                             </div>
                                             :

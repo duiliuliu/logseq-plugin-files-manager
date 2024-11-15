@@ -1,6 +1,15 @@
 import { DataItem } from "@/data/types"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
+import { logger } from "@/utils/logger"
+
+export interface ColumnDef<T> {
+    key: string
+    title: string
+    visible?: boolean
+    width?: number
+    render?: (value: any, record: T) => React.ReactNode
+}
 
 export const tableColumns = [
     {
@@ -23,10 +32,26 @@ export const tableColumns = [
         )
     },
     {
+        key: "createdTime",
+        title: "Created",
+        width: 150,
+        visible: false,
+        render: (value: number) => {
+            if (value) {
+                try {
+                    return format(Number(value), "yyyy-MM-dd HH:mm")
+                } catch (error) {
+                    logger.error(error, value)
+                }
+            }
+            return '-'
+        }
+    },
+    {
         key: "updatedTime",
         title: "Updated",
         width: 150,
-        render: (value: number) => format(value, "yyyy-MM-dd HH:mm")
+        render: (value: number) => value ? format(Number(value), "yyyy-MM-dd HH:mm") : "-"
     },
     {
         key: "size",
@@ -48,7 +73,6 @@ export const tableColumns = [
     {
         key: "path",
         title: "Path",
-        width: 300
+        width: 380
     }
 ]
-
