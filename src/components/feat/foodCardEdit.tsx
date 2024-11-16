@@ -44,7 +44,7 @@ const FoodCard: React.FC<FoodCardProps> = ({
 }) => {
     const renderContent = (data: FoodCardProps, toggleDisplayMode?: (mode: string) => void) => (
         data.displaymode === 'normal' ? (
-            <ImageDisplay cover={data.cover || ''} title={data.title || ''} position={data.imageposition || 'top-image'}>
+            <ImageDisplay cover={data.cover || ''} title={data.title || ''} position={data.imageposition || 'top-image'} description={data.description}>
                 <CardHeader>
                     <div className="flex justify-between items-center">
                         <CardTitle className="text-xl font-semibold">

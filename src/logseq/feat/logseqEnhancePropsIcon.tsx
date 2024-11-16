@@ -81,10 +81,17 @@ export const runEnhanceLspPluginDropdown = () => {
  */
 export const stopEnhanceLspPluginDropdown = () => {
     try {
-        logger.debug('stopEnhanceLspPluginDropdown')
-        const node = parent?.document?.head.querySelector(`style[data-injected-style^="${ICON_PARENT_STYLE_KEY}"]`)
-        node?.remove()
+        logger.debug('stopEnhanceLspPluginDropdown');
+        const node = parent?.document?.head.querySelector(`style[data-injected-style^="${ICON_PARENT_STYLE_KEY}"]`);
+        if (node) {
+            const parentNode = node.parentNode;
+            if (parentNode) {
+                parentNode.removeChild(node);
+            } else {
+                console.warn('The parent node of the target node is null, cannot perform remove operation.');
+            }
+        }
     } catch (error) {
-
+        console.warn('An error occurred while trying to stopEnhanceLspPluginDropdown:', error);
     }
 }
