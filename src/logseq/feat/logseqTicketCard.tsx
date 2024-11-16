@@ -223,6 +223,10 @@ const formatLink = (input?: string, graph?: string) => {
         return
     }
 
+    return input.split(',').map(item => formatOneLink(item, graph)).reduce((prev, curr) => prev + ',' + curr)
+}
+
+const formatOneLink = (input: string, graph?: string) => {
     // 检查是否为Markdown格式的http/https链接
     if (/^!\[.*?\]\((http[s]?:\/\/[^)]+)\)$/.test(input)) {
         return input.match(/(http[s]?:\/\/[^)]+)/)?.[0];
