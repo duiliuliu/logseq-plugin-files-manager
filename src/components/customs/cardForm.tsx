@@ -28,6 +28,7 @@ export const commonFieldConfig: { [key: string]: FieldConfig } = {
         { value: 'bottom-image', label: 'Bottom' },
         { value: 'left-image', label: 'Left' },
         { value: 'right-image', label: 'Right' },
+        { value: 'nine-grid', label: 'NineGrid' },
         { value: 'overlay', label: 'Overlay' }]
     },
     displaymode: {
