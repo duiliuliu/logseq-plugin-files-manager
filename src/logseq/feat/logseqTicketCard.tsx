@@ -17,8 +17,7 @@ import PageCard2 from "@/components/feat/pageCard2"
 import Itinerary, { getdefaultItineraryProps } from "@/components/feat/itinerary"
 import RatingCard2 from "@/components/feat/ratingCardEdit"
 import ExpenseCard, { getdefaultExpenseCardProps } from "@/components/feat/expenseCardEdit"
-import TrainTicket from "@/components/feat/trainTicketEdit"
-import { getdefaultTrainTicketProps, TrainTicketProps } from "@/components/feat/trainTicket"
+import TrainTicket, { getdefaultTrainTicketProps, TrainTicketProps, trainTicketStyles } from "@/components/feat/trainTicketEdit"
 import FlightTicket from "@/components/feat/flightticketEdit"
 import { FlightTicketProps, getdefaultFilghtTicketProps } from "@/components/feat/flightTicket"
 import FlightTicket2 from "@/components/feat/flightTicketEdit2"
@@ -308,7 +307,8 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             }}
         />,
         defaultPropsFunc: () => { return getdefaultTrainTicketProps(dateFormat) },
-        renderType: 'reactive'
+        renderType: 'reactive',
+        styles: trainTicketStyles
     })
 
     registeAndRenderMicroDom({

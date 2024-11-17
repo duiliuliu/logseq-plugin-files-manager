@@ -9,8 +9,44 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Edit } from "lucide-react"
-import { TrainTicketProps } from './trainTicket'
 import { logger } from '@/utils/logger'
+
+export const trainTicketStyles = ` 
+.arrival-time::after {
+    content: attr(data-isnextday);
+    position: relative;
+    top: -5px;
+    right: -5px;
+    font-size: 10px;
+}
+`
+export const getdefaultTrainTicketProps = (dateFormat?: string) => {
+    const defaultProps: TrainTicketProps = {
+        fromStation: '北京',
+        toStation: '上海',
+        trainNumber: 'G717',
+        date: dateFormat ? `[[${format(new Date(), dateFormat)}]]` : format(new Date(), "yyyy-MM-dd"),
+        departureTime: '10:00',
+        arrivalTime: "20:00",
+        color: 'green',
+        seatInfo: '一等座',
+        editable: false
+    }
+    return defaultProps
+}
+
+export interface TrainTicketProps {
+    fromStation?: string
+    toStation?: string
+    trainNumber?: string
+    date?: string
+    departureTime?: string
+    arrivalTime?: string
+    seatInfo?: string
+    color?: string
+    editable?: boolean
+    onUpdate?: (updatedData: Partial<TrainTicketProps>) => void
+}
 
 export default function TrainTicket({
     fromStation = '北京',
@@ -219,7 +255,7 @@ export default function TrainTicket({
                         month: '2-digit',
                         day: '2-digit',
                     })} {departureTime}开</span>
-                    <span>{isnextday ? "明天" : "今天"}{arrivalTime}到</span>
+                    <span className="arrival-time" data-isnextday={isnextday ? "+1" : ""}>{arrivalTime}到  </span>
                 </div>
                 <div className="text-sm">
                     <div>{seatInfo}</div>

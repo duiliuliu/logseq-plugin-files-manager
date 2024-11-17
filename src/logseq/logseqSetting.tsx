@@ -6,13 +6,13 @@ import { logger } from '../utils/logger';
 import { createMetaBlockProps } from '../data/types';
 import ReactDOM from 'react-dom';
 import FlightTicket2 from '@/components/feat/flightTicket2';
-import TrainTicket from '@/components/feat/trainTicket';
 import FlexibleLayout from '@/components/customs/flexibleLayout';
 import BookCard from '@/components/feat/bookCardEdit';
 import RatingCard from '@/components/feat/ratingCardEdit';
 import FlipCountDown from '@/components/feat/timeCountdown';
 import PageCard from '@/components/feat/pageCard';
 import FoodCard from '@/components/feat/foodCardEdit';
+import TrainTicket from '@/components/feat/trainTicketEdit';
 
 interface Notification {
     previousPluginVersion: string;
