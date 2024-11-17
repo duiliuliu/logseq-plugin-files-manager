@@ -12,13 +12,14 @@
 	- Windows系统：Ctrl + Shift + Enter
 	- macOS系统：Cmd + Shift + Enter
 	  
-	  ![启动方式](./images/app-open.jpg)
+  ![启动方式](./images/app-open.jpg)
 - 安装完成后，文件管理器将自动开始构建数据库。在这个过程中，文件管理器左上角会显示“正在构建...”的提示。请耐心等待，直到该提示消失后再退出Logseq。
 - ~~**请注意：本插件目前对Logseq文档的目录读取，严格按照默认配置，如：pages、journals、assets目录分类各种文件；后续会尝试优化，读取用户配置**~~
 - ![构建数据](./images/app-build.jpg)
 - 您也可以在设置中手动点击“重建数据”，以刷新数据库。
   
-  ![手动重建](./images/app-rebuild.jpg)
+   <center class="half"><img alt="Manual Rebuild" src="./images/app-rebuild-en.png" width="300"> <img alt="Building Data" src="./images/app-building-en.png" width="300"></center> 
+
 - ## 功能介绍
 >  **更多功能&使用分享 [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
 
@@ -66,8 +67,11 @@
 - 可使用命令：`/train-ticket`  或者编辑内容为  `{{renderer :train-ticket, *}}`
 - 可使用命令：`/flight-ticket`  或者编辑内容为  `{{renderer :flight-ticket, *}}`
 - 可使用命令：`/flight-ticket2`  或者编辑内容为  `{{renderer :flight-ticket2, *}}`
+- 更多的命令可查看插件设置
 <center class="half"> <img src="https://github.com/user-attachments/assets/bd281222-1e0a-43ee-8d86-1224a2d571bf" width="200"/><img src="https://github.com/user-attachments/assets/b24c9056-17a6-4d11-8591-a542bada743f" width="200"/> </center> 
 <center class="half"> <img src="https://github.com/user-attachments/assets/85ea12fa-601e-47a5-adba-137d7e315984" width="200"/><img src="https://github.com/user-attachments/assets/db6cb584-723d-4e31-a35e-cbeb527e1bc9" width="200"/> </center> 
+<center class="half"><img width="200" src="https://github.com/user-attachments/assets/f5fd4c70-d243-454d-a429-923637ceea8b"><img width="200" src="https://github.com/user-attachments/assets/c6901fe1-ec8a-4d33-b59b-80a23e7d0cc8"><img width="200" alt="image" src="https://github.com/user-attachments/assets/09034863-af94-48ff-8bc8-e845921c0d75">
+</center> 
 
 > 更多功能,期待您的探索和体验.**更多功能&使用分享 [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
 - ### 开发计划
