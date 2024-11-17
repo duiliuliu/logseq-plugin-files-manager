@@ -14,15 +14,13 @@
 	- Windows: Ctrl + Shift + Enter
 	- macOS: Cmd + Shift + Enter
 	  
-	  ![Launch Method](./images/app-main-open.png)
+  ![Launch Method](./images/app-main-open.png)
 - After installation, the file manager will automatically start building the database. During this process, the message "Building..." will appear in the upper left corner of the file manager. Please do not exit Logseq until this message disappears.
 - ~~**Please Note: The plugin currently reads the Logseq document directories strictly according to the default configuration, categorizing various files into directories such as pages, journals, and assets; future updates will attempt to optimize by reading user configurations.**~~
 - ![Rebuild Data](./images/app-build-en.png)
 - You can also manually click on Settings to rebuild the data and refresh the database.
+  <center class="half"><img alt="Manual Rebuild" src="./images/app-rebuild-en.png" width="300"> <img alt="Building Data" src="./images/app-building-en.png" width="300"></center> 
   
-  ![Manual Rebuild](./images/app-rebuild-en.png)
-  
-  ![Building Data](./images/app-building-en.png)
 - ## Feature Introduction
 >  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
   
@@ -69,9 +67,14 @@
 - you can use command: `/train-ticket`  or edit: ` {{renderer :train-ticket, *}}`
 - you can use command: `/flight-ticket`  or edit: ` {{renderer :flight-ticket, *}}`
 - you can use command: `/flight-ticket2`  or edit: ` {{renderer :flight-ticket2, *}}`
+- more cards can find in plugin settings
 
 <center class="half"> <img src="https://github.com/user-attachments/assets/bd281222-1e0a-43ee-8d86-1224a2d571bf" width="200"/><img src="https://github.com/user-attachments/assets/b24c9056-17a6-4d11-8591-a542bada743f" width="200"/> </center> 
 <center class="half"> <img src="https://github.com/user-attachments/assets/85ea12fa-601e-47a5-adba-137d7e315984" width="200"/><img src="https://github.com/user-attachments/assets/db6cb584-723d-4e31-a35e-cbeb527e1bc9" width="200"/> </center> 
+<center class="half"><img width="200" src="https://github.com/user-attachments/assets/f5fd4c70-d243-454d-a429-923637ceea8b"><img width="200" src="https://github.com/user-attachments/assets/c6901fe1-ec8a-4d33-b59b-80a23e7d0cc8"><img width="200" alt="image" src="https://github.com/user-attachments/assets/09034863-af94-48ff-8bc8-e845921c0d75">
+</center> 
+
+
 > Discover and experience more features awaiting your exploration.  **see more details [👉🏻👉🏻here](https://github.com/duiliuliu/logseq-plugin-files-manager/discussions)**
 
   
