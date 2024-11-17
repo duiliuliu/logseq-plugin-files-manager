@@ -25,7 +25,7 @@ interface CountdownTimerProps {
 const CountdownTimer = function Component({
     targetDate,
     message,
-    color = "#f4a261",
+    color = "dark",
     fontColor = "dark",
     animationStyle = "flip"
 }: CountdownTimerProps) {

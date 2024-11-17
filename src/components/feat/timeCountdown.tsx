@@ -140,7 +140,7 @@ export const getTargetTime = (targetDate?: Date | string): number => {
 
 const FlipCountDown = function Component({
   targetDate = "2024-12-31T00:00:00",
-  color = "#f4a261",
+  color = "dark",
   message = "倒计时结束!"
 }: FlipCountdownProps) {
   const [timeLeft, setTimeLeft] = useState({

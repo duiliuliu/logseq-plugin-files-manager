@@ -6,6 +6,7 @@ import Tooltip from '../customs/tooltip'
 import { renderTags } from '../customs/tags'
 import CardWithEdit from '../customs/cardWithEdit'
 import { formatSource } from './utils'
+import { ImageDisplay } from '../customs/imageDisplay'
 
 export const getdefaultBookCardProps = (): BookCardProps => ({
     cover: "https://www.ibs.it/images/9788804739036_0_536_0_75.jpg",
@@ -56,11 +57,13 @@ const BookCard: React.FC<BookCardProps> = ({
             ? <div className="flex items-center p-2">
                 {data.cover && (
                     <div className="w-16 h-24 mr-3 flex-shrink-0 overflow-hidden">
-                        <img
-                            src={data.cover}
+                        <ImageDisplay
+                            cover={data.cover || ''}
+                            title={data.title || ''}
                             alt={`${data.title} cover`}
-                            className="w-full h-full object-cover rounded-sm"
-                            style={{ objectFit: 'cover', objectPosition: 'center' }}
+                            className="w-full h-full"
+                            imageClassName="rounded-sm"
+                            imageStyle={{ objectFit: 'cover', objectPosition: 'center' }}
                         />
                     </div>
                 )}
@@ -91,11 +94,13 @@ const BookCard: React.FC<BookCardProps> = ({
                 <div className="flex p-4" onClick={() => setShowInfoTooltip(!showInfoTooltip)}>
                     {data.cover && (
                         <div className="w-20 h-30 mr-4 flex-shrink-0 overflow-hidden">
-                            <img
-                                src={data.cover}
+                            <ImageDisplay
+                                cover={data.cover || ''}
+                                title={data.title || ''}
                                 alt={`${data.title} cover`}
-                                className="w-full h-full object-cover rounded-md"
-                                style={{ objectFit: 'cover', objectPosition: 'center' }}
+                                className="w-full h-full"
+                                imageClassName="rounded-md"
+                                imageStyle={{ objectFit: 'cover', objectPosition: 'center' }}
                             />
                         </div>
                     )}

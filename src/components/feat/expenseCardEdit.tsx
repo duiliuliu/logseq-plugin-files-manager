@@ -7,10 +7,11 @@ import CardWithEdit from '../customs/cardWithEdit'
 import { format } from 'date-fns'
 import { formatSource } from './utils'
 import { truncateDescription } from '../customs/description'
+import { ImageDisplay } from '../customs/imageDisplay'
 
-const formatCover = (cover: string): string => {
-    return cover.split(',').at(0) || cover
-}
+// export const formatCover = (cover: string): string => {
+//     return cover.split(',').at(0) || cover
+// }
 
 export const getdefaultExpenseCardProps = () => {
     const defaultProps: ExpenseCardProps = {
@@ -73,7 +74,11 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
                 {data.imageposition === 'overlay' && data.cover ? (
                     <div className="relative h-48">
                         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-80"></div>
-                        <img src={formatCover(data.cover)} alt={data.title} className="w-full h-full object-cover opacity-30" />
+                        <ImageDisplay
+                            cover={data.cover || ''}
+                            title={data.title || ''}
+                            imageClassName="w-full h-full object-cover opacity-30"
+                        />
                         <div className="absolute inset-0 text-white p-4">
                             {renderExpenseDetails(data)}
                         </div>
@@ -83,14 +88,26 @@ const ExpenseCard: React.FC<ExpenseCardProps> = ({
                         {(data.imageposition === 'left-image' || data.imageposition === 'top-image') && data.cover && (
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent to-white opacity-25"></div>
-                                <img src={formatCover(data.cover)} alt={data.title} className="w-full h-auto object-cover" style={{ maxHeight: '200px' }} />
+                                <ImageDisplay
+                                    cover={data.cover || ''}
+                                    title={data.title || ''}
+                                    className="w-full"
+                                    imageClassName="w-full h-auto object-cover"
+                                    imageStyle={{ maxHeight: '200px' }}
+                                />
                             </div>
                         )}
                         <div>{renderExpenseDetails(data)}   </div>
                         {(data.imageposition === 'right-image' || data.imageposition === 'bottom-image') && data.cover && (
                             <div className="relative">
                                 <div className="absolute inset-0 bg-gradient-to-l from-transparent to-white opacity-25"></div>
-                                <img src={formatCover(data.cover)} alt={data.title} className="w-full h-auto object-cover" style={{ maxHeight: '200px' }} />
+                                <ImageDisplay
+                                    cover={data.cover || ''}
+                                    title={data.title || ''}
+                                    className="w-full"
+                                    imageClassName="w-full h-auto object-cover"
+                                    imageStyle={{ maxHeight: '200px' }}
+                                />
                             </div>
                         )}
                     </div>
