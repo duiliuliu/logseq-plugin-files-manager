@@ -84,10 +84,13 @@ const FoodCard: React.FC<FoodCardProps> = ({
             <div className="relative w-full h-40 cursor-pointer"
                 onClick={() => toggleDisplayMode && toggleDisplayMode('normal')}// 单击展开紧凑模式
             >
-                <img
-                    src={data.cover?.split(',')[0]}
-                    alt={data.title}
-                    className="w-full h-full object-cover"
+                <ImageDisplay
+                    cover={data.cover || ''}
+                    title={data.title || ''}
+                    alt={`${data.title} cover`}
+                    className="w-full h-full"
+                    imageClassName="object-cover"
+                    imageStyle={{ objectFit: 'cover', objectPosition: 'center' }}
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
                     <h3 className="text-lg font-semibold">{data.title}</h3>

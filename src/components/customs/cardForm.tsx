@@ -54,6 +54,7 @@ export interface FieldConfig {
     type?: string
     options?: SelectOption[]
     icon?: ReactNode
+    tooltip?: string
 }
 
 export interface CardFormProps {
