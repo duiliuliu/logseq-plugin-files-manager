@@ -1,5 +1,5 @@
 import { parse } from "date-fns";
-import { getGloableUserConfigs } from "./useUserConfigs";
+import { getGloableUserConfigs } from "../useUserConfigs";
 import { BlockEntity } from "@logseq/libs/dist/LSPlugin";
 
 export const getMilestones = async (pageName: string, blockUid: string) => {
@@ -12,13 +12,13 @@ export const getMilestones = async (pageName: string, blockUid: string) => {
 
 async function getMilestonesWithJournal(pageName: string) {
     const days = new Map()
-    const result: { content: string; date: Date }[] = []
+    const result: { id: string; content: string; date: Date }[] = []
     const block = await logseq.Editor.getPage(pageName)
     let journals
     try {
         journals = (
             await logseq.DB.datascriptQuery(
-                `[:find (pull ?j [:block/journal-day]) (pull ?b [:block/content])
+                `[:find (pull ?j [:block/journal-day]) (pull ?b [*])
           :in $ ?uuid
           :where
           [?t :block/uuid ?uuid]
@@ -39,20 +39,22 @@ async function getMilestonesWithJournal(pageName: string) {
     for (const journal of journals) {
         if (journal["journal-day"]) {
             // @ts-ignore
-            const date = new Date(parse(string(journal["journal-day"]),"yyyymmdd"))
+            const date = new Date(parse(`${journal["journal-day"]}`, "yyyymmdd", new Date()))
             const ts = date.getTime()
             if (!days.has(ts)) {
                 days.set(ts, { uuid: journal.uuid })
                 // @ts-ignore
                 result.push({
-                    content: removeDateFromText(journal.content, pageName),
+                    id: journal.uuid,
+                    content: journal.content,
                     date: date,
                 })
             }
         } else {
             // @ts-ignore 
             result.push({
-                content: removeDateFromText(journal.content, pageName),
+                id: journal.uuid,
+                content: journal.content,
                 date: getDateFromText(journal.content),
             })
         }
@@ -68,7 +70,8 @@ const getMilestonesWithContent = async (pageName: string, blockUid: string) => {
     return ((milestones as BlockEntity)?.children)?.map(milestone => {
         const content = (milestone as BlockEntity)?.content
         return {
-            content: removeDateFromText(content),
+            id: (milestone as BlockEntity).uuid,
+            content: content,
             date: getDateFromText(content),
         }
     }) || []
@@ -79,24 +82,3 @@ const getDateFromText = (text: string): Date => {
     const last = text?.match(/\[\[(.+?)\]\]/g)?.slice(-1)[0]
     return parse(last?.replace(/^(\[\[)|(\]\])$/g, '') || '', getGloableUserConfigs().preferredDateFormat, new Date())
 }
-
-const removeDateFromText = (text: string, page?: string): string => {
-    page && (text = text.replace(`#${page}`, ''))
-    page && (text = text.replace(`[[${page}]]`, ''))
-    text = text.split('\n')[0]
-    text = text.split('\n')[0]
-
-    const last = text?.match(/\[\[(.+?)\]\]/g)?.slice(-1)[0]
-    if (!last) return convertHerfData(text)
-    return convertHerfData(text.replace(last, '').trim())
-}
-
-
-const convertHerfData = (text: string): string => {
-    const idAttriReg = /id::\s+[\w-]+/ig
-    text = text.replace(idAttriReg, '')
-
-    const hredReg = /(?<!!)\[(.*?)\]\((.*?)\)/ig
-    return '<p>' + text.replace(hredReg, `<a href=$2>$1</a>`) + '</p>'
-}
- 

@@ -27,6 +27,10 @@ import { getPageTodos2 } from "./logseqGetTODOs"
 import FoodCard, { getdefaultFoodCardProps } from "@/components/feat/foodCardEdit"
 import { CardProps } from "antd"
 import BookCard, { BookCardProps, getdefaultBookCardProps } from "@/components/feat/bookCardEdit"
+import { getMilestones } from "./logseqGetMilestones"
+import { mockMilestones } from "@/mock/mileStones"
+import { parseContent } from "@/components/feat/milestone/milestone"
+import MilestoneViewer from "@/components/feat/milestone/milestone-view"
 
 const hiddenBlockCardProp = (blockUid: string) => {
     logger.debug('hiddenBlockCardProp', blockUid)
@@ -113,11 +117,12 @@ type PageInfo = { pageE: PageEntity | null, todoList: Array<TodoItem> | undefine
 type registeAndRenderMicroDomProps = {
     cardType: string,
     hiddenBlockCardProps: boolean | undefined,
-    elementFunc: (blockE?: BlockEntity, pageinfo?: PageInfo) => React.ReactElement,
+    elementFunc: (blockE?: BlockEntity, pageinfo?: PageInfo, args?: { [K: string]: any }) => React.ReactElement,
     defaultPropsFunc?: () => { [K: string]: any }
     renderType?: 'native' | 'reactive'
     paramTemps?: string[] | { [K: string]: string }
     styles?: string
+    argsBuildFunc?: (blockE?: BlockEntity, pageinfo?: PageInfo) => Promise<{ [K: string]: any }> | { [K: string]: any }
 }
 type renderMicroParam = {
     [K: string]: any,
@@ -127,7 +132,16 @@ type renderMicroParam = {
     position?: string,
     hiddenBlockProps?: string
 }
-const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc, defaultPropsFunc, renderType = 'reactive', paramTemps: pramTemps = ['*'], styles }: registeAndRenderMicroDomProps) => {
+const registeAndRenderMicroDom = ({
+    cardType,
+    hiddenBlockCardProps,
+    elementFunc,
+    defaultPropsFunc,
+    renderType = 'reactive',
+    paramTemps: pramTemps = ['*'],
+    styles,
+    argsBuildFunc
+}: registeAndRenderMicroDomProps) => {
     logger.debug('registeAndRenderMicroDom', { prefix: cardType, hiddenBlockCardProps, renderType })
     let slotContent = pramTemps ? Array.isArray(pramTemps) ? ` {{renderer :${cardType}, ${pramTemps.join(',')}}} ` : ` {{renderer :${cardType}, ${Object.entries(pramTemps).map(([k, v]) => `${k}:${v}`).reduce((prev, curr) => prev + ',' + curr)}}} ` : ` {{renderer :${cardType} }} `
     if (defaultPropsFunc) { slotContent += '\n' + propertiesToStr(defaultPropsFunc())[0] }
@@ -152,6 +166,8 @@ const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc,
         let blockE: BlockEntity | null
         let pageInfo: PageInfo = await getPageInfo(params.page);
         if (params.block) { blockE = (await logseq.Editor.getBlock(params.block.replace('((', '').replace('))', ''))) } else { blockE = (await logseq.Editor.getBlock(uuid)) }
+        const elementArgs: { [K: string]: any } = argsBuildFunc ? (await argsBuildFunc(blockE || undefined, pageInfo)) : {}
+
         let mydiv
         switch (renderType) {
             case 'reactive':
@@ -160,7 +176,7 @@ const registeAndRenderMicroDom = ({ cardType, hiddenBlockCardProps, elementFunc,
                 let wrapId = params.display ? 'slot-' + id : id
                 if (params.display) {
                     wrapElementFunc = (blockE?: BlockEntity, pageinfo?: PageInfo) => <FlexibleLayout
-                        mainElement={elementFunc(blockE, pageinfo)}
+                        mainElement={elementFunc(blockE, pageinfo, elementArgs)}
                         children={[(blockE && tryGetBlockOtrherElement('v1', cardType, blockE, hiddenBlockCardProps)) || '']}
                         display={(params.display as DisplayStyle)}
                         onTextUpdate={(index: number, text: string | null) => console.log('onTextUpdate', index, text)}
@@ -576,6 +592,20 @@ export const initTicketFeat = (appConfig?: AppConfig) => {
             onUpdate={(data: Partial<MovieCardProps>) => { blockE && updateBlockProps(blockE, data) }}
         />,
         defaultPropsFunc: getdefaultMovieCardProps,
+        renderType: 'reactive'
+    })
+
+    registeAndRenderMicroDom({
+        cardType: 'milestone-card',
+        hiddenBlockCardProps,
+        elementFunc: (args?: { [K: string]: any }) => <MilestoneViewer milestones={args?.milestones || mockMilestones} />,
+        argsBuildFunc: async (blockE, pageinfo) => {
+            const milestones = (await getMilestones(pageinfo?.pageE?.originalName || '', blockE?.uuid || '')).map(item => ({
+                ...item,
+                ...parseContent(item.content)
+            }))
+            return milestones
+        },
         renderType: 'reactive'
     })
 

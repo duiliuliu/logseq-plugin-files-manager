@@ -1,6 +1,26 @@
 import { Badge } from "@/components/ui/badge"
 
-export type Status = 'TODO' | 'NOW' | 'LATER' | 'DONE' | 'DOING' | 'IN-PROGRESS' | 'WAIT' | 'CANCEL'
+// 定义枚举类型
+export enum Status {
+    TODO = 'TODO',
+    NOW = 'NOW',
+    LATER = 'LATER',
+    DONE = 'DONE',
+    DOING = 'DOING',
+    IN_PROGRESS = 'IN-PROGRESS',
+    WAIT = 'WAIT',
+    CANCEL = 'CANCEL'
+}
+
+export function checkStatusPrefix(inputString: string): Status | null {
+    const statusValues = Object.values(Status);
+    for (const status of statusValues) {
+        if (inputString.startsWith(status)) {
+            return status
+        }
+    }
+    return null;
+}
 
 const STATUS_STYLES = {
     'TODO': 'bg-slate-500',
