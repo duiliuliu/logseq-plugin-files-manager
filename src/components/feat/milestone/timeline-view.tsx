@@ -1,10 +1,9 @@
-
 import { useState } from 'react'
 import { format, parseISO } from 'date-fns'
-import { ArrowUpDownIcon, ChevronFirstIcon, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowUpDownIcon } from 'lucide-react'
 import { Button } from "@/components/ui/button"
-import { MilestoneCard } from './milestone-card'
 import { Milestone } from './milestone'
+import { cn } from "@/lib/utils"
 
 interface TimelineViewProps {
     milestones: Milestone[]
@@ -15,13 +14,14 @@ interface TimelineViewProps {
     onAddMilestone?: (milestone: Milestone) => void
 }
 
+type DisplayMode = 'alternate' | 'left' | 'right'
+
 export function TimelineView({
     milestones,
-    isWideMode,
-    onUpdateMilestone,
-    onHiddenMilestone }: TimelineViewProps) {
+    isWideMode }: TimelineViewProps) {
     const [isReversed, setIsReversed] = useState(false)
-    const [displayMode, setDisplayMode] = useState<'both' | 'left' | 'right'>('both')
+    const [displayMode, setDisplayMode] = useState<DisplayMode>('alternate')
+    const timelineColor = "#3b82f6" // Matching blue-500 from Tailwind
 
     const sortedMilestones = [...milestones].sort((a, b) => {
         const dateA = parseISO(a.date)
@@ -29,85 +29,111 @@ export function TimelineView({
         return isReversed ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime()
     })
 
-    const toggleReverse = () => setIsReversed(!isReversed)
+    const renderMilestone = (milestone: Milestone, index: number, array: Milestone[]) => {
+        const isLeft = displayMode === 'alternate' ? index % 2 === 0 : displayMode === 'left'
+        const isFirst = index === 0
+        const isLast = index === array.length - 1
 
-    const renderMilestone = (milestone: Milestone, index: number) => {
-        const isLeft = displayMode === 'both' ? index % 2 === 0 : displayMode === 'left'
         return (
-            <div key={milestone.id} className="flex items-center">
-                {(displayMode === 'both' || displayMode === 'left') && (
-                    <div className={`flex-1 ${isLeft ? 'order-1' : 'order-3'}`}>
-                        {isLeft && <MilestoneCard
-                            milestone={milestone}
-                            isWideMode={isWideMode}
-                            viewMode="timeline"
-                            onUpdateMilestone={onUpdateMilestone}
-                            onHiddenMilestone={onHiddenMilestone}
-                        />}
+            <div key={milestone.id} className="relative">
+                {/* Vertical connecting line */}
+                <div
+                    className={`absolute left-1/2 transform -translate-x-1/2 w-[4px] ${isFirst ? 'top-1/2' : 'top-0'}`}
+                    style={{
+                        backgroundColor: timelineColor,
+                        height: isLast ? 'calc(50% + 1px)' : '100%', // Ensure the line reaches the bottom of the container
+                        top: isFirst ? '50%' : '10px', // Start from the top of the node for the first milestone
+                    }}
+                />
+
+                <div className={cn(
+                    "relative flex items-center min-h-[100px]",
+                    isWideMode ? "px-8" : "px-4"
+                )}>
+                    {/* Left side content */}
+                    <div className={cn(
+                        "flex-1 pr-8 text-right",
+                        ((!isLeft && displayMode === 'alternate') || displayMode === 'right') ? 'invisible' : ''
+                    )}>
+                        <div className="inline-block max-w-md">
+                            <div className="font-medium">{milestone.content}</div>
+                            <div className="text-sm text-muted-foreground">
+                                {format(parseISO(milestone.date), 'yyyy-MM-dd HH:mm:ss')}
+                            </div>
+                        </div>
                     </div>
-                )}
-                <div className="flex-shrink-0 order-2 w-16 text-center">
-                    <div className="h-full flex flex-col items-center">
-                        <div className="flex-1 w-1 bg-border"></div>
-                        <div className="w-4 h-4 rounded-full bg-primary"></div>
-                        <div className="flex-1 w-1 bg-border"></div>
+
+                    {/* Timeline node */}
+                    <div className="relative z-10 flex-shrink-0">
+                        <div className="w-4 h-4 rounded-full ring-4 ring-white" style={{ backgroundColor: timelineColor }} />
                     </div>
-                    <div className="mt-2 text-sm text-muted-foreground">
-                        {format(parseISO(milestone.date), 'MMM d')}
+
+                    {/* Right side content */}
+                    <div className={cn(
+                        "flex-1 pl-8",
+                        ((isLeft && displayMode === 'alternate') || displayMode === 'left') ? 'invisible' : ''
+                    )}>
+                        <div className="inline-block max-w-md">
+                            <div className="font-medium">{milestone.content}</div>
+                            <div className="text-sm text-muted-foreground">
+                                {format(parseISO(milestone.date), 'yyyy-MM-dd HH:mm:ss')}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                {(displayMode === 'both' || displayMode === 'right') && (
-                    <div className={`flex-1 ${isLeft ? 'order-3' : 'order-1'}`}>
-                        {!isLeft && <MilestoneCard
-                            milestone={milestone}
-                            isWideMode={isWideMode}
-                            viewMode="timeline"
-                            onUpdateMilestone={onUpdateMilestone}
-                            onHiddenMilestone={onHiddenMilestone}
-                        />}
-                    </div>
-                )}
             </div>
         )
     }
 
     return (
-        <div className="space-y-4">
-            <div className="flex justify-between items-center">
-                <Button variant="outline" size="sm" onClick={toggleReverse}>
+        <div className={cn(
+            "space-y-8",
+            isWideMode ? "max-w-6xl mx-auto" : "max-w-3xl mx-auto"
+        )}>
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    {(['left', 'right', 'alternate'] as const).map((mode) => (
+                        <button
+                            key={mode}
+                            onClick={() => setDisplayMode(mode)}
+                            className={cn(
+                                "flex items-center space-x-2 px-3 py-2 rounded-md transition-colors",
+                                displayMode === mode
+                                    ? "bg-blue-100 text-blue-600"
+                                    : "hover:bg-gray-100"
+                            )}
+                        >
+                            <div className={cn(
+                                "w-4 h-4 rounded-full border-2 flex items-center justify-center",
+                                displayMode === mode
+                                    ? "border-blue-600"
+                                    : "border-gray-400"
+                            )}>
+                                {displayMode === mode && (
+                                    <div className="w-2 h-2 rounded-full bg-blue-600" />
+                                )}
+                            </div>
+                            <span className="capitalize">{mode}</span>
+                        </button>
+                    ))}
+                </div>
+
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsReversed(!isReversed)}
+                    className="ml-4"
+                >
                     <ArrowUpDownIcon className="h-4 w-4" />
                 </Button>
-                <div className="space-x-2">
-                    <Button
-                        variant={displayMode === 'both' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setDisplayMode('both')}
-                    >
-                        <ChevronFirstIcon className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        variant={displayMode === 'left' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setDisplayMode('left')}
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-
-                    </Button>
-                    <Button
-                        variant={displayMode === 'right' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setDisplayMode('right')}
-                    >
-                        <ChevronRight className="h-4 w-4" />
-                    </Button>
-                </div>
             </div>
-            <div className="space-y-8" onContextMenu={(e) => {
-                e.preventDefault()
-                // onAddMilestone?.({})
-            }}>
-                {sortedMilestones.map(renderMilestone)}
+
+            <div className="relative py-4">
+                {sortedMilestones.map((milestone, index) =>
+                    renderMilestone(milestone, index, sortedMilestones)
+                )}
             </div>
         </div>
     )
 }
+
